@@ -48,3 +48,46 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+---
+
+## Running with Docker
+
+This project can also be run inside a Docker container to simplify the development environment setup.
+
+### Steps to run with Docker
+
+1. Make sure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
+
+2. From the terminal, in the folder where your `docker-compose.yml` is located, run:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+3. This will build the image and start the container running Expo's Metro Bundler.
+
+4. To access the app:
+
+   - Open the Expo Go app on your mobile device (on the same network as the Docker host).
+   - Scan the QR code shown in the terminal or open the Expo web interface in your browser at:  
+     `http://localhost:19002`
+
+5. To stop the container, run:
+
+   ```bash
+   docker-compose down
+   ```
+
+### Notes
+
+- Your project code is synced via a volume with the container, so any changes made locally will reflect automatically in the running app (hot reload).
+- If you don’t see updates, try restarting the bundler with a cleared cache inside the container:
+
+   ```bash
+   docker exec -it <container-id> npx expo start -c
+   ```
+
+- The standard Expo ports (19000, 19001, 19002) are exposed to facilitate connection.
+
+---
