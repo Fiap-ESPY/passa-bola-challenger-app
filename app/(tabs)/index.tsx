@@ -1,12 +1,14 @@
 import EventCard from "@/components/cards/event/EventCard";
+import { View, Text } from "react-native";
 
 
 const HomeScreen = () => {
   return (
-    <>
-      <h1>Hello World</h1>
-      <EventCard/>
-    </>
+    <View>
+      <Text style = {{marginBottom: 200}}> Ola </Text>
+       <EventCard/>
+
+    </View>
 
   );
 };
