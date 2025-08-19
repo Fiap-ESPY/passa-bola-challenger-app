@@ -1,0 +1,48 @@
+# Node modules locais (vamos instalar dentro do container)
+node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Cache e build temporários
+.expo
+.expo-shared
+.expo-dev
+.tmp
+.temp
+.cache
+build
+dist
+
+# Logs
+*.log
+
+# Sistema / IDE
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+
+# Android
+android/app/build
+android/.gradle
+android/gradle
+android/local.properties
+
+# iOS
+ios/build
+ios/Pods
+ios/*.xcworkspace
+ios/*.xcodeproj/project.xcworkspace
+ios/*.xcodeproj/xcuserdata
+
+# Testes
+coverage
+__tests__
+*.spec.js
+*.test.js
+
+# Outros arquivos que não precisam ir pro container
+.env
+.env.*
