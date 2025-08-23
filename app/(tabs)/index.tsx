@@ -1,9 +1,9 @@
-const HomeScreen = () => {
+import AppRoutes from "../routes/AppRoute";
+
+const Index = () => {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <AppRoutes/>
   );
 };
 
-export default HomeScreen;
+export default Index;
