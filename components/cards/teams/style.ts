@@ -6,8 +6,7 @@ const styles = StyleSheet.create({
         width: 365, 
         height: 280,
         borderWidth: 1,
-        backgroundColor: "#0022ee",
-        borderColor: "#E4E4E4",
+        borderColor: "#000000ff",
         borderRadius: 16, 
         marginLeft: 40,
         marginTop: 50, 
@@ -31,36 +30,77 @@ const styles = StyleSheet.create({
         color: "#FFF",
         fontWeight: 600, 
         fontSize: 16,
+
     },
 
     teamsContainer:{
         marginTop: 25,
         width: "100%", 
         height: 169,
-        alignItems: "center"
+        alignItems: "center",
         
         
     }, 
 
     teams:{
-        backgroundColor: "#D9D9D9",
-        width: 290,
-        height: 168,
+        width: 295,
+        backgroundColor: "#0022ee",
+        height: 82,
         flexDirection: "row",
         justifyContent: "space-around",
-        alignItems: "center"
+        alignItems: "center",
+        marginBottom: 22,
+
     }, 
 
     teamsIcons:{
-        backgroundColor: "#e00505ff",
+        borderRadius: "100%",
+        backgroundColor: "#D9D9D9",
         width:80,
         height: 80, 
-        borderRadius: "100%",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+
     },
 
-    
+    staticGame:{
+        width: 290,
+        height: 68,
+        alignItems: "center",
+        backgroundColor: "red"
+    },
+
+    nameteamsDiv:{
+        width: 295, 
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingLeft: 14,
+        paddingRight: 14,
+
+    }, 
+
+    nameTeams:{
+        fontSize: 12, 
+        color: "#9A9A9A",
+        fontWeight: 500,
+
+    },
+
+
+    score:{
+        width: 295, 
+        flexDirection: "row", 
+        justifyContent: "space-between",
+        paddingLeft: 40,
+        paddingRight: 40,
+    },
+
+    scoreText:{
+        fontSize: 32,
+        fontWeight: 500,
+
+    }
+
 })
 
 
