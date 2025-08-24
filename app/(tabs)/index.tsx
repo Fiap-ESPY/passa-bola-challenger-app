@@ -1,8 +1,11 @@
+import TeamsCard from "@/components/cards/teams/TeamsCard";
+import { View} from "react-native";
+
 const HomeScreen = () => {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <View>
+      <TeamsCard/>
+    </View>
   );
 };
 
