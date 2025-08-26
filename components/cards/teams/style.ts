@@ -1,3 +1,4 @@
+import { JustifyContent } from './../../../node_modules/csstype/index.d';
 import {StyleSheet} from "react-native"
 
 
@@ -44,14 +45,18 @@ const styles = StyleSheet.create({
 
     teams:{
         width: 295,
-        backgroundColor: "#0022ee",
-        height: 82,
+        height: 159,
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
         marginBottom: 22,
-
     }, 
+
+    teamsSection:{
+        height: "100%", 
+        justifyContent: "space-around",
+        alignItems: "center"
+    },
 
     teamsIcons:{
         borderRadius: "100%",
@@ -60,46 +65,21 @@ const styles = StyleSheet.create({
         height: 80, 
         alignItems: "center",
         justifyContent: "center",
-
+       
     },
-
-    staticGame:{
-        width: 290,
-        height: 68,
-        alignItems: "center",
-        backgroundColor: "red"
-    },
-
-    nameteamsDiv:{
-        width: 295, 
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingLeft: 14,
-        paddingRight: 14,
-
-    }, 
 
     nameTeams:{
         fontSize: 12, 
-        color: "#9A9A9A",
-        fontWeight: 500,
-
-    },
-
-
-    score:{
-        width: 295, 
-        flexDirection: "row", 
-        justifyContent: "space-between",
-        paddingLeft: 40,
-        paddingRight: 40,
+        fontWeight: 500, 
+        color: "#9A9A9A"
     },
 
     scoreText:{
-        fontSize: 32,
+        fontSize: 32, 
         fontWeight: 500,
-
     }
+
+    
 
 })
 
