@@ -1,4 +1,3 @@
-import { JustifyContent } from './../../../node_modules/csstype/index.d';
 import {StyleSheet} from "react-native"
 
 
