@@ -76,6 +76,10 @@ const styles = StyleSheet.create({
     scoreText:{
         fontSize: 32, 
         fontWeight: 500,
+    },
+    score:{
+        width: "100%",
+        alignItems: "center"
     }
 
     
