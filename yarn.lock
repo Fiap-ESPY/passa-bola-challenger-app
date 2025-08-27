@@ -858,11 +858,6 @@
     "@eslint/core" "^0.15.1"
     levn "^0.4.1"
 
-"@expo-google-fonts/inter@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.npmjs.org/@expo-google-fonts/inter/-/inter-0.4.1.tgz"
-  integrity sha512-ypL+XokTHEG+ie/nxNj/mS38afMrY4Li4oKvTJf9k9XvH7I21qfTGCsDtlZ6nIUWEAy1odoUZISdXT1nfMh4kA==
-
 "@expo/cli@0.24.20":
   version "0.24.20"
   resolved "https://registry.npmjs.org/@expo/cli/-/cli-0.24.20.tgz"
