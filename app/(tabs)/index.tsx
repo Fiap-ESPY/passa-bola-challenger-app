@@ -1,12 +1,9 @@
-import TeamsCard from "@/components/cards/teams/TeamsCard";
-import { View} from "react-native";
+import AppRoutes from "../routes/AppRoute";
 
-const HomeScreen = () => {
+const Index = () => {
   return (
-    <View>
-      <TeamsCard/>
-    </View>
+    <AppRoutes/>
   );
 };
 
-export default HomeScreen;
+export default Index;
