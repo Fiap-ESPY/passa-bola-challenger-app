@@ -1,16 +1,9 @@
-import EventCard from "@/components/cards/event/EventCard";
-import { View, Text } from "react-native";
+import AppRoutes from "../routes/AppRoute";
 
-
-const HomeScreen = () => {
+const Index = () => {
   return (
-    <View>
-      <Text style = {{marginBottom: 200}}> Ola </Text>
-       <EventCard/>
-
-    </View>
-
+    <AppRoutes/>
   );
 };
 
-export default HomeScreen;
+export default Index;
