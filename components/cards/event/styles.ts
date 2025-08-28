@@ -29,6 +29,16 @@ const styles = StyleSheet.create({
         paddingLeft: 18,
     },
 
+    areaofDescriptionDisabled: {
+        flex: 1,
+        borderBottomLeftRadius: 24,
+        borderBottomRightRadius: 24,
+        boxShadow: "0px 4px 8px rgba(0,0,0,0.25)",
+        justifyContent: "space-evenly",
+        paddingLeft: 18,
+        backgroundColor: "#dbdbdb",
+    },
+
     label:{
         backgroundColor: "#FFFFFF",
         width:125, 
