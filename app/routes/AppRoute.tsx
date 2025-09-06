@@ -35,7 +35,7 @@ function BottomTabsNavigation() {
   };
 
   return (
-    <BottomTabs.Navigator screenOptions={screenOptions}>
+    <BottomTabs.Navigator screenOptions={screenOptions} initialRouteName="home">
       <BottomTabs.Screen
         name="news"
         component={NewsScreen}
