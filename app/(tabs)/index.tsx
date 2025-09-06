@@ -1,9 +1,7 @@
-import AppRoutes from "../routes/AppRoute";
+import AppRoutes from '../routes/AppRoute';
 
 const Index = () => {
-  return (
-    <AppRoutes/>
-  );
+  return <AppRoutes />;
 };
 
 export default Index;
