@@ -1,73 +1,85 @@
+import { COLORS } from '@/theme/colors';
 import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 
 export const Card = styled.View`
-  width: 25rem;
-  margin: 16px 0;
-  border-radius: 12px;
+  background-color: ${COLORS.white};
+  border-radius: 16px;
   overflow: hidden;
-  background-color: #fff;
-  elevation: 3;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+  /* sombra iOS */
+  shadow-color: #000;
+  shadow-opacity: 0.06;
+  shadow-radius: 8px;
+  shadow-offset: 0px 3px;
+
+  /* sombra Android */
+  elevation: 2;
+
+  margin-bottom: 14px;
 `;
 
 export const GradientBackground = styled(LinearGradient)`
-  padding: 16px;
+  height: 110px;
+  width: 100%;
+  padding: 14px;
+  justify-content: flex-end;
 `;
 
 export const Label = styled.View`
-  background-color: #ffff;
-  padding: 4px 8px;
-  border-radius: 8px;
-  align-self: flex-start;
-  margin-bottom: 8px;
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  background-color: ${COLORS.tagBg};
+  padding: 6px 10px;
+  border-radius: 16px;
 `;
 
 export const LabelText = styled.Text`
-  color: #9a9a9a;
-  font-weight: 700;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: ${COLORS.tagText};
 `;
 
 export const EventTitle = styled.Text`
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  margin-top: 2rem;
+  color: ${COLORS.white};
+  font-weight: 800;
+  font-size: 16px;
 `;
 
-export const DescriptionArea = styled.View<{ available: boolean }>`
-  padding: 16px;
-  background-color: ${({ available }) => (available ? '#fff' : '#ffd6d6')};
+export const DescriptionArea = styled.View`
+  padding: 14px;
+  gap: 6px;
 `;
 
 export const EventDescription = styled.Text`
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 8px;
+  color: ${COLORS.sub};
+  line-height: 20px;
 `;
 
 export const BoldText = styled.Text`
-  font-weight: 700;
+  font-weight: 800;
+  color: ${COLORS.text};
 `;
 
 export const ClockIcon = styled(FontAwesome)`
-  margin-left: 1rem;
+  color: ${COLORS.sub};
+  margin-left: 15px;
 `;
 
-export const InfoButton = styled.TouchableOpacity<{ available: boolean }>`
-  width: 100%;
-  height: 40px;
-  background-color: ${({ available }) => (available ? '#70ac3a' : '#9A9A9A')};
-  justify-content: center;
+export const InfoButton = styled.Pressable<{ available: boolean }>`
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 20px;
   align-items: center;
-  border-radius: 24px;
-  margin-top: 8px;
+  justify-content: center;
+  background-color: ${({ available }) =>
+    available ? COLORS.green : COLORS.tagText};
 `;
 
 export const ButtonText = styled.Text`
-  color: #fff;
-  font-weight: 700;
-  font-size: 16px;
+  color: ${COLORS.white};
+  font-weight: 800;
 `;

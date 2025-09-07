@@ -4,6 +4,7 @@ export type RootStackParamList = {
   BottomTabs: undefined;
   NewScreen: undefined;
   Profile: undefined;
+  MatchDetails: { matchId: number };
 };
 
 export type BottomTabParamList = {

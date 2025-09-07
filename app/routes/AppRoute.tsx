@@ -1,20 +1,24 @@
+import { RootStackParamList } from '@/navigation/navigationTypes';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MatchDetails from '../screens/MatchDetails';
+
 // SCREENS
+import { COLORS } from '@/theme/colors';
 import HomeScreen from '../screens/Home';
 import NewsScreen from '../screens/News';
 import ProfileScreen from '../screens/Profile';
 
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Ionicons from '@expo/vector-icons/Ionicons';
-
 export default function StackNavigation() {
-  const Stack = createStackNavigator();
+  const Stack = createStackNavigator<RootStackParamList>();
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="BottomTabs" component={BottomTabsNavigation} />
+      <Stack.Screen name="MatchDetails" component={MatchDetails} />
     </Stack.Navigator>
   );
 }
@@ -29,9 +33,13 @@ function BottomTabsNavigation() {
       borderWidth: 0,
       borderTopColor: 'white',
       backgroundColor: 'white',
-      height: 55,
+      height: 70,
       elevation: 0,
     },
+  };
+
+  const focusedStyle = (isFocused: boolean) => {
+    return isFocused ? COLORS.darkCharcoal : COLORS.lightGray;
   };
 
   return (
@@ -43,8 +51,8 @@ function BottomTabsNavigation() {
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="newspaper"
-              size={24}
-              color={focused ? '#1E1E1E' : '#E4E4E4'}
+              size={27}
+              color={focusedStyle(focused)}
             />
           ),
         }}
@@ -54,11 +62,7 @@ function BottomTabsNavigation() {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="home"
-              size={24}
-              color={focused ? '#1E1E1E' : '#E4E4E4'}
-            />
+            <Ionicons name="home" size={27} color={focusedStyle(focused)} />
           ),
         }}
       />
@@ -67,11 +71,7 @@ function BottomTabsNavigation() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <FontAwesome
-              name="user"
-              size={24}
-              color={focused ? '#1E1E1E' : '#E4E4E4'}
-            />
+            <FontAwesome name="user" size={27} color={focusedStyle(focused)} />
           ),
         }}
       />

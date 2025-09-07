@@ -1,7 +1,7 @@
 import { MatchEvent } from '@/model/matchEvent';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text } from 'react-native';
 import {
   BoldText,
   ButtonText,
@@ -16,8 +16,10 @@ import {
   LabelText,
 } from './styles';
 
-import { RootStackNavigationProps } from '@/app/navigation/navigationTypes';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { COLORS } from '@/theme/colors';
 import { useNavigation } from '@react-navigation/native';
+import ActionButton from '@/components/buttons/actionbutton/ActionButton';
 
 type MatchEventCardProps = {
   matchEvent: MatchEvent;
@@ -38,7 +40,7 @@ const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
   return (
     <Card>
       <GradientBackground
-        colors={['#F973AD', '#BCA3EB']}
+        colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
       >
@@ -48,22 +50,26 @@ const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
         <EventTitle>{matchEvent.title}</EventTitle>
       </GradientBackground>
 
-      <DescriptionArea available={matchEvent.isAvailable}>
+      <DescriptionArea>
         <EventDescription>
-          <BoldText>End. </BoldText>: {matchEvent.address}
+          <BoldText>End.: </BoldText> <Text> {matchEvent.address}</Text>
         </EventDescription>
         <EventDescription>
-          <BoldText>Data </BoldText>: {formattedDate}
-          <ClockIcon name="clock-o" size={16} color="black" /> {formattedHour}h
+          <Text>
+            <BoldText>Data: </BoldText> {formattedDate}
+            <ClockIcon name="clock-o" size={16} color="black" />
+            <Text> {formattedHour}h</Text>
+          </Text>
         </EventDescription>
 
-        <InfoButton available={matchEvent.isAvailable} onPress={onClick}>
-          <ButtonText>Informações</ButtonText>
-        </InfoButton>
-
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Text>Ir para Nova Tela</Text>
-        </TouchableOpacity>
+        <ActionButton
+          isDisabled={!matchEvent.isAvailable}
+          label='Informações'
+          onPress={() =>
+            navigation.navigate('MatchDetails', { matchId: matchEvent.id })
+          }
+        />
+        
       </DescriptionArea>
     </Card>
   );
