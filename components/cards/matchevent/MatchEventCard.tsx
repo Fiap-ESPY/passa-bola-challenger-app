@@ -1,6 +1,7 @@
 import { MatchEvent } from '@/model/matchEvent';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Text, TouchableOpacity } from 'react-native';
 import {
   BoldText,
   ButtonText,
@@ -15,12 +16,17 @@ import {
   LabelText,
 } from './styles';
 
+import { RootStackNavigationProps } from '@/app/navigation/navigationTypes';
+import { useNavigation } from '@react-navigation/native';
+
 type MatchEventCardProps = {
   matchEvent: MatchEvent;
   onClick: () => void;
 };
 
 const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
+  const navigation = useNavigation<RootStackNavigationProps>();
+
   const formattedDate = format(parseISO(matchEvent.dateAndHour), 'dd/MM/yyyy', {
     locale: ptBR,
   });
@@ -54,6 +60,10 @@ const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
         <InfoButton available={matchEvent.isAvailable} onPress={onClick}>
           <ButtonText>Informações</ButtonText>
         </InfoButton>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Text>Ir para Nova Tela</Text>
+        </TouchableOpacity>
       </DescriptionArea>
     </Card>
   );

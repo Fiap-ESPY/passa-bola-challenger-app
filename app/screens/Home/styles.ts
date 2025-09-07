@@ -21,3 +21,23 @@ export const Logo = styled(Image)`
   width: 250px;
   resize-mode: contain;
 `;
+
+
+export const CardContainer = styled.View`
+  flex: 1;
+`;
+
+export const FilterContainer = styled.View`
+  flex-direction: row;
+  gap: 12px;
+`;
+
+export const FilterLabel = styled.View`
+  background-color: #ffff;
+  padding: 4px 8px;
+  border-radius: 20px;
+  align-self: flex-start;
+  margin-bottom: 8px;
+  width: 6rem;
+  text-align: center;
+`;

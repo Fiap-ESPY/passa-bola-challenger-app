@@ -3,7 +3,14 @@ import logoImage from '@/assets/logo.png';
 import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
 import { MatchEvent } from '@/model/matchEvent';
 import { ScrollView } from 'react-native';
-import { Container, Header, Logo } from './styles';
+import {
+  CardContainer,
+  Container,
+  FilterContainer,
+  FilterLabel,
+  Header,
+  Logo,
+} from './styles';
 
 export const MATCH_EVENTS: MatchEvent[] = [
   {
@@ -39,13 +46,20 @@ export default function Home() {
         <Logo source={logoImage} />
       </Header>
       <Container>
-        {MATCH_EVENTS.map((matchEvent, index) => (
-          <MatchEventCard
-            key={index}
-            matchEvent={matchEvent}
-            onClick={() => console.log('Cliquei')}
-          />
-        ))}
+        <FilterContainer>
+          <FilterLabel>Todos</FilterLabel>
+          <FilterLabel>Próximos</FilterLabel>
+          <FilterLabel>Anteriores</FilterLabel>
+        </FilterContainer>
+        <CardContainer>
+          {MATCH_EVENTS.map((matchEvent, index) => (
+            <MatchEventCard
+              key={index}
+              matchEvent={matchEvent}
+              onClick={() => console.log('Cliquei')}
+            />
+          ))}
+        </CardContainer>
       </Container>
     </ScrollView>
   );
