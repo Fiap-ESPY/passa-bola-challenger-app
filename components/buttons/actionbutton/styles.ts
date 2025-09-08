@@ -4,9 +4,8 @@ import styled from 'styled-components/native';
 export const ButtonContainer = styled.Pressable<{ isDisabled: boolean }>`
   flex: 1;
   margin-top: 10px;
-  padding: 17px;
+  padding: 12px;
   border-radius: 20px;
-  height: 30px;
   align-items: center;
   justify-content: center;
   background-color: ${({ isDisabled }) =>

@@ -57,6 +57,8 @@ export const DescriptionArea = styled.View`
 export const EventDescription = styled.Text`
   color: ${COLORS.sub};
   line-height: 20px;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export const BoldText = styled.Text`
@@ -66,7 +68,7 @@ export const BoldText = styled.Text`
 
 export const ClockIcon = styled(FontAwesome)`
   color: ${COLORS.sub};
-  margin-left: 15px;
+  margin-left: 10px;
 `;
 
 export const InfoButton = styled.Pressable<{ available: boolean }>`
@@ -82,4 +84,15 @@ export const InfoButton = styled.Pressable<{ available: boolean }>`
 export const ButtonText = styled.Text`
   color: ${COLORS.white};
   font-weight: 800;
+`;
+
+export const ClockWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: 6px;
+`;
+
+export const HourText = styled.Text`
+  color: ${COLORS.sub};
+  margin-left: 4px;
 `;

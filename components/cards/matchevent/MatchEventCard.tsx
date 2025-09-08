@@ -7,10 +7,12 @@ import {
   ButtonText,
   Card,
   ClockIcon,
+  ClockWrapper,
   DescriptionArea,
   EventDescription,
   EventTitle,
   GradientBackground,
+  HourText,
   InfoButton,
   Label,
   LabelText,
@@ -52,24 +54,20 @@ const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
 
       <DescriptionArea>
         <EventDescription>
-          <BoldText>End.: </BoldText> <Text> {matchEvent.address}</Text>
-        </EventDescription>
-        <EventDescription>
-          <Text>
-            <BoldText>Data: </BoldText> {formattedDate}
-            <ClockIcon name="clock-o" size={16} color="black" />
-            <Text> {formattedHour}h</Text>
-          </Text>
+          <BoldText>Data: </BoldText> {formattedDate}
+          <ClockWrapper>
+            <ClockIcon name="clock-o" size={15} />
+            <HourText>{formattedHour}h</HourText>
+          </ClockWrapper>
         </EventDescription>
 
         <ActionButton
           isDisabled={!matchEvent.isAvailable}
-          label='Informações'
+          label="Informações"
           onPress={() =>
             navigation.navigate('MatchDetails', { matchId: matchEvent.id })
           }
         />
-        
       </DescriptionArea>
     </Card>
   );
