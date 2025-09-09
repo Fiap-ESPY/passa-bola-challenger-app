@@ -1,6 +1,6 @@
 import type { MatchEvent } from '@/model/matchEvent';
 
-export const MATCH_EVENTS: MatchEvent[] = [
+export const MATCH_EVENTS_DATA: MatchEvent[] = [
   {
     id: 1,
     title: 'Futebol Amistoso - São Paulo x Rio de Janeiro',

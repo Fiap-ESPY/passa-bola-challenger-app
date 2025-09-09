@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import styles from './style';
 
 const TeamsCard = () => {

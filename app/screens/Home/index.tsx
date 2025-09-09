@@ -1,8 +1,8 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
-import { MATCH_EVENTS } from '@/data/matchEvents';
-import { COLORS } from '@/theme/colors';
+import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
+import { MATCH_EVENTS_DATA } from '@/data/matchEventsData';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StatusBar } from 'react-native';
 import {
@@ -12,13 +12,12 @@ import {
   HeaderTitle,
   Logo,
   Screen,
-  SearchBar,
-  SearchIcon,
-  SearchInput,
   TabPill,
   Tabs,
   TabText,
 } from './styles';
+import { useNavigation } from 'expo-router';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -27,13 +26,15 @@ enum EventFilterType {
 }
 
 const Home = () => {
+  const navigation = useNavigation<RootStackNavigationProps>();
+
   const [eventFilterType, setEventFilterType] = useState<EventFilterType>(
     EventFilterType.ALL_EVENTS
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
 
   const filteredData = useMemo(() => {
-    const filteredEvents = MATCH_EVENTS.filter(event =>
+    const filteredEvents = MATCH_EVENTS_DATA.filter(event =>
       event.title.toLowerCase().includes(filterSearch.toLowerCase())
     );
 
@@ -58,16 +59,10 @@ const Home = () => {
       <HeaderCard>
         <HeaderTitle>JOGOS</HeaderTitle>
 
-        <SearchBar>
-          <SearchIcon name="search" size={18} />
-          <SearchInput
-            placeholder="Pesquisar"
-            placeholderTextColor={COLORS.grayMedium}
-            value={filterSearch}
-            onChangeText={setFilterSearch}
-            returnKeyType="search"
-          />
-        </SearchBar>
+        <SearchFilter
+          searchValue={filterSearch}
+          onChangeText={setFilterSearch}
+        />
 
         <Tabs>
           <TabPill
@@ -102,7 +97,12 @@ const Home = () => {
       >
         {filteredData.map(match => (
           <CardWrapper key={match.id}>
-            <MatchEventCard matchEvent={match} onClick={() => {}} />
+            <MatchEventCard
+              matchEvent={match}
+              onClick={() =>
+                navigation.navigate('MatchDetails', { matchId: match.id })
+              }
+            />
           </CardWrapper>
         ))}
       </ScrollView>
