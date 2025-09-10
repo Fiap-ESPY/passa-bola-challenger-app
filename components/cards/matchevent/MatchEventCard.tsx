@@ -1,10 +1,8 @@
 import { MatchEvent } from '@/model/matchEvent';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Text } from 'react-native';
 import {
   BoldText,
-  ButtonText,
   Card,
   ClockIcon,
   ClockWrapper,
@@ -13,15 +11,12 @@ import {
   EventTitle,
   GradientBackground,
   HourText,
-  InfoButton,
   Label,
   LabelText,
 } from './styles';
 
-import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { COLORS } from '@/theme/colors';
-import { useNavigation } from '@react-navigation/native';
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
+import { COLORS } from '@/theme/colors';
 
 type MatchEventCardProps = {
   matchEvent: MatchEvent;
@@ -29,8 +24,6 @@ type MatchEventCardProps = {
 };
 
 const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
-  const navigation = useNavigation<RootStackNavigationProps>();
-
   const formattedDate = format(parseISO(matchEvent.dateAndHour), 'dd/MM/yyyy', {
     locale: ptBR,
   });
@@ -54,6 +47,9 @@ const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
 
       <DescriptionArea>
         <EventDescription>
+          <BoldText>Local: </BoldText> {matchEvent.address}
+        </EventDescription>
+        <EventDescription>
           <BoldText>Data: </BoldText> {formattedDate}
           <ClockWrapper>
             <ClockIcon name="clock-o" size={15} />
@@ -64,9 +60,7 @@ const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
         <ActionButton
           isDisabled={!matchEvent.isAvailable}
           label="Informações"
-          onPress={() =>
-            navigation.navigate('MatchDetails', { matchId: matchEvent.id })
-          }
+          onPress={onClick}
         />
       </DescriptionArea>
     </Card>

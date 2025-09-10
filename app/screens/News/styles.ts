@@ -1,5 +1,5 @@
 import { COLORS } from '@/theme/colors';
-import { FontAwesome } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 
@@ -65,3 +65,61 @@ export const TabText = styled.Text<{ $active?: boolean }>`
 export const CardWrapper = styled.View`
   margin-top: 14px;
 `;
+
+export const FeaturedCard = styled.TouchableOpacity`
+  margin-top: 8px;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: ${COLORS.white};
+  /* sombra iOS */
+  shadow-color: #000;
+  shadow-opacity: 0.08;
+  shadow-radius: 8px;
+  shadow-offset: 0px 3px;
+  /* sombra Android */
+  elevation: 2;
+`;
+
+export const FeaturedImage = styled.ImageBackground`
+  height: 180px;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+`;
+
+export const FeaturedOverlay = styled(LinearGradient)`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+`;
+
+export const FeaturedBadge = styled.View`
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  background-color: ${COLORS.tagBg};
+  padding: 6px 10px;
+  border-radius: 16px;
+`;
+
+export const FeaturedBadgeText = styled.Text`
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: ${COLORS.tagText};
+`;
+
+export const FeaturedTitle = styled.Text`
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  color: ${COLORS.white};
+  font-weight: 800;
+  font-size: 18px;
+`;
+
+

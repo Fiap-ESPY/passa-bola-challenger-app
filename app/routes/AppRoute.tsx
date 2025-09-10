@@ -2,14 +2,15 @@ import { RootStackParamList } from '@/navigation/navigationTypes';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import { COLORS } from '@/theme/colors';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import MatchDetails from '../screens/MatchDetails';
 
 // SCREENS
-import { COLORS } from '@/theme/colors';
 import HomeScreen from '../screens/Home';
+import MatchDetails from '../screens/MatchDetails';
 import NewsScreen from '../screens/News';
+import NewsDetails from '../screens/NewsDetails';
 import ProfileScreen from '../screens/Profile';
 
 export default function StackNavigation() {
@@ -19,11 +20,12 @@ export default function StackNavigation() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="BottomTabs" component={BottomTabsNavigation} />
       <Stack.Screen name="MatchDetails" component={MatchDetails} />
+      <Stack.Screen name="NewsDetails" component={NewsDetails} />
     </Stack.Navigator>
   );
 }
 
-function BottomTabsNavigation() {
+const BottomTabsNavigation = () => {
   const BottomTabs = createBottomTabNavigator();
 
   const screenOptions = {

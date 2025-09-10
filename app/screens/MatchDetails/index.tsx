@@ -37,7 +37,7 @@ const MatchDetails = () => {
 
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 80 }}>
         <Section>
-          <SectionTitle>Copa Passa Bola - 4ª edição</SectionTitle>
+          <SectionTitle>Copa Passa a Bola - 4ª edição</SectionTitle>
           <SectionText>📍 Rua Passa Bola, nº 123 – Centro, SP</SectionText>
           <SectionText>📅 Domingo 01/06 - 12:00h</SectionText>
         </Section>

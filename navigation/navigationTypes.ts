@@ -5,6 +5,7 @@ export type RootStackParamList = {
   NewScreen: undefined;
   Profile: undefined;
   MatchDetails: { matchId: number };
+  NewsDetails: { newsId: number };
 };
 
 export type BottomTabParamList = {
