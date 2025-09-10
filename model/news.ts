@@ -1,9 +1,13 @@
 import { ImageSourcePropType } from 'react-native';
+import { NewsCategoryType } from './enum/newsCategoryType';
 
 export interface News {
   id: number;
   title: string;
   description: string;
+  category: NewsCategoryType;
   image: ImageSourcePropType;
-  date: Date;
+  date: string;
+  content: string;
+  source: string;
 }

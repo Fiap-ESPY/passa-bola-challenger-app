@@ -4,6 +4,7 @@ import passaBolaImage from '@/assets/news/passa_bola.png';
 import NewsCard from '@/components/cards/news/NewsCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
 import { NEWS_DATA } from '@/data/newsData';
+import { NewsCategoryType } from '@/model/enum/newsCategoryType';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { useNavigation } from 'expo-router';
 import React, { useMemo, useState } from 'react';
@@ -25,24 +26,30 @@ import {
   TabText,
 } from './styles';
 
-enum EventFilterType {
-  ALL_EVENTS,
-  NEXT_EVENTS,
-  PAST_EVENTS,
-}
-
 const News = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
-  const [eventFilterType, setEventFilterType] = useState<EventFilterType>(
-    EventFilterType.ALL_EVENTS
-  );
+  const [eventFilterType, setEventFilterType] = useState<
+    NewsCategoryType | undefined
+  >(undefined);
   const [filterSearch, setFilterSearch] = useState<string>('');
 
   const filteredData = useMemo(() => {
     const filteredEvents = NEWS_DATA.filter(news =>
       news.title.toLowerCase().includes(filterSearch.toLowerCase())
     );
+
+    if (eventFilterType === NewsCategoryType.BRASILEIRAO_NEWS) {
+      return filteredEvents.filter(
+        event => event.category === NewsCategoryType.BRASILEIRAO_NEWS
+      );
+    }
+
+    if (eventFilterType === NewsCategoryType.PASSA_BOLA_NEWS) {
+      return filteredEvents.filter(
+        event => event.category === NewsCategoryType.PASSA_BOLA_NEWS
+      );
+    }
 
     return filteredEvents;
   }, [eventFilterType, filterSearch]);
@@ -64,27 +71,31 @@ const News = () => {
 
         <Tabs>
           <TabPill
-            onPress={() => setEventFilterType(EventFilterType.ALL_EVENTS)}
-            $active={eventFilterType === EventFilterType.ALL_EVENTS}
+            onPress={() => setEventFilterType(undefined)}
+            $active={!eventFilterType}
           >
-            <TabText $active={eventFilterType === EventFilterType.ALL_EVENTS}>
-              Todos
+            <TabText $active={!eventFilterType}>Todos</TabText>
+          </TabPill>
+          <TabPill
+            onPress={() => setEventFilterType(NewsCategoryType.PASSA_BOLA_NEWS)}
+            $active={eventFilterType === NewsCategoryType.PASSA_BOLA_NEWS}
+          >
+            <TabText
+              $active={eventFilterType === NewsCategoryType.PASSA_BOLA_NEWS}
+            >
+              Passa Bola
             </TabText>
           </TabPill>
           <TabPill
-            onPress={() => setEventFilterType(EventFilterType.NEXT_EVENTS)}
-            $active={eventFilterType === EventFilterType.NEXT_EVENTS}
+            onPress={() =>
+              setEventFilterType(NewsCategoryType.BRASILEIRAO_NEWS)
+            }
+            $active={eventFilterType === NewsCategoryType.BRASILEIRAO_NEWS}
           >
-            <TabText $active={eventFilterType === EventFilterType.NEXT_EVENTS}>
-              Novidades
-            </TabText>
-          </TabPill>
-          <TabPill
-            onPress={() => setEventFilterType(EventFilterType.PAST_EVENTS)}
-            $active={eventFilterType === EventFilterType.PAST_EVENTS}
-          >
-            <TabText $active={eventFilterType === EventFilterType.PAST_EVENTS}>
-              Anteriores
+            <TabText
+              $active={eventFilterType === NewsCategoryType.BRASILEIRAO_NEWS}
+            >
+              Brasileirão
             </TabText>
           </TabPill>
         </Tabs>
@@ -116,6 +127,8 @@ const News = () => {
             title={news.title}
             description={news.description}
             image={news.image}
+            date={"2025-05-10"}
+            source={news.source}
             onClick={() =>
               navigation.navigate('NewsDetails', { newsId: news.id })
             }

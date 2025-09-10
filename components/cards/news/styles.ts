@@ -18,10 +18,11 @@ export const NewsItem = styled.TouchableOpacity`
 `;
 
 export const NewsThumb = styled.Image`
-  width: 84px;
-  height: 84px;
+  width: 100px;
+  height: 100px;
   border-radius: 10px;
-  margin-right: 12px;
+  margin-right: 6px;
+  align-self: center;
 `;
 
 export const NewsInfo = styled.View`
@@ -37,7 +38,8 @@ export const NewsMetaRow = styled.View`
 export const NewsPill = styled.Text`
   background-color: ${COLORS.tagBg};
   color: ${COLORS.tagText};
-  padding: 2px 8px;
+  padding: 2px 10px;
+  margin-left: 5px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 800;
@@ -48,7 +50,7 @@ export const NewsMetaDivider = styled.View`
   flex: 1;
   margin-left: 8px;
   border-radius: 3px;
-  background-color: ${COLORS.grayLight ?? '#e6e6e6'};
+  background-color: ${COLORS.lightGray};
 `;
 
 export const NewsTitle = styled.Text`
@@ -56,10 +58,30 @@ export const NewsTitle = styled.Text`
   font-weight: 800;
   font-size: 13px;
   margin-bottom: 4px;
+  padding: 2px 8px;
 `;
 
 export const NewsExcerpt = styled.Text`
   color: ${COLORS.sub};
   font-size: 12px;
   line-height: 16px;
+  padding: 2px 8px;
+`;
+
+export const NewsText = styled.Text`
+  font-size: 11px;
+  color: ${COLORS.grayMedium};
+  text-align: right;
+  margin-top: 12px;
+`;
+
+
+export const NewsDate = styled.Text`
+  font-size: 11px;
+  color: ${COLORS.grayMedium};
+  text-align: left;
+  margin-top: 12px;
+  position: absolute;
+  bottom: 0px;
+  left: 8px;
 `;

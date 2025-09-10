@@ -5,7 +5,7 @@ import styled from 'styled-components/native';
 
 export const Container = styled.View`
   flex: 1;
-  background-color: ${COLORS.white};
+  background-color: ${COLORS.bg};
 `;
 
 export const HeaderGradient = styled(LinearGradient)`
@@ -22,13 +22,16 @@ export const HeaderContent = styled.View`
 `;
 
 export const BackButton = styled.TouchableOpacity`
-  margin-right: 12px;
+  margin-left: 12px;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8px;
+  border-radius: 20px;
+  z-index: 2;
 `;
 
 export const BackIcon = styled(FontAwesome)`
   color: ${COLORS.white};
-  font-size: 20px;
-  margin-top: 20px;
+  font-size: 24px;
 `;
 
 export const Section = styled.View`
