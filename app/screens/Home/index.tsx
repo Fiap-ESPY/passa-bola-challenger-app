@@ -2,7 +2,7 @@ import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { MATCH_EVENTS_DATA } from '@/data/matchEventsData';
+import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StatusBar } from 'react-native';
 import {

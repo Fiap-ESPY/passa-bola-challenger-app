@@ -1,7 +1,9 @@
-
+import ActionButton from '@/components/buttons/actionbutton/ActionButton';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
-import { useRouter } from 'expo-router';
-import React from 'react';
+import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRouter } from 'expo-router';
+import React, { useMemo } from 'react';
 import { ScrollView } from 'react-native';
 import {
   BackButton,
@@ -16,10 +18,15 @@ import {
   SectionText,
   SectionTitle,
 } from './styles';
-import ActionButton from '@/components/buttons/actionbutton/ActionButton';
 
 const MatchDetails = () => {
+  const navigation = useNavigation<RootStackNavigationProps>();
+
   const router = useRouter();
+  const route = useRoute();
+  const { matchId } = route.params as { matchId: number };
+
+  const refId = useMemo(() => matchId, [matchId]);
 
   return (
     <Container>
@@ -148,11 +155,13 @@ const MatchDetails = () => {
 
       <Footer>
         <ActionButton
-          label={"Chaveamento"}
-          onPress={() => console.log('Chaveamento')}
+          label={'Chaveamento'}
+          onPress={() =>
+            navigation.navigate('MatchSwitching', { matchId: refId })
+          }
         />
         <ActionButton
-          label={"Estatísticas"}
+          label={'Estatísticas'}
           onPress={() => console.log('Estatísticas')}
         />
       </Footer>

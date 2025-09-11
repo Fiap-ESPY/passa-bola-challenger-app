@@ -1,4 +1,4 @@
-import { MatchEvent } from '@/model/matchEvent';
+import { MatchEvent } from '@/model/match';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
