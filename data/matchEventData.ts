@@ -1,4 +1,5 @@
-import type { MatchEvent } from '@/model/matchEvent';
+import type { MatchEvent } from '@/model/match';
+import { BRACKET_EVENTS_DATA } from './brackEventData';
 
 export const MATCH_EVENTS_DATA: MatchEvent[] = [
   {
@@ -8,6 +9,12 @@ export const MATCH_EVENTS_DATA: MatchEvent[] = [
     address: 'Estádio do Morumbi, São Paulo, SP',
     dateAndHour: '2025-09-12T16:00:00',
     isAvailable: true,
+    brackEvents: BRACKET_EVENTS_DATA,
+    tournamentWinner: {
+      id: '4',
+      name: 'Feras',
+      logo: require('@/assets/teams/feras_team.png'),
+    },
   },
   {
     id: 2,
@@ -16,6 +23,8 @@ export const MATCH_EVENTS_DATA: MatchEvent[] = [
     address: 'Ginásio do Maracanãzinho, Rio de Janeiro, RJ',
     dateAndHour: '2025-09-13T19:30:00',
     isAvailable: true,
+    brackEvents: BRACKET_EVENTS_DATA,
+    tournamentWinner: null,
   },
   {
     id: 3,
@@ -24,5 +33,7 @@ export const MATCH_EVENTS_DATA: MatchEvent[] = [
     address: 'Ginásio do Maracanãzinho, Rio de Janeiro, RJ',
     dateAndHour: '2025-09-13T19:30:00',
     isAvailable: false,
+    brackEvents: BRACKET_EVENTS_DATA,
+    tournamentWinner: null,
   },
 ];

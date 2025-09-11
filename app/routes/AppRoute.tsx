@@ -12,6 +12,7 @@ import MatchDetails from '../screens/MatchDetails';
 import NewsScreen from '../screens/News';
 import NewsDetails from '../screens/NewsDetails';
 import ProfileScreen from '../screens/Profile';
+import MatchSwitching from '../screens/MatchSwitching';
 
 export default function StackNavigation() {
   const Stack = createStackNavigator<RootStackParamList>();
@@ -21,6 +22,7 @@ export default function StackNavigation() {
       <Stack.Screen name="BottomTabs" component={BottomTabsNavigation} />
       <Stack.Screen name="MatchDetails" component={MatchDetails} />
       <Stack.Screen name="NewsDetails" component={NewsDetails} />
+      <Stack.Screen name="MatchSwitching" component={MatchSwitching} />
     </Stack.Navigator>
   );
 }
@@ -79,4 +81,4 @@ const BottomTabsNavigation = () => {
       />
     </BottomTabs.Navigator>
   );
-}
+};

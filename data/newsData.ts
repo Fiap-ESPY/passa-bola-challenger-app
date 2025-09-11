@@ -1,7 +1,3 @@
-import brasileiraoImage from '@/assets/news/brasileirao.png';
-import copaPassaBolaImage from '@/assets/news/copa_passa_bola.png';
-import kinSaitoImage from '@/assets/news/kin_saito.jpg';
-import selecaoBrasileiraImage from '@/assets/news/selecao_brasileira.jpg';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
 import { News } from '@/model/news';
 
@@ -13,7 +9,7 @@ export const NEWS_DATA: News[] = [
     category: NewsCategoryType.PASSA_BOLA_NEWS,
     description:
       'A Copa Passa a Bola volta em sua 4ª edição com formato ampliado e etapas regionais, reunindo equipes femininas de diversas cidades.',
-    image: copaPassaBolaImage,
+    image: require('@/assets/news/copa_passa_bola.png'),
     source: 'Passa a Bola Oficial',
     content: `A organização do Passa a Bola confirmou a realização da 4ª edição da Copa, competição que destaca o futebol feminino amador e semiprofissional. O torneio terá fases regionais e mata-mata final, com calendário distribuído aos fins de semana para facilitar a participação dos times.
 
@@ -30,7 +26,7 @@ A premiação inclui troféu, medalhas e kits esportivos para as equipes finalis
     category: NewsCategoryType.BRASILEIRAO_NEWS,
     description:
       'Oito jogos da 15ª rodada aconteceram simultaneamente nesta quarta-feira (18) encerrando a primeira fase da competição.',
-    image: brasileiraoImage,
+    image: require('@/assets/news/brasileirao.png'),
     source: 'Globo Esporte',
     content: `A 15ª rodada do Campeonato Brasileiro chegou ao fim com muita emoção e mudanças significativas na tabela. Times que brigam pelo título conquistaram vitórias importantes, enquanto aqueles que lutam contra o rebaixamento tiveram que encarar resultados amargos.
 
@@ -45,7 +41,7 @@ A próxima rodada promete confrontos diretos e pode definir novos rumos na compe
     category: NewsCategoryType.GENERAL,
     description:
       'Vocês sabem quais são as exigências para que os times possam participar? É necessário atender a critérios técnicos, manter a documentação regularizada e cumprir os prazos definidos pela organização.',
-    image: kinSaitoImage,
+    image: require('@/assets/news/kin_saito.jpg'),
     source: 'FIFA News',
     content: `Kin Saito, diretora de competições da FIFA, esteve no Brasil nesta semana para acompanhar os preparativos 
     para a próxima edição da Copa. Durante entrevista coletiva, ela destacou os avanços nas obras dos estádios, 
@@ -65,7 +61,7 @@ A próxima rodada promete confrontos diretos e pode definir novos rumos na compe
     category: NewsCategoryType.GENERAL,
     description:
       'A seleção brasileira feminina inicia nesta semana a preparação para uma série de amistosos internacionais. A comissão técnica promete testar novas formações e dar oportunidade para jovens talentos se destacarem.',
-    image: selecaoBrasileiraImage,
+    image: require('@/assets/news/selecao_brasileira.jpg'),
     source: 'CBF Oficial',
     content: `A Seleção Brasileira Feminina iniciou, nesta segunda-feira, a fase final de preparação para a série de 
 amistosos internacionais que acontecerão neste mês. A técnica da equipe anunciou que pretende testar novas 

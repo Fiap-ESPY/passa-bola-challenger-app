@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Profile: undefined;
   MatchDetails: { matchId: number };
   NewsDetails: { newsId: number };
+  MatchSwitching: { matchId: number };
 };
 
 export type BottomTabParamList = {
