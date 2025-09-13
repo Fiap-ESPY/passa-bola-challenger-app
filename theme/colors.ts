@@ -15,5 +15,6 @@ export const COLORS = {
   greenDisabled: '#CFE7C7',
   grayMedium: '#999999',
   lightGray: '#E4E4E4',
+  gray: '#D9D9D9',
   darkCharcoal: '#1E1E1E',
 };

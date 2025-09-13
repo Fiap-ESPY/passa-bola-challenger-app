@@ -22,6 +22,7 @@ export const HeaderContent = styled.View`
 
 export const BackButton = styled.TouchableOpacity`
   margin-left: 12px;
+  margin-top: 10px;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 8px;
   border-radius: 20px;
@@ -31,6 +32,7 @@ export const BackButton = styled.TouchableOpacity`
 export const BackIcon = styled(FontAwesome)`
   color: ${COLORS.white};
   font-size: 24px;
+  padding: 0px 2px;
 `;
 
 export const Section = styled.View`
