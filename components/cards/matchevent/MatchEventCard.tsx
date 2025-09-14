@@ -11,6 +11,8 @@ import {
   EventTitle,
   GradientBackground,
   HourText,
+  ImageBackground,
+  ImageOverlay,
   Label,
   LabelText,
 } from './styles';
@@ -44,16 +46,31 @@ const MatchEventCard = ({
 
   return (
     <Card>
-      <GradientBackground
-        colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      >
-        <Label>
-          <LabelText>{matchEvent.type.toLocaleUpperCase()}</LabelText>
-        </Label>
-        <EventTitle>{matchEvent.title}</EventTitle>
-      </GradientBackground>
+      {matchEvent?.image ? (
+        <ImageBackground
+          source={matchEvent?.image}
+          resizeMode="cover"
+          alt="Image Background"
+        >
+          <ImageOverlay
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
+          />
+          <EventTitle>{matchEvent.title}</EventTitle>
+        </ImageBackground>
+      ) : (
+        <GradientBackground
+          colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <Label>
+            <LabelText>{matchEvent.type.toLocaleUpperCase()}</LabelText>
+          </Label>
+          <EventTitle>{matchEvent.title}</EventTitle>
+        </GradientBackground>
+      )}
 
       <DescriptionArea>
         <EventDescription>

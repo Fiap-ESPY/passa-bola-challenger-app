@@ -26,6 +26,7 @@ import {
   Tabs,
   TabText,
 } from './styles';
+import { clearNews } from '@/utils/news/newsStore';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -128,7 +129,7 @@ const Home = () => {
       </HeaderGrad>
 
       <HeaderCard>
-        <HeaderTitle>CAMPEONATOS E RACHAS</HeaderTitle>
+        <HeaderTitle>JOGOS</HeaderTitle>
         <SearchFilter
           searchValue={filterSearch}
           onChangeText={setFilterSearch}

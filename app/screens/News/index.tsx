@@ -180,6 +180,7 @@ const News = () => {
             image={item.image}
             date={item.date}
             source={item.source}
+            pill={item.pill}
             onClick={() =>
               navigation.navigate('NewsDetails', { newsId: item.id })
             }

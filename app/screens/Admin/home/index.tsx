@@ -82,12 +82,12 @@ const AdminHome = () => {
           <EventCard
             title="Campeonatos"
             onClick={() => navigation.navigate('AdminEvents')}
-            image={require('@/assets/events.jpg')}
+            image={require('@/assets/events/events.jpg')}
           />
           <EventCard
             title="Notícias"
             onClick={() => navigation.navigate('AdminNews')}
-            image={require('@/assets/news.jpg')}
+            image={require('@/assets/news/news.jpg')}
           />
         </CardWrapper>
       </ScrollView>
