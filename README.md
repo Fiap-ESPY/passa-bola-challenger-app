@@ -1,93 +1,122 @@
-# Welcome to your Expo app 👋
+![Logo Passa Bola](./assets/logo.png)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 📱 Passa a Bola App
 
-## Get started
+O **Passa Bola App** é um aplicativo desenvolvido com [Expo](https://expo.dev) que tem como objetivo facilitar o gerenciamento de campeonatos, rachas e a divulgação de notícias relacionadas ao **futebol feminino**.  
+Com ele, usuários podem acompanhar eventos, partidas, informações relevantes e se manter conectados ao cenário esportivo feminino.
 
-1. Install dependencies
+---
+## 📦 Pré-requisitos
+
+Antes de iniciar, verifique se você possui as seguintes versões instaladas:
+
+- **Node.js**: v18.x ou superior  
+- **npm**: v9.x ou superior  
+
+---
+
+## 🚀 Como começar
+
+1. Instale as dependências:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Inicie o aplicativo:
 
    ```bash
-   npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+No terminal, você encontrará opções para abrir o app em:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- [Build de desenvolvimento](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Emulador Android](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [Simulador iOS](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), um sandbox limitado para testar o app.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🔄 Resetar o projeto
 
-When you're ready, run:
+Se precisar reiniciar o projeto com uma estrutura limpa, rode:
 
 ```bash
 npm run reset-project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Esse comando move o código inicial para o diretório **app-example** e cria uma pasta **app** em branco.
 
 ---
 
-## Running with Docker
+## 📖 Saiba mais
 
-This project can also be run inside a Docker container to simplify the development environment setup.
+- [Documentação do Expo](https://docs.expo.dev/): fundamentos e tópicos avançados.  
+- [Tutorial passo a passo](https://docs.expo.dev/tutorial/introduction/): aprenda construindo um app completo para Android, iOS e Web.  
 
-### Steps to run with Docker
+---
 
-1. Make sure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
+## 🐳 Executando com Docker
 
-2. From the terminal, in the folder where your `docker-compose.yml` is located, run:
+Este projeto também pode ser executado em um container **Docker**, simplificando a configuração do ambiente.
+
+### Passos
+
+1. Certifique-se de ter [Docker](https://docs.docker.com/get-docker/) e [Docker Compose](https://docs.docker.com/compose/install/) instalados.
+
+2. No terminal, na pasta onde está o `docker-compose.yml`, execute:
 
    ```bash
    docker-compose up --build
    ```
 
-3. This will build the image and start the container running Expo's Metro Bundler.
+3. Isso irá construir a imagem e iniciar o container rodando o **Metro Bundler** do Expo.
 
-4. To access the app:
+4. Para acessar o app:
 
-   - Open the Expo Go app on your mobile device (on the same network as the Docker host).
-   - Scan the QR code shown in the terminal or open the Expo web interface in your browser at:  
+   - Abra o **Expo Go** no seu celular (na mesma rede do host do Docker).  
+   - Escaneie o QR code exibido no terminal ou acesse no navegador:  
      `http://localhost:19002`
 
-5. To stop the container, run:
+5. Para parar o container, execute:
 
    ```bash
    docker-compose down
    ```
 
-### Notes
+### Notas
 
-- Your project code is synced via a volume with the container, so any changes made locally will reflect automatically in the running app (hot reload).
-- If you don’t see updates, try restarting the bundler with a cleared cache inside the container:
+- O código do projeto é sincronizado via volume, então mudanças locais refletem automaticamente no app (hot reload).  
+- Se não visualizar as atualizações, tente reiniciar o bundler limpando o cache:  
 
    ```bash
    docker exec -it <container-id> npx expo start -c
    ```
 
-- The standard Expo ports (19000, 19001, 19002) are exposed to facilitate connection.
+- As portas padrão do Expo (19000, 19001, 19002) estão expostas para conexão.
+
+---
+
+## 🔑 Login Admin
+
+O aplicativo possui um usuário administrador para acessar a área restrita de gerenciamento:
+
+- **Usuário:** `admin@passabola.com`  
+- **Senha:** `12345678`
+
+
+---
+
+## 👥 Integrantes
+- Beatriz Cortez - RM561431
+ 
+- Bruno Alves - RM563986
+ 
+- Gabriel Augusto - RM564126
+ 
+- Gustavo Moura - RM566190
+ 
+- Pedro Henrique - RM563281
 
 ---
