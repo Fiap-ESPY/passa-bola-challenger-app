@@ -106,8 +106,8 @@ Este projeto também pode ser executado em um container **Docker**, simplificand
 
 O aplicativo possui um usuário administrador para acessar a área restrita de gerenciamento:
 
-- **Usuário:** `admin@passabola.com`  
-- **Senha:** `12345678`
+- **Usuário:** `passabola@gmail.com`  
+- **Senha:** `admin123`
 
 
 ---
