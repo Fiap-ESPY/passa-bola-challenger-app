@@ -15,6 +15,7 @@ const TeamsCard = () => {
               <Image
                 source={require('@/assests/example_team.png')}
                 style={{ width: '90%', height: '90%' }}
+                alt='Example team'
               />
             </View>
 
@@ -28,6 +29,7 @@ const TeamsCard = () => {
           <Image
             source={require('@/assests/hugeicons_versus.png')}
             style={{ width: 44, height: 44 }}
+            alt="Versus icon"
           />
 
           <View style={styles.teamsSection}>
@@ -35,6 +37,7 @@ const TeamsCard = () => {
               <Image
                 source={require('@/assests/example_team.png')}
                 style={{ width: '90%', height: '90%' }}
+                alt="Example team"
               />
             </View>
 

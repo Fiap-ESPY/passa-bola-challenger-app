@@ -1,3 +1,5 @@
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { ImageSourcePropType } from 'react-native';
 import {
   NewsDate,
@@ -11,8 +13,6 @@ import {
   NewsThumb,
   NewsTitle,
 } from './styles';
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 type NewsCardProps = {
   title: string;
@@ -37,7 +37,7 @@ const NewsCard = ({
 
   return (
     <NewsItem activeOpacity={0.8} onPress={onClick}>
-      <NewsThumb source={image} />
+      <NewsThumb source={image} alt="News thumb image" />
 
       <NewsInfo>
         <NewsMetaRow>

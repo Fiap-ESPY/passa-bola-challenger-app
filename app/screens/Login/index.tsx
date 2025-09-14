@@ -1,10 +1,11 @@
+import { UserRole } from '@/model/enum/userRole';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
-import { useRouter } from 'expo-router';
+import { UserSession } from '@/utils/session/session';
+import { useNavigation } from 'expo-router';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import {
-  BackButton,
-  BackIcon,
   DividerLine,
   DividerRow,
   DividerText,
@@ -25,23 +26,37 @@ import {
   TextInputStyled,
 } from './styles';
 
-export default function Profile() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPass, setShowPass] = useState(false);
+export const Login = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [showPass, setShowPass] = useState<boolean>(false);
 
-  const onLogin = () => {
-    // TODO: autenticar
-    console.log('login', { email, password });
+  const navigation = useNavigation<RootStackNavigationProps>();
+
+  const onLogin = async () => {
+    if (email === 'admin@passabola.com' && password === '12345678') {
+      const admin_user = {
+        email,
+        role: UserRole.ADMIN,
+        loggedInAt: new Date().toISOString(),
+      };
+
+      await UserSession.save(admin_user);
+
+      navigation.navigate('AdminHome');
+    } else {
+      Alert.alert('Erro', 'E-mail ou senha inválidos.');
+      console.log('Credenciais incorretas');
+    }
   };
+
   const onForgot = () => {
     // TODO: navegação para recuperar senha
-    console.log('forgot');
+    Alert.alert("Página em desenvolvimento...")
   };
   const onSignUp = () => {
     // TODO: navegação para cadastro
-    console.log('signup');
+    Alert.alert("Página em desenvolvimento...")
   };
 
   return (
@@ -53,10 +68,6 @@ export default function Profile() {
         end={{ x: 1, y: 1 }}
       >
         <Safe>
-          <BackButton onPress={() => router.back()}>
-            <BackIcon name="arrow-left" />
-          </BackButton>
-
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             style={{ flex: 1, justifyContent: 'center' }}
@@ -118,4 +129,6 @@ export default function Profile() {
       </GradientBg>
     </Screen>
   );
-}
+};
+
+export default Login;

@@ -31,7 +31,11 @@ const NewsDetails = () => {
 
   return (
     <Container>
-      <HeaderImage source={newsItem?.image} resizeMode="cover">
+      <HeaderImage
+        source={newsItem?.image}
+        resizeMode="cover"
+        alt="Detail header image"
+      >
         <HeaderContent>
           <BackButton onPress={() => router.back()}>
             <BackIcon name="arrow-left" />

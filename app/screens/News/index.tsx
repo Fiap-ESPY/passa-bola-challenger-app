@@ -5,11 +5,17 @@ import NewsCard from '@/components/cards/news/NewsCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
 import { NEWS_DATA } from '@/data/newsData';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
+import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { useNavigation } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { loadNews, saveNews } from '@/utils/news/newsStore';
+import { UserSession } from '@/utils/session/session';
+import { useFocusEffect } from '@react-navigation/native';
+import { router, useNavigation } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, StatusBar } from 'react-native';
 import {
+  BackButton,
+  BackIcon,
   FeaturedBadge,
   FeaturedBadgeText,
   FeaturedCard,
@@ -26,39 +32,81 @@ import {
   TabText,
 } from './styles';
 
+type NewsItem = (typeof NEWS_DATA)[number]; // reaproveita o shape do mock
+
 const News = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
+
+  // mesma ideia do Home (events)
+  const [news, setNews] = useState<NewsItem[]>(NEWS_DATA);
+  const [hydrated, setHydrated] = useState(false);
 
   const [eventFilterType, setEventFilterType] = useState<
     NewsCategoryType | undefined
   >(undefined);
   const [filterSearch, setFilterSearch] = useState<string>('');
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      (async () => {
+        const result = await UserSession.hasRole(UserRole.ADMIN);
+        if (active) setIsAdmin(result);
+      })();
+      return () => {
+        active = false;
+      };
+    }, [])
+  );
+
+  useEffect(() => {
+    (async () => {
+      const stored = await loadNews<NewsItem[]>();
+      if (stored && Array.isArray(stored)) {
+        setNews(stored);
+      } else {
+        await saveNews(NEWS_DATA);
+      }
+      setHydrated(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    (async () => {
+      await saveNews(news);
+    })();
+  }, [news, hydrated]);
 
   const filteredData = useMemo(() => {
-    const filteredEvents = NEWS_DATA.filter(news =>
-      news.title.toLowerCase().includes(filterSearch.toLowerCase())
+    const base = news.filter(item =>
+      item.title.toLowerCase().includes(filterSearch.toLowerCase())
     );
 
     if (eventFilterType === NewsCategoryType.BRASILEIRAO_NEWS) {
-      return filteredEvents.filter(
-        event => event.category === NewsCategoryType.BRASILEIRAO_NEWS
-      );
+      return base.filter(n => n.category === NewsCategoryType.BRASILEIRAO_NEWS);
     }
-
     if (eventFilterType === NewsCategoryType.PASSA_BOLA_NEWS) {
-      return filteredEvents.filter(
-        event => event.category === NewsCategoryType.PASSA_BOLA_NEWS
-      );
+      return base.filter(n => n.category === NewsCategoryType.PASSA_BOLA_NEWS);
     }
-
-    return filteredEvents;
-  }, [eventFilterType, filterSearch]);
+    return base;
+  }, [news, eventFilterType, filterSearch]);
 
   return (
     <Screen>
       <StatusBar barStyle="light-content" />
-      <HeaderGrad source={headerImage} resizeMode="cover">
-        <Logo source={logoImage} resizeMode="contain" />
+      <HeaderGrad
+        source={headerImage}
+        resizeMode="cover"
+        alt="Gradient Background"
+      >
+        {isAdmin && (
+          <BackButton onPress={() => router.back()}>
+            <BackIcon name="arrow-left" />
+          </BackButton>
+        )}
+        <Logo source={logoImage} resizeMode="contain" alt="Passa bola Logo" />
       </HeaderGrad>
 
       <HeaderCard>
@@ -100,12 +148,17 @@ const News = () => {
           </TabPill>
         </Tabs>
       </HeaderCard>
+
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
         <FeaturedCard activeOpacity={0.8}>
-          <FeaturedImage source={passaBolaImage} resizeMode="cover">
+          <FeaturedImage
+            source={passaBolaImage}
+            resizeMode="cover"
+            alt="Passa bola image"
+          >
             <FeaturedOverlay
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
@@ -114,23 +167,22 @@ const News = () => {
             <FeaturedBadge>
               <FeaturedBadgeText>Fique atualizado!</FeaturedBadgeText>
             </FeaturedBadge>
-
             <FeaturedTitle numberOfLines={2}>
               NOVIDADES DO NOSSO INSTAGRAM AQUI
             </FeaturedTitle>
           </FeaturedImage>
         </FeaturedCard>
 
-        {filteredData.map(news => (
+        {filteredData.map(item => (
           <NewsCard
-            key={news.id}
-            title={news.title}
-            description={news.description}
-            image={news.image}
-            date={"2025-05-10"}
-            source={news.source}
+            key={item.id}
+            title={item.title}
+            description={item.description}
+            image={item.image}
+            date={item.date}
+            source={item.source}
             onClick={() =>
-              navigation.navigate('NewsDetails', { newsId: news.id })
+              navigation.navigate('NewsDetails', { newsId: item.id })
             }
           />
         ))}

@@ -10,7 +10,7 @@ export const Screen = styled.View`
 
 export const GradientBg = styled(LinearGradient)`
   flex: 1;
-  overflow: hidden; /* para o ripple não vazar */
+  overflow: hidden;
 `;
 
 export const Safe = styled(SafeAreaView)`
@@ -24,8 +24,10 @@ export const BackButton = styled.TouchableOpacity`
   background-color: rgba(0, 0, 0, 0.6);
   padding: 8px;
   border-radius: 20px;
-  width: 42px;
   z-index: 2;
+  position: absolute;
+  left: 15px;
+  top: 30px;
 `;
 
 export const BackIcon = styled(FontAwesome)`

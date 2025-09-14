@@ -21,7 +21,7 @@ export const HeaderContent = styled.View`
 `;
 
 export const BackButton = styled.TouchableOpacity`
-  margin-left: 12px;
+  margin-left: 25px;
   margin-top: 10px;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 8px;

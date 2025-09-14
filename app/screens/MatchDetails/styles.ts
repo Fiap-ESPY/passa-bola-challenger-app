@@ -23,7 +23,6 @@ export const HeaderContent = styled.View`
 
 export const BackButton = styled.TouchableOpacity`
   margin-left: 12px;
-  margin-top: 10px;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 8px;
   border-radius: 20px;
@@ -69,10 +68,12 @@ export const RuleItem = styled.Text`
 export const Footer = styled.View`
   flex-direction: row;
   justify-content: space-around;
-  padding: 12px;
+  padding: 0px 15px;
+  padding-bottom: 35px;
   border-top-width: 1px;
   border-color: #e1e1e1;
   background-color: ${COLORS.white};
+  gap: 10px;
 `;
 
 export const FooterButton = styled.TouchableOpacity`

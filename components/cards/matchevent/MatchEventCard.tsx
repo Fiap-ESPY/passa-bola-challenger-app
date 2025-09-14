@@ -17,13 +17,23 @@ import {
 
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
 import { COLORS } from '@/theme/colors';
+import { FontAwesome } from '@expo/vector-icons';
 
 type MatchEventCardProps = {
   matchEvent: MatchEvent;
   onClick: () => void;
+  onDelete: () => void;
+  onEdit: () => void;
+  isAdmin: boolean;
 };
 
-const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
+const MatchEventCard = ({
+  matchEvent,
+  onClick,
+  onEdit,
+  onDelete,
+  isAdmin,
+}: MatchEventCardProps) => {
   const formattedDate = format(parseISO(matchEvent.dateAndHour), 'dd/MM/yyyy', {
     locale: ptBR,
   });
@@ -58,10 +68,28 @@ const MatchEventCard = ({ matchEvent, onClick }: MatchEventCardProps) => {
         </EventDescription>
 
         <ActionButton
-          isDisabled={!matchEvent.isAvailable}
           label="Informações"
           onPress={onClick}
+          icon={
+            <FontAwesome name="info-circle" size={18} color={COLORS.white} />
+          }
         />
+        {isAdmin && (
+          <>
+            <ActionButton
+              backgroundColor={COLORS.grayMedium}
+              label="Editar evento"
+              onPress={onEdit}
+              icon={<FontAwesome name="edit" size={18} color={COLORS.white} />}
+            />
+            <ActionButton
+              backgroundColor={COLORS.red}
+              label="Remover evento"
+              onPress={onDelete}
+              icon={<FontAwesome name="trash" size={18} color={COLORS.white} />}
+            />
+          </>
+        )}
       </DescriptionArea>
     </Card>
   );

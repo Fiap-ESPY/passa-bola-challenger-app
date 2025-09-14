@@ -163,6 +163,7 @@ const MatchSwitching = () => {
                           <TeamLogo
                             source={match.home.logo}
                             resizeMode="contain"
+                            alt="Team logo image"
                           />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.home.name}</TeamName>
@@ -172,6 +173,7 @@ const MatchSwitching = () => {
                       <VsImage
                         source={require('@/assets/icons/vs_icon.png')}
                         resizeMode="contain"
+                        alt="Vs icon"
                       />
 
                       <Side>
@@ -179,6 +181,7 @@ const MatchSwitching = () => {
                           <TeamLogo
                             source={match.away.logo}
                             resizeMode="contain"
+                            alt="Team logo image"
                           />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.away.name}</TeamName>
@@ -205,7 +208,10 @@ const MatchSwitching = () => {
                     <MatchRow>
                       <Side>
                         <TeamCircle>
-                          <TeamLogo source={match.home.logo} />
+                          <TeamLogo
+                            source={match.home.logo}
+                            alt="Team logo image"
+                          />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.home.name}</TeamName>
                         <Score>{match.home.score ?? '-'}</Score>
@@ -213,10 +219,14 @@ const MatchSwitching = () => {
                       <VsImage
                         source={require('@/assets/icons/vs_icon.png')}
                         resizeMode="contain"
+                        alt="Vs icon"
                       />
                       <Side>
                         <TeamCircle>
-                          <TeamLogo source={match.away.logo} />
+                          <TeamLogo
+                            source={match.away.logo}
+                            alt="Team logo image"
+                          />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.away.name}</TeamName>
                         <Score>{match.away.score ?? '-'}</Score>
@@ -242,7 +252,10 @@ const MatchSwitching = () => {
                     <MatchRow>
                       <Side>
                         <TeamCircle>
-                          <TeamLogo source={match.home.logo} />
+                          <TeamLogo
+                            source={match.home.logo}
+                            alt="Team logo image"
+                          />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.home.name}</TeamName>
                         <Score>{match.home.score ?? '-'}</Score>
@@ -250,10 +263,14 @@ const MatchSwitching = () => {
                       <VsImage
                         source={require('@/assets/icons/vs_icon.png')}
                         resizeMode="contain"
+                        alt="Vs icon"
                       />
                       <Side>
                         <TeamCircle>
-                          <TeamLogo source={match.away.logo} />
+                          <TeamLogo
+                            source={match.away.logo}
+                            alt="Team logo image"
+                          />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.away.name}</TeamName>
                         <Score>{match.away.score ?? '-'}</Score>
@@ -279,7 +296,10 @@ const MatchSwitching = () => {
                     <MatchRow>
                       <Side>
                         <TeamCircle>
-                          <TeamLogo source={match.home.logo} />
+                          <TeamLogo
+                            source={match.home.logo}
+                            alt="Team logo image"
+                          />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.home.name}</TeamName>
                         <Score>{match.home.score ?? '-'}</Score>
@@ -287,10 +307,14 @@ const MatchSwitching = () => {
                       <VsImage
                         source={require('@/assets/icons/vs_icon.png')}
                         resizeMode="contain"
+                        alt="Vs icon"
                       />
                       <Side>
                         <TeamCircle>
-                          <TeamLogo source={match.away.logo} />
+                          <TeamLogo
+                            source={match.away.logo}
+                            alt="Team logo image"
+                          />
                         </TeamCircle>
                         <TeamName numberOfLines={1}>{match.away.name}</TeamName>
                         <Score>{match.away.score ?? '-'}</Score>
@@ -315,6 +339,7 @@ const MatchSwitching = () => {
                   <WinnerLogo
                     source={matchItem?.tournamentWinner.logo}
                     resizeMode="contain"
+                    alt="Winner logo team"
                   />
                 </WinnerAvatar>
 

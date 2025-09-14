@@ -1,18 +1,21 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 
 export type RootStackParamList = {
-  BottomTabs: undefined;
+  BottomTabs: { screen: string };
   NewScreen: undefined;
-  Profile: undefined;
   MatchDetails: { matchId: number };
   NewsDetails: { newsId: number };
   MatchSwitching: { matchId: number };
+  AdminHome: undefined;
+  AdminNews: undefined;
+  AdminEvents: undefined;
+  AdminCreateEvent: undefined;
 };
 
 export type BottomTabParamList = {
   Home: undefined;
   News: undefined;
-  Profile: undefined;
+  Login: undefined;
 };
 
 export type RootStackNavigationProps = StackNavigationProp<RootStackParamList>;
