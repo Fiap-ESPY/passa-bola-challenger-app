@@ -6,7 +6,7 @@ import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
-import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import { clearEvents, loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
@@ -47,16 +47,23 @@ const Home = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const unsub = listenAuth(user => {
-        if (user) {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      });
+      let active = true;
 
-      return () => unsub();
-    }, [navigation])
+      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
+
+      (async () => {
+        const stored = await loadEvents();
+        if (active && stored && Array.isArray(stored)) {
+          setEvents(stored);
+          setHydrated(true);
+        }
+      })();
+
+      return () => {
+        active = false;
+        unsubAuth();
+      };
+    }, [])
   );
 
   useEffect(() => {

@@ -38,6 +38,18 @@ const AdminHome = () => {
     }
   };
 
+  const handleConfirmLogout = () => {
+    Alert.alert(
+      'Sair',
+      'Deseja se deslogar da conta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Deslogar', style: 'destructive', onPress: handleLogout },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <Screen>
       <StatusBar barStyle="light-content" />
@@ -48,7 +60,7 @@ const AdminHome = () => {
       >
         <HeaderActions>
           <LogoutButton
-            onPress={handleLogout}
+            onPress={handleConfirmLogout}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel="Sair da conta"
