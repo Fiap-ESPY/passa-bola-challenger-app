@@ -5,6 +5,10 @@
 O **Passa Bola App** é um aplicativo desenvolvido com [Expo](https://expo.dev) que tem como objetivo facilitar o gerenciamento de campeonatos, rachas e a divulgação de notícias relacionadas ao **futebol feminino**.  
 Com ele, usuários podem acompanhar eventos, partidas, informações relevantes e se manter conectados ao cenário esportivo feminino.
 
+### 🔗 Links úteis
+
+- 🎨 [Protótipo no Figma](https://www.figma.com/design/DgQlRYl27zFH0SXp0i4CQp/Passa-a-Bola---Sprint?node-id=4-2&p=f&t=fWhvcgczrGM4dWVX-0)
+
 ---
 ## 📦 Pré-requisitos
 
