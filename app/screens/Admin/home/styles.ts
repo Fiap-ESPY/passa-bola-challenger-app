@@ -51,3 +51,33 @@ export const HeaderTitle = styled.Text`
 export const CardWrapper = styled.View`
   gap: 30px;
 `;
+
+export const HeaderActions = styled.View`
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  z-index: 2;
+  flex-direction: row;
+`;
+
+export const LogoutButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background-color: rgba(0, 0, 0, 0.35);
+
+  /* sombra iOS */
+  shadow-color: #000;
+  shadow-opacity: 0.12;
+  shadow-radius: 8px;
+  shadow-offset: 0px 4px;
+
+  /* sombra Android */
+  elevation: 3;
+`;
+
+export const LogoutText = styled.Text`
+  color: ${COLORS.white};
+  font-weight: 700;
+`;

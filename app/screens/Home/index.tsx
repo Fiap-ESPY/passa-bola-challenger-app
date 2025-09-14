@@ -3,14 +3,13 @@ import logoImage from '@/assets/logo.png';
 import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
 import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
-import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
 import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
-import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { router, useNavigation } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
@@ -48,17 +47,16 @@ const Home = () => {
 
   useFocusEffect(
     useCallback(() => {
-      let active = true;
+      const unsub = listenAuth(user => {
+        if (user) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      });
 
-      (async () => {
-        const result = await UserSession.hasRole(UserRole.ADMIN);
-        if (active) setIsAdmin(result);
-      })();
-
-      return () => {
-        active = false;
-      };
-    }, [])
+      return () => unsub();
+    }, [navigation])
   );
 
   useEffect(() => {
@@ -115,7 +113,7 @@ const Home = () => {
         alt="Gradient Background"
       >
         {isAdmin && (
-          <BackButton onPress={() => router.back()}>
+          <BackButton onPress={() => navigation.navigate('AdminHome')}>
             <BackIcon name="arrow-left" />
           </BackButton>
         )}
@@ -167,7 +165,7 @@ const Home = () => {
                 navigation.navigate('MatchDetails', { matchId: match.id })
               }
               onDelete={() => handleDelete(match.id)}
-              onEdit={() => Alert.alert("Página em desenvolvimento...")}
+              onEdit={() => Alert.alert('Página em desenvolvimento...')}
               isAdmin={isAdmin}
             />
           </CardWrapper>

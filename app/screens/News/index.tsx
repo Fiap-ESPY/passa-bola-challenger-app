@@ -5,10 +5,9 @@ import NewsCard from '@/components/cards/news/NewsCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
 import { NEWS_DATA } from '@/data/newsData';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
-import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { listenAuth } from '@/services/auth';
 import { loadNews, saveNews } from '@/utils/news/newsStore';
-import { UserSession } from '@/utils/session/session';
 import { useFocusEffect } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -32,12 +31,11 @@ import {
   TabText,
 } from './styles';
 
-type NewsItem = (typeof NEWS_DATA)[number]; // reaproveita o shape do mock
+type NewsItem = (typeof NEWS_DATA)[number];
 
 const News = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
-  // mesma ideia do Home (events)
   const [news, setNews] = useState<NewsItem[]>(NEWS_DATA);
   const [hydrated, setHydrated] = useState(false);
 
@@ -49,15 +47,16 @@ const News = () => {
 
   useFocusEffect(
     useCallback(() => {
-      let active = true;
-      (async () => {
-        const result = await UserSession.hasRole(UserRole.ADMIN);
-        if (active) setIsAdmin(result);
-      })();
-      return () => {
-        active = false;
-      };
-    }, [])
+      const unsub = listenAuth(user => {
+        if (user) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      });
+
+      return () => unsub();
+    }, [navigation])
   );
 
   useEffect(() => {

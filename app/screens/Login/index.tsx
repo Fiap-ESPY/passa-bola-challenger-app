@@ -1,5 +1,6 @@
 import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { login } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
 import { useNavigation } from 'expo-router';
@@ -30,11 +31,20 @@ export const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPass, setShowPass] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<RootStackNavigationProps>();
 
   const onLogin = async () => {
-    if (email === 'admin@passabola.com' && password === '12345678') {
+    if (!email || !password) {
+      Alert.alert('Erro', 'E-mail e senha devem ser preenchidos.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await login(email.trim(), password);
+
       const admin_user = {
         email,
         role: UserRole.ADMIN,
@@ -42,21 +52,20 @@ export const Login = () => {
       };
 
       await UserSession.save(admin_user);
-
       navigation.navigate('AdminHome');
-    } else {
+    } catch (e: any) {
       Alert.alert('Erro', 'E-mail ou senha inválidos.');
-      console.log('Credenciais incorretas');
+      console.error('Firebase login error:', e);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onForgot = () => {
-    // TODO: navegação para recuperar senha
-    Alert.alert("Página em desenvolvimento...")
+    Alert.alert('Página em desenvolvimento...');
   };
   const onSignUp = () => {
-    // TODO: navegação para cadastro
-    Alert.alert("Página em desenvolvimento...")
+    Alert.alert('Página em desenvolvimento...');
   };
 
   return (
@@ -75,7 +84,6 @@ export const Login = () => {
             <Logo source={require('@/assets/logo.png')} resizeMode="contain" />
 
             <Form>
-              {/* E-mail */}
               <InputWrapper>
                 <TextInputStyled
                   placeholder="E-mail"
@@ -88,7 +96,6 @@ export const Login = () => {
                 />
               </InputWrapper>
 
-              {/* Senha */}
               <InputWrapper>
                 <TextInputStyled
                   placeholder="Senha"
@@ -110,8 +117,8 @@ export const Login = () => {
                 <ForgotText>Esqueceu a Senha?</ForgotText>
               </ForgotLink>
 
-              <PrimaryButton onPress={onLogin}>
-                <PrimaryText>Entrar</PrimaryText>
+              <PrimaryButton onPress={onLogin} disabled={loading}>
+                <PrimaryText>{loading ? 'Entrando...' : 'Entrar'}</PrimaryText>
               </PrimaryButton>
 
               <DividerRow>
