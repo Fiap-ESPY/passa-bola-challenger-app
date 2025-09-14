@@ -23,8 +23,21 @@ export const Card = styled.View`
 export const GradientBackground = styled(LinearGradient)`
   height: 110px;
   width: 100%;
-  padding: 14px;
   justify-content: flex-end;
+`;
+
+export const ImageBackground = styled.ImageBackground`
+  height: 140px;
+  width: 100%;
+  justify-content: flex-end;
+`;
+
+export const ImageOverlay = styled(LinearGradient)`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 `;
 
 export const Label = styled.View`
@@ -47,6 +60,7 @@ export const EventTitle = styled.Text`
   color: ${COLORS.white};
   font-weight: 800;
   font-size: 16px;
+  padding: 14px;
 `;
 
 export const DescriptionArea = styled.View`

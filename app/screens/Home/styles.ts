@@ -17,6 +17,24 @@ export const HeaderGrad = styled(ImageBackground)`
   border-bottom-right-radius: 20px;
 `;
 
+export const BackButton = styled.TouchableOpacity`
+  margin-left: 12px;
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8px;
+  border-radius: 20px;
+  z-index: 2;
+  position: absolute;
+  left: 15px;
+  top: 30px;
+`;
+
+export const BackIcon = styled(FontAwesome)`
+  color: ${COLORS.white};
+  font-size: 24px;
+  padding: 0px 2px;
+`;
+
 export const Logo = styled.Image`
   width: 140px;
 `;
@@ -64,4 +82,28 @@ export const TabText = styled.Text<{ $active?: boolean }>`
 
 export const CardWrapper = styled.View`
   margin-top: 14px;
+`;
+
+export const FloatingButton = styled.TouchableOpacity`
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+
+  width: 76px;
+  height: 76px;
+  border-radius: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  background-color: ${COLORS.blue};
+
+  /* sombra iOS */
+  shadow-color: #000;
+  shadow-opacity: 0.15;
+  shadow-radius: 8px;
+  shadow-offset: 0px 4px;
+
+  /* sombra Android */
+  elevation: 6;
 `;

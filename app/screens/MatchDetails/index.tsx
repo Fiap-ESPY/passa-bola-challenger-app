@@ -4,7 +4,7 @@ import { COLORS } from '@/theme/colors';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
-import { ScrollView } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 import {
   BackButton,
   BackIcon,
@@ -162,7 +162,7 @@ const MatchDetails = () => {
         />
         <ActionButton
           label={'Estatísticas'}
-          onPress={() => console.log('Estatísticas')}
+          onPress={() => Alert.alert("Página em desenvolvimento...")}
         />
       </Footer>
     </Container>

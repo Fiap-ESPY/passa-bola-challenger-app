@@ -1,4 +1,5 @@
 import { COLORS } from '@/theme/colors';
+import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
@@ -15,6 +16,24 @@ export const HeaderGrad = styled(ImageBackground)`
   justify-content: center;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+`;
+
+export const BackButton = styled.TouchableOpacity`
+  margin-left: 12px;
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8px;
+  border-radius: 20px;
+  z-index: 2;
+  position: absolute;
+  left: 15px;
+  top: 30px;
+`;
+
+export const BackIcon = styled(FontAwesome)`
+  color: ${COLORS.white};
+  font-size: 24px;
+  padding: 0px 2px;
 `;
 
 export const Logo = styled.Image`
@@ -121,5 +140,3 @@ export const FeaturedTitle = styled.Text`
   font-weight: 800;
   font-size: 18px;
 `;
-
-

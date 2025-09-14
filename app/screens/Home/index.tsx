@@ -3,10 +3,20 @@ import logoImage from '@/assets/logo.png';
 import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
 import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
-import React, { useMemo, useState } from 'react';
-import { ScrollView, StatusBar } from 'react-native';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { listenAuth } from '@/services/auth';
+import { COLORS } from '@/theme/colors';
+import { clearEvents, loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import { FontAwesome } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
+  BackButton,
+  BackIcon,
   CardWrapper,
+  FloatingButton,
   HeaderCard,
   HeaderGrad,
   HeaderTitle,
@@ -16,8 +26,7 @@ import {
   Tabs,
   TabText,
 } from './styles';
-import { useNavigation } from 'expo-router';
-import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { clearNews } from '@/utils/news/newsStore';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -28,42 +37,103 @@ enum EventFilterType {
 const Home = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
+  const [events, setEvents] = useState(MATCH_EVENTS_DATA);
+  const [hydrated, setHydrated] = useState(false);
+
   const [eventFilterType, setEventFilterType] = useState<EventFilterType>(
     EventFilterType.ALL_EVENTS
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+
+      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
+
+      (async () => {
+        const stored = await loadEvents();
+        if (active && stored && Array.isArray(stored)) {
+          setEvents(stored);
+          setHydrated(true);
+        }
+      })();
+
+      return () => {
+        active = false;
+        unsubAuth();
+      };
+    }, [])
+  );
+
+  useEffect(() => {
+    (async () => {
+      const stored = await loadEvents();
+      if (stored && Array.isArray(stored)) {
+        setEvents(stored);
+      } else {
+        await saveEvents(MATCH_EVENTS_DATA);
+      }
+      setHydrated(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    (async () => {
+      await saveEvents(events);
+    })();
+  }, [events, hydrated]);
+
+  const handleDelete = useCallback((id: number | string) => {
+    Alert.alert(
+      'Remover evento',
+      'Tem certeza que deseja remover este evento?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Remover',
+          style: 'destructive',
+          onPress: () => setEvents(curr => curr.filter(e => e.id !== id)),
+        },
+      ]
+    );
+  }, []);
 
   const filteredData = useMemo(() => {
-    const filteredEvents = MATCH_EVENTS_DATA.filter(event =>
+    const base = events.filter(event =>
       event.title.toLowerCase().includes(filterSearch.toLowerCase())
     );
-
-    if (eventFilterType === EventFilterType.NEXT_EVENTS) {
-      return filteredEvents.filter(event => event.isAvailable);
-    }
-
-    if (eventFilterType === EventFilterType.PAST_EVENTS) {
-      return filteredEvents.filter(event => !event.isAvailable);
-    }
-
-    return filteredEvents;
-  }, [eventFilterType, filterSearch]);
+    if (eventFilterType === EventFilterType.NEXT_EVENTS)
+      return base.filter(e => e.isAvailable);
+    if (eventFilterType === EventFilterType.PAST_EVENTS)
+      return base.filter(e => !e.isAvailable);
+    return base;
+  }, [events, eventFilterType, filterSearch]);
 
   return (
     <Screen>
       <StatusBar barStyle="light-content" />
-      <HeaderGrad source={headerImage} resizeMode="cover">
-        <Logo source={logoImage} resizeMode="contain" />
+      <HeaderGrad
+        source={headerImage}
+        resizeMode="cover"
+        alt="Gradient Background"
+      >
+        {isAdmin && (
+          <BackButton onPress={() => navigation.navigate('AdminHome')}>
+            <BackIcon name="arrow-left" />
+          </BackButton>
+        )}
+        <Logo source={logoImage} resizeMode="contain" alt="Passa bola Logo" />
       </HeaderGrad>
 
       <HeaderCard>
         <HeaderTitle>JOGOS</HeaderTitle>
-
         <SearchFilter
           searchValue={filterSearch}
           onChangeText={setFilterSearch}
         />
-
         <Tabs>
           <TabPill
             onPress={() => setEventFilterType(EventFilterType.ALL_EVENTS)}
@@ -102,10 +172,21 @@ const Home = () => {
               onClick={() =>
                 navigation.navigate('MatchDetails', { matchId: match.id })
               }
+              onDelete={() => handleDelete(match.id)}
+              onEdit={() => Alert.alert('Página em desenvolvimento...')}
+              isAdmin={isAdmin}
             />
           </CardWrapper>
         ))}
       </ScrollView>
+      {isAdmin && (
+        <FloatingButton
+          activeOpacity={0.85}
+          onPress={() => navigation.navigate('AdminCreateEvent')}
+        >
+          <FontAwesome name="plus" size={25} color={COLORS.white} />
+        </FloatingButton>
+      )}
     </Screen>
   );
 };

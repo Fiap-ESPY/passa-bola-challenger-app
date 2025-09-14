@@ -1,3 +1,5 @@
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { ImageSourcePropType } from 'react-native';
 import {
   NewsDate,
@@ -11,12 +13,11 @@ import {
   NewsThumb,
   NewsTitle,
 } from './styles';
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 type NewsCardProps = {
   title: string;
   description: string;
+  pill: string;
   image: ImageSourcePropType;
   source: string;
   date: string;
@@ -30,6 +31,7 @@ const NewsCard = ({
   source,
   onClick,
   date,
+  pill,
 }: NewsCardProps) => {
   const formattedDate = format(parseISO(date), 'dd/MM/yyyy', {
     locale: ptBR,
@@ -37,15 +39,15 @@ const NewsCard = ({
 
   return (
     <NewsItem activeOpacity={0.8} onPress={onClick}>
-      <NewsThumb source={image} />
+      <NewsThumb source={image} alt="News thumb image" />
 
       <NewsInfo>
         <NewsMetaRow>
-          <NewsPill>Novidades</NewsPill>
+          <NewsPill>{pill?.toLocaleUpperCase()}</NewsPill>
           <NewsMetaDivider />
         </NewsMetaRow>
 
-        <NewsTitle numberOfLines={2}>{title.toUpperCase()}</NewsTitle>
+        <NewsTitle numberOfLines={2}>{title?.toLocaleUpperCase()}</NewsTitle>
 
         <NewsExcerpt numberOfLines={2}>{description}</NewsExcerpt>
         <NewsDate>{formattedDate}</NewsDate>

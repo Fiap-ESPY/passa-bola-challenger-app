@@ -32,6 +32,7 @@ export const BackButton = styled.TouchableOpacity`
 export const BackIcon = styled(FontAwesome)`
   color: ${COLORS.white};
   font-size: 24px;
+  padding: 0px 2px;
 `;
 
 export const Section = styled.View`
@@ -67,10 +68,12 @@ export const RuleItem = styled.Text`
 export const Footer = styled.View`
   flex-direction: row;
   justify-content: space-around;
-  padding: 12px;
+  padding: 0px 15px;
+  padding-bottom: 35px;
   border-top-width: 1px;
   border-color: #e1e1e1;
   background-color: ${COLORS.white};
+  gap: 10px;
 `;
 
 export const FooterButton = styled.TouchableOpacity`

@@ -32,6 +32,7 @@ export const BackButton = styled.TouchableOpacity`
 export const BackIcon = styled(FontAwesome)`
   color: ${COLORS.white};
   font-size: 24px;
+  padding: 0px 2px;
 `;
 
 export const HeaderCard = styled.View`

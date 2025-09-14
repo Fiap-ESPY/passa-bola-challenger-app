@@ -5,6 +5,7 @@ export interface News {
   id: number;
   title: string;
   description: string;
+  pill: string;
   category: NewsCategoryType;
   image: ImageSourcePropType;
   date: string;
