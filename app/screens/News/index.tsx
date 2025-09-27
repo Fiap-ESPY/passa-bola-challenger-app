@@ -7,11 +7,11 @@ import { NEWS_DATA } from '@/data/newsData';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
-import { loadEvents } from '@/utils/events/eventsStore';
+import { clearNews, loadNews, saveNews } from '@/utils/news/newsStore';
 import { useFocusEffect } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, StatusBar } from 'react-native';
+import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
   BackButton,
   BackIcon,
@@ -51,11 +51,13 @@ const News = () => {
 
       const unsubAuth = listenAuth(user => setIsAdmin(!!user));
 
-      const stored = loadEvents();
-      if (active && stored && Array.isArray(stored)) {
-        setNews(stored);
-        setHydrated(true);
-      }
+      (async () => {
+        const stored = await loadNews();
+        if (active && stored && Array.isArray(stored)) {
+          setNews(stored);
+          setHydrated(true);
+        }
+      })();
 
       return () => {
         active = false;
@@ -65,19 +67,38 @@ const News = () => {
   );
 
   useEffect(() => {
-    const stored = loadEvents();
-    if (stored && Array.isArray(stored)) {
-      setNews(stored);
-    } else {
-      setNews(NEWS_DATA);
-    }
-    setHydrated(true);
+    (async () => {
+      const stored = await loadNews();
+      if (stored && Array.isArray(stored)) {
+        setNews(stored);
+      } else {
+        await setNews(NEWS_DATA);
+      }
+      setHydrated(true);
+    })();
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    setNews(news);
+    (async () => {
+      await saveNews(news);
+    })();
   }, [news, hydrated]);
+
+  const handleDelete = useCallback((id: number | string) => {
+    Alert.alert(
+      'Remover notícia',
+      'Tem certeza que deseja remover essa notícia?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Remover',
+          style: 'destructive',
+          onPress: () => setNews(curr => curr.filter(e => e.id !== id)),
+        },
+      ]
+    );
+  }, []);
 
   const filteredData = useMemo(() => {
     const base = news.filter(item =>
@@ -173,18 +194,23 @@ const News = () => {
           </FeaturedImage>
         </FeaturedCard>
 
-        {filteredData.map(item => (
+        {filteredData.map(newsItem => (
           <NewsCard
-            key={item.id}
-            title={item.title}
-            description={item.description}
-            image={item.image}
-            date={item.date}
-            source={item.source}
-            pill={item.pill}
+            key={newsItem.id}
+            title={newsItem.title}
+            description={newsItem.description}
+            image={newsItem.image}
+            date={newsItem.date}
+            source={newsItem.source}
+            pill={newsItem.pill}
+            isAdmin={isAdmin}
             onClick={() =>
-              navigation.navigate('NewsDetails', { newsId: item.id })
+              navigation.navigate('NewsDetails', { newsId: newsItem.id })
             }
+            onEdit={() =>
+              navigation.navigate('NewsDetails', { newsId: newsItem.id })
+            }
+            onDelete={() => handleDelete(newsItem.id)}
           />
         ))}
       </ScrollView>

@@ -22,7 +22,6 @@ export const NewsThumb = styled.Image`
   height: 100px;
   border-radius: 10px;
   margin-right: 6px;
-  align-self: center;
 `;
 
 export const NewsInfo = styled.View`

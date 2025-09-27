@@ -6,11 +6,7 @@ import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
-import {
-  clearEvents,
-  loadEvents,
-  saveEvents,
-} from '@/utils/events/eventsStore';
+import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -91,7 +87,7 @@ const Home = () => {
   const handleDelete = useCallback((id: number | string) => {
     Alert.alert(
       'Remover evento',
-      'Tem certeza que deseja remover este evento?',
+      'Tem certeza que deseja remover esse evento?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
