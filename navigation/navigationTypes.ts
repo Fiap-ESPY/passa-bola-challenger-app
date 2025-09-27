@@ -3,7 +3,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 export type RootStackParamList = {
   BottomTabs: { screen: string };
   NewScreen: undefined;
-  MatchDetails: { matchId: number };
+  ChampionshipDetails: { championshipId: number };
+  ChampionshipStatistics: { championshipId: number };
   NewsDetails: { newsId: number };
   MatchSwitching: { matchId: number };
   MatchStatistics: { matchId: number };

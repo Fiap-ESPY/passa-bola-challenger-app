@@ -1,7 +1,7 @@
-import type { MatchEvent } from '@/model/match';
+import type { Championship } from '@/model/championship';
 import { BRACKET_EVENTS_DATA } from './brackEventData';
 
-export const MATCH_EVENTS_DATA: MatchEvent[] = [
+export const CHAMPIONSHIP_DATA: Championship[] = [
   {
     id: 1,
     title: 'Futebol Amistoso - São Paulo x Rio de Janeiro',

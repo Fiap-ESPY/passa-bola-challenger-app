@@ -1,8 +1,8 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
-import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
+import ChampionshipCard from '@/components/cards/championship/ChampionshipCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
+import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
@@ -35,7 +35,7 @@ enum EventFilterType {
 const Home = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
-  const [events, setEvents] = useState(MATCH_EVENTS_DATA);
+  const [events, setEvents] = useState(CHAMPIONSHIP_DATA);
   const [hydrated, setHydrated] = useState(false);
 
   const [eventFilterType, setEventFilterType] = useState<EventFilterType>(
@@ -68,7 +68,7 @@ const Home = () => {
     if (stored && Array.isArray(stored)) {
       setEvents(stored);
     } else {
-      saveEvents(MATCH_EVENTS_DATA);
+      saveEvents(CHAMPIONSHIP_DATA);
     }
     setHydrated(true);
   }, []);
@@ -157,14 +157,16 @@ const Home = () => {
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
       >
-        {filteredData.map(match => (
-          <CardWrapper key={match.id}>
-            <MatchEventCard
-              matchEvent={match}
+        {filteredData.map(championship => (
+          <CardWrapper key={championship.id}>
+            <ChampionshipCard
+              championship={championship}
               onClick={() =>
-                navigation.navigate('MatchDetails', { matchId: match.id })
+                navigation.navigate('ChampionshipDetails', {
+                  championshipId: championship.id,
+                })
               }
-              onDelete={() => handleDelete(match.id)}
+              onDelete={() => handleDelete(championship.id)}
               onEdit={() => Alert.alert('Página em desenvolvimento...')}
               isAdmin={isAdmin}
             />

@@ -1,5 +1,5 @@
 import { BRACKET_EVENTS_DATA } from '@/data/brackEventData';
-import { Match } from '@/model/match';
+import { Match } from '@/model/championship';
 import { COLORS } from '@/theme/colors';
 import { useRoute } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -166,7 +166,7 @@ const MatchStatistics = () => {
                       <PlayerName>{player.name}</PlayerName>
                     </PlayerDetail>
 
-                   <PlayerStatisticsContainer>
+                    <PlayerStatisticsContainer>
                       <PlayerStatistics>
                         <PlayerStatisticsIcon
                           source={require('@/assets/players/statistics/soccer_ball.png')}

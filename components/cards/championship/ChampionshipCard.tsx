@@ -1,4 +1,4 @@
-import { MatchEvent } from '@/model/match';
+import { Championship } from '@/model/championship';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -21,34 +21,38 @@ import ActionButton from '@/components/buttons/actionbutton/ActionButton';
 import { COLORS } from '@/theme/colors';
 import { FontAwesome } from '@expo/vector-icons';
 
-type MatchEventCardProps = {
-  matchEvent: MatchEvent;
+type ChampionshipCardProps = {
+  championship: Championship;
   onClick: () => void;
   onDelete: () => void;
   onEdit: () => void;
   isAdmin: boolean;
 };
 
-const MatchEventCard = ({
-  matchEvent,
+const ChampionshipCard = ({
+  championship,
   onClick,
   onEdit,
   onDelete,
   isAdmin,
-}: MatchEventCardProps) => {
-  const formattedDate = format(parseISO(matchEvent.dateAndHour), 'dd/MM/yyyy', {
-    locale: ptBR,
-  });
+}: ChampionshipCardProps) => {
+  const formattedDate = format(
+    parseISO(championship.dateAndHour),
+    'dd/MM/yyyy',
+    {
+      locale: ptBR,
+    }
+  );
 
-  const formattedHour = format(parseISO(matchEvent.dateAndHour), 'HH:mm', {
+  const formattedHour = format(parseISO(championship.dateAndHour), 'HH:mm', {
     locale: ptBR,
   });
 
   return (
     <Card>
-      {matchEvent?.image ? (
+      {championship?.image ? (
         <ImageBackground
-          source={matchEvent?.image}
+          source={championship?.image}
           resizeMode="cover"
           alt="Image Background"
         >
@@ -57,7 +61,7 @@ const MatchEventCard = ({
             end={{ x: 0, y: 1 }}
             colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
           />
-          <EventTitle>{matchEvent.title}</EventTitle>
+          <EventTitle>{championship.title}</EventTitle>
         </ImageBackground>
       ) : (
         <GradientBackground
@@ -66,15 +70,15 @@ const MatchEventCard = ({
           end={{ x: 1, y: 0 }}
         >
           <Label>
-            <LabelText>{matchEvent.type.toLocaleUpperCase()}</LabelText>
+            <LabelText>{championship.type.toLocaleUpperCase()}</LabelText>
           </Label>
-          <EventTitle>{matchEvent.title}</EventTitle>
+          <EventTitle>{championship.title}</EventTitle>
         </GradientBackground>
       )}
 
       <DescriptionArea>
         <EventDescription>
-          <BoldText>Local: </BoldText> {matchEvent.address}
+          <BoldText>Local: </BoldText> {championship.address}
         </EventDescription>
         <EventDescription>
           <BoldText>Data: </BoldText> {formattedDate}
@@ -112,4 +116,4 @@ const MatchEventCard = ({
   );
 };
 
-export default MatchEventCard;
+export default ChampionshipCard;

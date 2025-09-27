@@ -19,14 +19,14 @@ import {
   SectionTitle,
 } from './styles';
 
-const MatchDetails = () => {
+const ChampionshipDetails = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
   const router = useRouter();
   const route = useRoute();
-  const { matchId } = route.params as { matchId: number };
+  const { championshipId } = route.params as { championshipId: number };
 
-  const refId = useMemo(() => matchId, [matchId]);
+  const refId = useMemo(() => championshipId, [championshipId]);
 
   return (
     <Container>
@@ -162,11 +162,15 @@ const MatchDetails = () => {
         />
         <ActionButton
           label={'Estatísticas'}
-          onPress={() => Alert.alert("Página em desenvolvimento...")}
+          onPress={() =>
+            navigation.navigate('ChampionshipStatistics', {
+              championshipId: refId,
+            })
+          }
         />
       </Footer>
     </Container>
   );
 };
 
-export default MatchDetails;
+export default ChampionshipDetails;

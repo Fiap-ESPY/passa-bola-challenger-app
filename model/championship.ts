@@ -10,7 +10,7 @@ export type Match = {
   away: Team & { score?: number };
 };
 
-export interface MatchEvent {
+export interface Championship {
   id: number;
   title: string;
   type: string;

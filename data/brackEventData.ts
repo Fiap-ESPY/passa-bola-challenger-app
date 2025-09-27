@@ -1,5 +1,5 @@
+import { Match } from '@/model/championship';
 import { RoundType } from '@/model/enum/roundType';
-import { Match } from '@/model/match';
 
 export const BRACKET_EVENTS_DATA: Match[] = [
   {
@@ -87,7 +87,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
       score: 4,
       scorers: [
         {
-          id: 401,
+          id: 801,
           name: 'Júlia Martins',
           goals: 3,
           assists: 1,
@@ -387,7 +387,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
       score: 3,
       scorers: [
         {
-          id: 401,
+          id: 801,
           name: 'Júlia Martins',
           goals: 3,
           assists: 0,
@@ -533,7 +533,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
       score: 2,
       scorers: [
         {
-          id: 401,
+          id: 801,
           name: 'Júlia Martins',
           goals: 1,
           assists: 1,
@@ -542,7 +542,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
           photo: require('@/assets/players/feras/julia_martins.jpg'),
         },
         {
-          id: 402,
+          id: 802,
           name: 'Joana Silva',
           goals: 1,
           assists: 0,

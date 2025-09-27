@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import { BRACKET_EVENTS_DATA } from '@/data/brackEventData';
-import type { MatchEvent } from '@/model/match';
+import type { Championship } from '@/model/championship';
 import { COLORS } from '@/theme/colors';
 import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import {
@@ -36,7 +36,7 @@ const AdminCreateEvent = () => {
   const [type, setType] = useState<EventType>('racha');
   const [address, setAddress] = useState<string>('');
 
-  const [existing, setExisting] = useState<MatchEvent[]>([]);
+  const [existing, setExisting] = useState<Championship[]>([]);
   const [hydrated, setHydrated] = useState<boolean>(false);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const AdminCreateEvent = () => {
     const numericIds = existing.map(e => Number(e.id)).filter(n => !isNaN(n));
     const nextNumeric = numericIds.length ? Math.max(...numericIds) + 1 : 1;
 
-    const newEvent: MatchEvent = {
+    const newEvent: Championship = {
       id: nextNumeric,
       title: title.trim(),
       type,

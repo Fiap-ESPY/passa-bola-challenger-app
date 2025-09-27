@@ -1,7 +1,7 @@
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
+import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
+import { Championship, Match } from '@/model/championship';
 import { RoundType } from '@/model/enum/roundType';
-import { Match, MatchEvent } from '@/model/match';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
 import { useRoute } from '@react-navigation/native';
@@ -60,8 +60,8 @@ const MatchSwitching = () => {
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
 
-  const matchItem: MatchEvent | undefined = useMemo(
-    () => MATCH_EVENTS_DATA.find(match => match.id === refId),
+  const matchItem: Championship | undefined = useMemo(
+    () => CHAMPIONSHIP_DATA.find(match => match.id === refId),
     [refId]
   );
 
