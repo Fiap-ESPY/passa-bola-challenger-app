@@ -58,37 +58,6 @@ export const HeaderTitle = styled.Text`
   letter-spacing: 1px;
 `;
 
-export const Tabs = styled.View`
-  flex-direction: row;
-  column-gap: 8px;
-  justify-content: center;
-`;
-
-export const TabPill = styled.Pressable<{ $active?: boolean }>`
-  padding: 8px 14px;
-  border-radius: 20px;
-  background-color: ${({ $active }) =>
-    $active ? COLORS.pillActive : COLORS.pill};
-`;
-
-export const TabText = styled.Text<{ $active?: boolean }>`
-  font-weight: 700;
-  color: ${({ $active }) => ($active ? COLORS.text : '#7A7A7A')};
-`;
-
-export const SectionTitle = styled.Text`
-  margin: 30px 0 15px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 800;
-  color: ${COLORS.text};
-  letter-spacing: 0.5px;
-`;
-
-export const Section = styled.View`
-  row-gap: 12px;
-`;
-
 export const MatchCard = styled.TouchableOpacity`
   background-color: ${COLORS.white};
   border-radius: 16px;
@@ -144,6 +113,7 @@ export const TeamName = styled.Text`
   font-size: 12px;
   font-weight: 600;
   color: ${COLORS.text};
+  align-items: center;
 `;
 
 export const VsImage = styled.Image`
@@ -152,7 +122,7 @@ export const VsImage = styled.Image`
 `;
 
 export const WinnerTitle = styled.Text`
-  margin: 0px 0 14px;
+  margin: 0px 0 12px;
   text-align: center;
   font-size: 22px;
   font-weight: 900;
@@ -161,13 +131,14 @@ export const WinnerTitle = styled.Text`
 `;
 
 export const WinnerCard = styled(LinearGradient)`
-  height: 170px;
+  height: 145px;
   border-radius: 28px;
-  padding: 16px;
+  padding: 20px;
+  width: 100%;
   justify-content: center;
   align-items: center;
+  margin-top: 15px;
 
-  /* sombra leve como no restante dos cards */
   shadow-color: ${COLORS.black};
   shadow-opacity: 0.08;
   shadow-radius: 10px;
@@ -175,18 +146,31 @@ export const WinnerCard = styled(LinearGradient)`
   elevation: 3;
 `;
 
+export const WinnerBadge = styled.View`
+  align-self: flex-start;
+  background-color: #ed4d9a;
+  padding: 4px 10px;
+  border-radius: 12px;
+`;
+
+export const WinnerBadgeText = styled.Text`
+  font-size: 11px;
+  font-weight: 700;
+  color: ${COLORS.white};
+`;
+
 export const WinnerContent = styled.View`
   align-items: center;
-  gap: 12px;
 `;
 
 export const WinnerAvatar = styled.View`
-  width: 90px;
-  height: 90px;
+  width: 70px;
+  height: 70px;
   border-radius: 45px;
   background-color: ${COLORS.white};
   align-items: center;
   justify-content: center;
+  margin-bottom: 5px;
 `;
 
 export const WinnerLogo = styled.Image`
@@ -196,7 +180,7 @@ export const WinnerLogo = styled.Image`
 `;
 
 export const WinnerName = styled.Text`
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 800;
   color: ${COLORS.white};
 `;
@@ -206,4 +190,102 @@ export const Score = styled.Text`
   font-weight: 900;
   color: ${COLORS.text};
   margin-top: 4px;
+`;
+
+export const SummaryContainer = styled.View`
+  margin-top: 24px;
+  padding: 15px;
+`;
+
+export const SummaryTitleRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+`;
+
+export const SummaryTitle = styled.Text`
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: ${COLORS.text};
+  text-align: center;
+`;
+
+export const PlayerRow = styled.View`
+  flex-direction: row;
+  background-color: ${COLORS.white};
+  border-radius: 16px;
+  shadow-color: ${COLORS.black};
+  shadow-opacity: 0.06;
+  shadow-radius: 8px;
+  shadow-offset: 0px 2px;
+  elevation: 2;
+  margin: 10px 0px;
+  overflow: hidden;
+  gap: 12px;
+`;
+
+export const PlayerPhoto = styled.Image`
+  width: 110px;
+  height: 180px;
+  background-color: #eee;
+  border-radius: 16px 0px 65px 16px;
+`;
+
+export const PlayerInfo = styled.View`
+  align-items: center;
+`;
+
+export const PlayerTeamLogo = styled.Image`
+  width: 50px;
+  height: 50px;
+`;
+
+export const PlayerContainer = styled.View`
+  align-items: center;
+  flex-direction: column;
+  margin-top: 10px;
+  gap: 23px;
+`;
+
+export const PlayerDetail = styled.View`
+  align-items: center;
+  flex-direction: row;
+  padding-right: 30px;
+  gap: 5px;
+  width: 100%;
+`;
+
+export const PlayerName = styled.Text`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${COLORS.text};
+`;
+
+export const PlayerStatisticsContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 25px;
+  width: 200px;
+  justify-content: center;
+`;
+
+export const PlayerStatisticsValue = styled.Text`
+  font-size: 18px;
+  font-weight: 500;
+  color: ${COLORS.text};
+  flex: 1;
+  text-align: right;
+`;
+
+export const PlayerStatistics = styled.View`
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+`;
+
+export const PlayerStatisticsIcon = styled.Image`
+  width: 25px;
+  height: 25px;
 `;

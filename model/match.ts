@@ -3,7 +3,7 @@ import { RoundType } from './enum/roundType';
 import { Team } from './team';
 
 export type Match = {
-  id: string;
+  id: number;
   round: RoundType;
   label: string;
   home: Team & { score?: number };

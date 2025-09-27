@@ -7,7 +7,7 @@ import { NEWS_DATA } from '@/data/newsData';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
-import { loadNews, saveNews } from '@/utils/news/newsStore';
+import { loadEvents } from '@/utils/events/eventsStore';
 import { useFocusEffect } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -47,35 +47,36 @@ const News = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const unsub = listenAuth(user => {
-        if (user) {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      });
+      let active = true;
 
-      return () => unsub();
-    }, [navigation])
+      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
+
+      const stored = loadEvents();
+      if (active && stored && Array.isArray(stored)) {
+        setNews(stored);
+        setHydrated(true);
+      }
+
+      return () => {
+        active = false;
+        unsubAuth();
+      };
+    }, [])
   );
 
   useEffect(() => {
-    (async () => {
-      const stored = await loadNews<NewsItem[]>();
-      if (stored && Array.isArray(stored)) {
-        setNews(stored);
-      } else {
-        await saveNews(NEWS_DATA);
-      }
-      setHydrated(true);
-    })();
+    const stored = loadEvents();
+    if (stored && Array.isArray(stored)) {
+      setNews(stored);
+    } else {
+      setNews(NEWS_DATA);
+    }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    (async () => {
-      await saveNews(news);
-    })();
+    setNews(news);
   }, [news, hydrated]);
 
   const filteredData = useMemo(() => {

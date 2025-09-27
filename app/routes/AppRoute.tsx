@@ -12,6 +12,7 @@ import HomeScreen from '../screens/Home';
 import LoginScreen from '../screens/Login';
 import MatchDetails from '../screens/MatchDetails';
 import MatchSwitching from '../screens/MatchSwitching';
+import MatchStatistics from '../screens/MatchStatistics';
 import NewsScreen from '../screens/News';
 import NewsDetails from '../screens/NewsDetails';
 import AdminCreateEvent from '../screens/Admin/createEvent';
@@ -29,6 +30,7 @@ export default function StackNavigation() {
       <Stack.Screen name="AdminNews" component={NewsScreen} />
       <Stack.Screen name="AdminEvents" component={HomeScreen} />
       <Stack.Screen name="AdminCreateEvent" component={AdminCreateEvent} />
+      <Stack.Screen name="MatchStatistics" component={MatchStatistics} />
     </Stack.Navigator>
   );
 }

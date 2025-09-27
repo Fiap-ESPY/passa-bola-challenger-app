@@ -12,7 +12,7 @@ export const MATCH_EVENTS_DATA: MatchEvent[] = [
     brackEvents: BRACKET_EVENTS_DATA,
     image: require('@/assets/events/morumbis.jpg'),
     tournamentWinner: {
-      id: '4',
+      id: 4,
       name: 'Feras',
       logo: require('@/assets/teams/feras_team.png'),
     },
@@ -27,7 +27,7 @@ export const MATCH_EVENTS_DATA: MatchEvent[] = [
     brackEvents: BRACKET_EVENTS_DATA,
     image: require('@/assets/events/copa_passa_bola_3.jpg'),
     tournamentWinner: {
-      id: '4',
+      id: 4,
       name: 'Feras',
       logo: require('@/assets/teams/feras_team.png'),
     },
@@ -42,7 +42,7 @@ export const MATCH_EVENTS_DATA: MatchEvent[] = [
     brackEvents: BRACKET_EVENTS_DATA,
     image: require('@/assets/news/copa_passa_bola_1.png'),
     tournamentWinner: {
-      id: '4',
+      id: 4,
       name: 'Feras',
       logo: require('@/assets/teams/feras_team.png'),
     },

@@ -6,10 +6,9 @@ import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
-import { clearEvents, loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import { FontAwesome } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { useNavigation } from 'expo-router';
+import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
@@ -26,7 +25,6 @@ import {
   Tabs,
   TabText,
 } from './styles';
-import { clearNews } from '@/utils/news/newsStore';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -52,13 +50,11 @@ const Home = () => {
 
       const unsubAuth = listenAuth(user => setIsAdmin(!!user));
 
-      (async () => {
-        const stored = await loadEvents();
-        if (active && stored && Array.isArray(stored)) {
-          setEvents(stored);
-          setHydrated(true);
-        }
-      })();
+      const stored = loadEvents();
+      if (active && stored && Array.isArray(stored)) {
+        setEvents(stored);
+        setHydrated(true);
+      }
 
       return () => {
         active = false;
@@ -68,22 +64,18 @@ const Home = () => {
   );
 
   useEffect(() => {
-    (async () => {
-      const stored = await loadEvents();
-      if (stored && Array.isArray(stored)) {
-        setEvents(stored);
-      } else {
-        await saveEvents(MATCH_EVENTS_DATA);
-      }
-      setHydrated(true);
-    })();
+    const stored = loadEvents();
+    if (stored && Array.isArray(stored)) {
+      setEvents(stored);
+    } else {
+      saveEvents(MATCH_EVENTS_DATA);
+    }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    (async () => {
-      await saveEvents(events);
-    })();
+    saveEvents(events);
   }, [events, hydrated]);
 
   const handleDelete = useCallback((id: number | string) => {

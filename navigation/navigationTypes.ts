@@ -6,6 +6,7 @@ export type RootStackParamList = {
   MatchDetails: { matchId: number };
   NewsDetails: { newsId: number };
   MatchSwitching: { matchId: number };
+  MatchStatistics: { matchId: number };
   AdminHome: undefined;
   AdminNews: undefined;
   AdminEvents: undefined;
