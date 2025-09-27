@@ -11,7 +11,7 @@ export type RootStackParamList = {
   AdminHome: undefined;
   AdminNews: undefined;
   AdminEvents: undefined;
-  AdminCreateEvent: undefined;
+  AdminCreateEvent: { championshipId?: number | null };
 };
 
 export type BottomTabParamList = {

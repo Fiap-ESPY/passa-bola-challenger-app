@@ -70,7 +70,7 @@ export const Label = styled.Text`
 
 export const Input = styled.TextInput`
   background-color: ${COLORS.white};
-  border: 1px solid #E6E6E6;
+  border: 1px solid #e6e6e6;
   border-radius: 12px;
   padding: 12px 14px;
   font-size: 16px;
@@ -121,7 +121,7 @@ export const SwitchRow = styled.View`
 `;
 
 export const SwitchLabel = styled.Text`
-  color: ${COLORS.text};
+  color: ${COLORS.black};
   font-size: 14px;
   flex: 1;
   padding-right: 8px;
@@ -189,6 +189,54 @@ export const InputIcon = styled(FontAwesome).attrs({
 
 export const InputValue = styled.Text`
   flex: 1;
-  color: ${COLORS.text};
+  color: ${COLORS.black};
   font-size: 16px;
+`;
+
+export const TextArea = styled(Input)`
+  height: 120px;
+  text-align-vertical: top;
+  padding-top: 12px;
+`;
+
+export const RuleSectionContainer = styled.View`
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 8px;
+  border: 1px solid #e6e6e6;
+`;
+
+export const RuleItemRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+`;
+
+export const RuleInput = styled(Input)`
+  flex: 1;
+  padding-vertical: 8px;
+`;
+
+export const AddButton = styled.TouchableOpacity`
+  background-color: ${COLORS.blue};
+  padding: 8px 12px;
+  border-radius: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  align-self: flex-start;
+`;
+
+export const AddButtonText = styled.Text`
+  color: ${COLORS.white};
+  font-weight: 700;
+  font-size: 14px;
+`;
+
+export const RemoveButton = styled.TouchableOpacity`
+  padding: 6px;
 `;

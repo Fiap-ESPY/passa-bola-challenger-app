@@ -40,8 +40,6 @@ export const calculateTopScorers = (matches: Match[]): ArtilheiraStats[] => {
   const playerStats = new Map<number, ArtilheiraStats>();
 
   matches.forEach(match => {
-    console.log(match);
-
     processScorers(
       playerStats,
       match?.home?.scorers ?? [],

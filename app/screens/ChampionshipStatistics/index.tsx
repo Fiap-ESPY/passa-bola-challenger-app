@@ -1,5 +1,5 @@
-import { BRACKET_EVENTS_DATA } from '@/data/brackEventData';
-import { Match } from '@/model/championship';
+import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
+import { Championship } from '@/model/championship';
 import { COLORS } from '@/theme/colors';
 import { useRoute } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -44,12 +44,12 @@ const ChampioshipStatistics = () => {
 
   const refId = useMemo(() => championshipId, [championshipId]);
 
-  const matchItem: Match | undefined = useMemo(
-    () => BRACKET_EVENTS_DATA.find(match => match.id === refId),
+  const championship: Championship | undefined = useMemo(
+    () => CHAMPIONSHIP_DATA.find(championship => championship.id === refId),
     [refId]
   );
 
-  const topScorers = calculateTopScorers(BRACKET_EVENTS_DATA);
+  const topScorers = calculateTopScorers(championship?.brackEvents ?? []);
 
   const sortedTopScorers = useMemo(
     () => [...topScorers].sort((a, b) => b.totalGoals - a.totalGoals),

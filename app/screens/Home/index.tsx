@@ -6,7 +6,11 @@ import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
-import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import {
+  clearEvents,
+  loadEvents,
+  saveEvents,
+} from '@/utils/events/eventsStore';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -50,11 +54,13 @@ const Home = () => {
 
       const unsubAuth = listenAuth(user => setIsAdmin(!!user));
 
-      const stored = loadEvents();
-      if (active && stored && Array.isArray(stored)) {
-        setEvents(stored);
-        setHydrated(true);
-      }
+      (async () => {
+        const stored = await loadEvents();
+        if (active && stored && Array.isArray(stored)) {
+          setEvents(stored);
+          setHydrated(true);
+        }
+      })();
 
       return () => {
         active = false;
@@ -64,18 +70,22 @@ const Home = () => {
   );
 
   useEffect(() => {
-    const stored = loadEvents();
-    if (stored && Array.isArray(stored)) {
-      setEvents(stored);
-    } else {
-      saveEvents(CHAMPIONSHIP_DATA);
-    }
-    setHydrated(true);
+    (async () => {
+      const stored = await loadEvents();
+      if (stored && Array.isArray(stored)) {
+        setEvents(stored);
+      } else {
+        await saveEvents(CHAMPIONSHIP_DATA);
+      }
+      setHydrated(true);
+    })();
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    saveEvents(events);
+    (async () => {
+      await saveEvents(events);
+    })();
   }, [events, hydrated]);
 
   const handleDelete = useCallback((id: number | string) => {
@@ -167,7 +177,11 @@ const Home = () => {
                 })
               }
               onDelete={() => handleDelete(championship.id)}
-              onEdit={() => Alert.alert('Página em desenvolvimento...')}
+              onEdit={() =>
+                navigation.navigate('AdminCreateEvent', {
+                  championshipId: championship.id,
+                })
+              }
               isAdmin={isAdmin}
             />
           </CardWrapper>
@@ -176,7 +190,11 @@ const Home = () => {
       {isAdmin && (
         <FloatingButton
           activeOpacity={0.85}
-          onPress={() => navigation.navigate('AdminCreateEvent')}
+          onPress={() =>
+            navigation.navigate('AdminCreateEvent', {
+              championshipId: null,
+            })
+          }
         >
           <FontAwesome name="plus" size={25} color={COLORS.white} />
         </FloatingButton>

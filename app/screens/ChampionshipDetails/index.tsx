@@ -1,10 +1,21 @@
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
+import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
+import { Championship } from '@/model/championship';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { COLORS } from '@/theme/colors';
 import { useRoute } from '@react-navigation/native';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useNavigation, useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
-import { Alert, ScrollView } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  ImageBackground,
+  ScrollView,
+  Text,
+} from 'react-native';
+
+import { COLORS } from '@/theme/colors';
+import { loadEvents } from '@/utils/events/eventsStore';
 import {
   BackButton,
   BackIcon,
@@ -21,154 +32,153 @@ import {
 
 const ChampionshipDetails = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
-
   const router = useRouter();
   const route = useRoute();
   const { championshipId } = route.params as { championshipId: number };
 
+  const [championship, setChampionship] = useState<Championship | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const refId = useMemo(() => championshipId, [championshipId]);
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    const fetchChampionship = async () => {
+      const storedEvents = await loadEvents();
+      const eventsFromStorage = storedEvents || [];
+
+      const allEventsMap = new Map<number, Championship>();
+
+      for (const event of CHAMPIONSHIP_DATA) {
+        allEventsMap.set(event.id, event);
+      }
+
+      for (const event of eventsFromStorage) {
+        allEventsMap.set(event.id, event);
+      }
+
+      const combinedEvents = Array.from(allEventsMap.values());
+
+      const foundChampionship = combinedEvents.find(c => c.id === refId);
+
+      setChampionship(foundChampionship || null);
+      setIsLoading(false);
+    };
+
+    fetchChampionship();
+  }, [refId]);
+
+  const formattedDate = useMemo(() => {
+    if (!championship?.dateAndHour) return null;
+    try {
+      const date = parseISO(championship.dateAndHour);
+      return format(date, "EEEE, dd/MM 'às' HH:mm'h'", { locale: ptBR });
+    } catch (error) {
+      return championship.dateAndHour;
+    }
+  }, [championship?.dateAndHour]);
+
+  if (isLoading) {
+    return (
+      <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </Container>
+    );
+  }
+
+  if (!championship) {
+    return (
+      <Container>
+        <Text>Campeonato não encontrado!</Text>
+      </Container>
+    );
+  }
 
   return (
     <Container>
-      <HeaderGradient
-        colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      >
-        <HeaderContent>
-          <BackButton onPress={() => router.back()}>
-            <BackIcon name="arrow-left" />
-          </BackButton>
-        </HeaderContent>
-      </HeaderGradient>
+      {championship.image ? (
+        <ImageBackground
+          source={championship.image}
+          style={{ width: '100%', height: 200 }}
+          resizeMode="cover"
+        >
+          <HeaderGradient
+            colors={['rgba(0,0,0,0.6)', 'transparent', 'rgba(0,0,0,0.8)']}
+            style={{ height: '100%' }}
+          >
+            <HeaderContent>
+              <BackButton onPress={() => router.back()}>
+                <BackIcon name="arrow-left" />
+              </BackButton>
+            </HeaderContent>
+          </HeaderGradient>
+        </ImageBackground>
+      ) : (
+        <HeaderGradient
+          colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <HeaderContent>
+            <BackButton onPress={() => router.back()}>
+              <BackIcon name="arrow-left" />
+            </BackButton>
+          </HeaderContent>
+        </HeaderGradient>
+      )}
 
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 80 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         <Section>
-          <SectionTitle>Copa Passa a Bola - 4ª edição</SectionTitle>
-          <SectionText>📍 Rua Passa Bola, nº 123 – Centro, SP</SectionText>
-          <SectionText>📅 Domingo 01/06 - 12:00h</SectionText>
+          <SectionTitle>{championship.title}</SectionTitle>
+          <SectionText>📍 {championship.address}</SectionText>
+          {formattedDate && <SectionText>📅 {formattedDate}</SectionText>}
         </Section>
 
-        <Section>
-          <SectionTitle>Descrição do Evento</SectionTitle>
-          <SectionText>
-            O Campeonato de Futebol Feminino Amador reúne 12 times compostos por
-            10 jogadoras cada, promovendo a integração, o espírito esportivo e o
-            incentivo à prática do futebol entre mulheres. Com partidas
-            dinâmicas e disputas acirradas, o torneio valoriza o talento
-            feminino no esporte e proporciona um ambiente de inclusão, respeito
-            e competitividade saudável.
-          </SectionText>
-        </Section>
+        {championship.description && (
+          <Section>
+            <SectionTitle>Descrição do Evento</SectionTitle>
+            <SectionText>{championship.description}</SectionText>
+          </Section>
+        )}
 
-        <Section>
-          <SectionTitle>Regras</SectionTitle>
-
-          <SectionText style={{ fontWeight: '700', marginTop: 8 }}>
-            Composição dos Times
-          </SectionText>
-          <RuleList>
-            <RuleItem>
-              • Cada equipe poderá inscrever até 10 jogadoras.
-            </RuleItem>
-            <RuleItem>
-              • Em campo, cada time jogará com 7 jogadoras (6 na linha + 1
-              goleira).
-            </RuleItem>
-            <RuleItem>
-              • Substituições são ilimitadas, mas devem ocorrer com autorização
-              da arbitragem e sem paralisação do jogo.
-            </RuleItem>
-          </RuleList>
-
-          <SectionText style={{ fontWeight: '700', marginTop: 16 }}>
-            Duração das Partidas
-          </SectionText>
-          <RuleList>
-            <RuleItem>
-              • Cada partida terá 2 tempos de 20 minutos, com 5 minutos de
-              intervalo.
-            </RuleItem>
-            <RuleItem>• Em caso de empate no tempo regulamentar:</RuleItem>
-          </RuleList>
-          <RuleList style={{ marginLeft: 12 }}>
-            <RuleItem>
-              ◦ Prorrogação de 2 tempos de 5 minutos (sem intervalo).
-            </RuleItem>
-            <RuleItem>
-              ◦ Persistindo o empate, disputa por pênaltis (3 cobranças por
-              time).
-            </RuleItem>
-          </RuleList>
-
-          <SectionText style={{ fontWeight: '700', marginTop: 16 }}>
-            Sistema de Disputa: Mata-Mata
-          </SectionText>
-          <RuleList>
-            <RuleItem>
-              • Participam 12 equipes em sistema eliminatório simples.
-            </RuleItem>
-            <RuleItem>
-              • As 4 equipes melhores ranqueadas (por sorteio ou critérios
-              definidos) entram diretamente nas quartas de final.
-            </RuleItem>
-            <RuleItem>
-              • As outras 8 equipes disputam a fase preliminar (oitavas de
-              final):
-            </RuleItem>
-          </RuleList>
-          <RuleList style={{ marginLeft: 12 }}>
-            <RuleItem>
-              ◦ 4 confrontos: vencedores avançam para as quartas.
-            </RuleItem>
-          </RuleList>
-          <RuleList>
-            <RuleItem>• A sequência do torneio:</RuleItem>
-          </RuleList>
-          <RuleList style={{ marginLeft: 12 }}>
-            <RuleItem>◦ Oitavas de Final – 8 times → 4 classificados</RuleItem>
-            <RuleItem>
-              ◦ Quartas de Final – 4 classificados + 4 cabeças de chave
-            </RuleItem>
-            <RuleItem>◦ Semifinais – 4 times</RuleItem>
-            <RuleItem>◦ Final e disputa de 3º lugar</RuleItem>
-          </RuleList>
-
-          <SectionText style={{ fontWeight: '700', marginTop: 16 }}>
-            Regras Gerais
-          </SectionText>
-          <RuleList>
-            <RuleItem>
-              • Cartão amarelo: jogadora fica fora por 2 minutos (sem
-              substituição).
-            </RuleItem>
-            <RuleItem>
-              • Cartão vermelho: expulsão direta e desfalque para o jogo
-              seguinte.
-            </RuleItem>
-            <RuleItem>
-              • Tolerância de 10 minutos para início da partida; após isso, WO.
-            </RuleItem>
-          </RuleList>
-        </Section>
+        {championship.rules && championship.rules.length > 0 && (
+          <Section>
+            <SectionTitle>Regras</SectionTitle>
+            {championship.rules.map((ruleSection, index) => (
+              <React.Fragment key={index}>
+                <SectionText style={{ fontWeight: '700', marginTop: 16 }}>
+                  {ruleSection.title}
+                </SectionText>
+                <RuleList>
+                  {ruleSection.items.map((item, itemIndex) => (
+                    <RuleItem key={itemIndex}>• {item}</RuleItem>
+                  ))}
+                </RuleList>
+              </React.Fragment>
+            ))}
+          </Section>
+        )}
       </ScrollView>
 
-      <Footer>
-        <ActionButton
-          label={'Chaveamento'}
-          onPress={() =>
-            navigation.navigate('MatchSwitching', { matchId: refId })
-          }
-        />
-        <ActionButton
-          label={'Estatísticas'}
-          onPress={() =>
-            navigation.navigate('ChampionshipStatistics', {
-              championshipId: refId,
-            })
-          }
-        />
-      </Footer>
+      {championship.type === 'campeonato' && (
+        <Footer>
+          <ActionButton
+            label={'Chaveamento'}
+            onPress={() =>
+              navigation.navigate('MatchSwitching', { matchId: refId })
+            }
+          />
+          <ActionButton
+            label={'Estatísticas'}
+            onPress={() =>
+              navigation.navigate('ChampionshipStatistics', {
+                championshipId: refId,
+              })
+            }
+          />
+        </Footer>
+      )}
     </Container>
   );
 };
