@@ -18,6 +18,8 @@ import MatchSwitching from '../screens/MatchSwitching';
 import NewsScreen from '../screens/News';
 import NewsDetails from '../screens/NewsDetails';
 import AdminCreateNews from '../screens/Admin/createNews';
+import OrganizationRegisterStep1 from '../screens/Organization/register/step-1';
+import OrganizationRegisterStep2 from '../screens/Organization/register/step-2';
 
 export default function StackNavigation() {
   const Stack = createStackNavigator<RootStackParamList>();
@@ -41,6 +43,8 @@ export default function StackNavigation() {
       <Stack.Screen name="AdminCreateEvent" component={AdminCreateEvent} />
       <Stack.Screen name="AdminCreateNews" component={AdminCreateNews} />
       <Stack.Screen name="MatchStatistics" component={MatchStatistics} />
+      <Stack.Screen name="OrganizationRegisterStep1" component={OrganizationRegisterStep1} />
+      <Stack.Screen name="OrganizationRegisterStep2" component={OrganizationRegisterStep2} />
     </Stack.Navigator>
   );
 }
