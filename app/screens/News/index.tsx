@@ -7,7 +7,9 @@ import { NEWS_DATA } from '@/data/newsData';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
-import { clearNews, loadNews, saveNews } from '@/utils/news/newsStore';
+import { COLORS } from '@/theme/colors';
+import { loadNews, saveNews } from '@/utils/news/newsStore';
+import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -21,6 +23,7 @@ import {
   FeaturedImage,
   FeaturedOverlay,
   FeaturedTitle,
+  FloatingButton,
   HeaderCard,
   HeaderGrad,
   HeaderTitle,
@@ -208,12 +211,26 @@ const News = () => {
               navigation.navigate('NewsDetails', { newsId: newsItem.id })
             }
             onEdit={() =>
-              navigation.navigate('NewsDetails', { newsId: newsItem.id })
+              navigation.navigate('AdminCreateNews', {
+                newsId: newsItem.id,
+              })
             }
             onDelete={() => handleDelete(newsItem.id)}
           />
         ))}
       </ScrollView>
+      {isAdmin && (
+        <FloatingButton
+          activeOpacity={0.85}
+          onPress={() =>
+            navigation.navigate('AdminCreateNews', {
+              newsId: null,
+            })
+          }
+        >
+          <FontAwesome name="plus" size={25} color={COLORS.white} />
+        </FloatingButton>
+      )}
     </Screen>
   );
 };

@@ -12,6 +12,7 @@ export type RootStackParamList = {
   AdminNews: undefined;
   AdminEvents: undefined;
   AdminCreateEvent: { championshipId?: number | null };
+  AdminCreateNews: { newsId?: number | null };
 };
 
 export type BottomTabParamList = {

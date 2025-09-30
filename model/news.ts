@@ -7,7 +7,7 @@ export interface News {
   description: string;
   pill: string;
   category: NewsCategoryType;
-  image: ImageSourcePropType;
+  image?: ImageSourcePropType | null;
   date: string;
   content: string;
   source: string;

@@ -21,7 +21,7 @@ type NewsCardProps = {
   title: string;
   description: string;
   pill: string;
-  image: ImageSourcePropType;
+  image?: ImageSourcePropType | null;
   source: string;
   date: string;
   onClick: () => void;
@@ -48,7 +48,7 @@ const NewsCard = ({
 
   return (
     <NewsItem activeOpacity={0.8} onPress={onClick}>
-      <NewsThumb source={image} alt="News thumb image" />
+      {image && <NewsThumb source={image} alt="News thumb image" />} 
 
       <NewsInfo>
         <NewsMetaRow>
