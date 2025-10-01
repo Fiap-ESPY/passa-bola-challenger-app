@@ -8,6 +8,7 @@ import { ScrollView, StatusBar } from 'react-native';
 import {
   BackButton,
   BackIcon,
+  ContainerPhoto,
   HeaderCard,
   HeaderContent,
   HeaderGradient,
@@ -17,11 +18,14 @@ import {
   PlayerName,
   PlayerPhoto,
   PlayerRow,
+  PlayerRank,
   PlayerStatistics,
   PlayerStatisticsContainer,
   PlayerStatisticsIcon,
   PlayerStatisticsValue,
   PlayerTeamLogo,
+  PlayerTeamName,
+  PlayerTeamContainer,
   PodiumColumn,
   PodiumContainer,
   PodiumGoalsContainer,
@@ -65,15 +69,17 @@ const ChampioshipStatistics = () => {
     rank: number
   ) => (
     <PodiumItem key={player.id} position={position}>
-      <PodiumPhoto source={player.photo} position={position} />
+      <ContainerPhoto>
+        <PodiumPhoto source={player.photo} position={position} />
+      </ContainerPhoto>
       <PodiumColumn position={position}>
-        <PodiumRank>{rank}º</PodiumRank>
-        <PodiumName numberOfLines={1}>{player.name}</PodiumName>
+        <PodiumRank>{rank}</PodiumRank>
+        <PodiumName numberOfLines={2}>{player.name}</PodiumName>
         <PodiumGoalsContainer>
-          <PodiumGoalsIcon
+          {/* <PodiumGoalsIcon
             source={require('@/assets/players/statistics/soccer_ball.png')}
           />
-          <PodiumGoalsValue>{player.totalGoals}</PodiumGoalsValue>
+          <PodiumGoalsValue>{player.totalGoals}</PodiumGoalsValue> */}
         </PodiumGoalsContainer>
       </PodiumColumn>
     </PodiumItem>
@@ -113,29 +119,30 @@ const ChampioshipStatistics = () => {
         <SummaryContainer>
           {remainingPlayers
             .sort((a, b) => b.totalGoals - a.totalGoals)
-            .map(player => (
+            .map((player, index) => (
               <PlayerRow key={player.id}>
                 <PlayerPhoto source={player.photo} resizeMode="cover" />
+
                 <PlayerContainer>
                   <PlayerDetail>
-                    <PlayerTeamLogo
-                      source={player.teamLogo}
-                      resizeMode="contain"
-                      alt="Team logo image"
-                    />
                     <PlayerName>{player.name}</PlayerName>
+                    <PlayerRank>{index + 1}°</PlayerRank>
                   </PlayerDetail>
+
                   <PlayerStatisticsContainer>
+                    <PlayerTeamContainer>
+                      <PlayerTeamLogo source={player.teamLogo} resizeMode="contain" />
+                      <PlayerTeamName>{player.teamName}</PlayerTeamName>
+                    </PlayerTeamContainer>
+
                     <PlayerStatistics>
                       <PlayerStatisticsIcon
                         source={require('@/assets/players/statistics/soccer_ball.png')}
                         resizeMode="contain"
-                        alt="Soccer ball icon"
                       />
-                      <PlayerStatisticsValue>
-                        {player.totalGoals ?? 0}
-                      </PlayerStatisticsValue>
+                      <PlayerStatisticsValue>{player.totalGoals ?? 0}</PlayerStatisticsValue>
                     </PlayerStatistics>
+
                   </PlayerStatisticsContainer>
                 </PlayerContainer>
               </PlayerRow>

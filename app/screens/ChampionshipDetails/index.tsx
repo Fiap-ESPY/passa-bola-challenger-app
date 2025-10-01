@@ -165,12 +165,14 @@ const ChampionshipDetails = () => {
         <Footer>
           <ActionButton
             label={'Chaveamento'}
+            backgroundColor='#F576B1'
             onPress={() =>
               navigation.navigate('MatchSwitching', { matchId: refId })
             }
           />
           <ActionButton
             label={'Estatísticas'}
+            backgroundColor='#B381C7'
             onPress={() =>
               navigation.navigate('ChampionshipStatistics', {
                 championshipId: refId,

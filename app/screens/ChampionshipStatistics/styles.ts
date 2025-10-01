@@ -37,11 +37,13 @@ export const BackIcon = styled(FontAwesome)`
 
 export const HeaderCard = styled.View`
   background-color: ${COLORS.white};
+  justify-content: space-between;
   margin-top: -28px; /* sobe sobre o gradiente */
   align-self: center;
   width: 90%;
+  height: 30%;
   border-radius: 16px;
-  padding: 16px;
+  padding-top: 16px;
   shadow-color: ${COLORS.black};
   shadow-opacity: 0.08;
   shadow-radius: 10px;
@@ -59,22 +61,25 @@ export const HeaderTitle = styled.Text`
 `;
 
 export const PodiumContainer = styled.View`
+  width: 100%;
+  height: 80%;
   flex-direction: row;
   justify-content: center;
   align-items: flex-end;
-  padding: 24px 16px;
-  gap: 5px;
+
+
 `;
 
 export const PodiumItem = styled.View<{ position: '1st' | '2nd' | '3rd' }>`
   align-items: center;
   width: 100px;
+  
 `;
 
 export const PodiumColumn = styled.View<{ position: '1st' | '2nd' | '3rd' }>`
   width: 100%;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
   padding-top: ${({ position }) =>
     position === '1st' ? '75px' : position === '2nd' ? '65px' : '55px'};
   padding-bottom: 8px;
@@ -83,33 +88,46 @@ export const PodiumColumn = styled.View<{ position: '1st' | '2nd' | '3rd' }>`
   position: relative;
 
   height: ${({ position }) =>
-    position === '1st' ? '150px' : position === '2nd' ? '130px' : '110px'};
-  background-color: ${
-    ({ position }) =>
-      position === '1st'
-        ? '#FFD700' /* Ouro */
-        : position === '2nd'
-          ? '#C0C0C0' /* Prata */
-          : '#CD7F32' /* Bronze */
+    position === '1st' ? '118px' : position === '2nd' ? '91px' : '77px'};
+  background-color: ${({ position }) =>
+    position === '1st'
+      ? '#F16EA6' /* Ouro */
+      : position === '2nd'
+        ? '#C774B9' /* Prata */
+        : '#B381C7' /* Bronze */
   };
 `;
 
-export const PodiumPhoto = styled.Image<{ position: '1st' | '2nd' | '3rd' }>`
-  width: 80px;
-  height: 100px;
-  border-radius: 10px;
-  border-width: 2px;
-  border-color: #fff;
+export const ContainerPhoto = styled.View`
+ width: 100px;
+  height: 100px; 
+  overflow: hidden; 
   position: absolute;
-  top: -20px;
-  z-index: 1;
+  top: -60%; 
+  z-index: 2;
+
+  background-color: #fff;
+`;
+
+
+export const PodiumPhoto = styled.Image.attrs({
+  resizeMode: 'cover',
+}) <{ position: '1st' | '2nd' | '3rd' }>`
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  
 `;
 
 export const PodiumName = styled.Text`
+  width: 60%;
   color: #000;
-  font-weight: bold;
-  font-size: 13px;
+  font-weight: 500;
+  font-size: 15px;
   text-align: center;
+  position: absolute;
+  top: -40px;
+
 `;
 
 export const PodiumGoalsContainer = styled.View`
@@ -131,12 +149,11 @@ export const PodiumGoalsValue = styled.Text`
 `;
 
 export const PodiumRank = styled.Text`
-  font-size: 18px;
+  font-size: 50px;
   font-weight: bold;
   color: #fff; 
   position: absolute;
-  top: 4px;
-  left: 8px;
+  top: 15px;
   z-index: 2;
   text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5); 
 `;
@@ -159,6 +176,7 @@ export const SummaryTitle = styled.Text`
   margin-bottom: 10px;
   color: ${COLORS.text};
   text-align: center;
+
 `;
 
 export const PlayerRow = styled.View`
@@ -172,11 +190,10 @@ export const PlayerRow = styled.View`
   elevation: 2;
   margin: 10px 0px;
   overflow: hidden;
-  gap: 12px;
 `;
 
 export const PlayerPhoto = styled.Image`
-  width: 110px;
+ width: 140px;
   height: 180px;
   background-color: #eee;
   border-radius: 16px 0px 65px 16px;
@@ -187,37 +204,60 @@ export const PlayerInfo = styled.View`
 `;
 
 export const PlayerTeamLogo = styled.Image`
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
 `;
 
 export const PlayerContainer = styled.View`
-  align-items: center;
+  flex: 1;
   flex-direction: column;
-  margin-top: 10px;
-  gap: 23px;
+  padding: 15px 25px;
+  gap: 30px;
+  
+
 `;
 
 export const PlayerDetail = styled.View`
-  align-items: center;
-  flex-direction: row;
-  padding-right: 30px;
-  gap: 5px;
-  width: 100%;
+   flex-direction: row;
+  justify-content: space-between; 
+  align-items: flex-start; 
 `;
 
 export const PlayerName = styled.Text`
-  font-size: 14px;
+  font-size: 20px;
+  font-weight: 600;
+  color: ${COLORS.text};
+  flex-shrink: 1;
+
+`;
+
+export const PlayerRank = styled.Text`
+  font-size: 20px;
   font-weight: 600;
   color: ${COLORS.text};
 `;
 
-export const PlayerStatisticsContainer = styled.View`
+export const PlayerTeamContainer = styled.View`
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 8px;
+`;
+
+export const PlayerTeamName = styled.Text`
+  font-size: 15px;
+  font-weight: 500;
+  color: ${COLORS.text};
+`
+
+export const PlayerStatisticsContainer = styled.View` 
   flex-direction: row;
   align-items: center;
-  gap: 25px;
-  width: 200px;
-  justify-content: center;
+
+  gap: 8px;
+  justify-content: space-between;
+
 `;
 
 export const PlayerStatisticsValue = styled.Text`
@@ -225,13 +265,16 @@ export const PlayerStatisticsValue = styled.Text`
   font-weight: 500;
   color: ${COLORS.text};
   flex: 1;
-  text-align: right;
+  
 `;
 
 export const PlayerStatistics = styled.View`
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   gap: 12px;
+
+
 `;
 
 export const PlayerStatisticsIcon = styled.Image`
