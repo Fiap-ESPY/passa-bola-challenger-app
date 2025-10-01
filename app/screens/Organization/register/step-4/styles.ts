@@ -21,7 +21,7 @@ export const GradientBg = styled(LinearGradient)`
 export const Logo = styled.Image`
   width: 150px;
   height: 150px;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   align-self: center;
 `;
 
@@ -60,7 +60,7 @@ export const PrimaryButton = styled.Pressable`
   background-color: ${COLORS.black};
   align-items: center;
   justify-content: center;
-  margin: 0 4px 10px;
+  margin: 20px 4px 10px;
 `;
 
 export const PrimaryText = styled.Text`
@@ -118,41 +118,6 @@ export const StepLine = styled.View<{ active: boolean }>`
   margin-horizontal: 5px;
 `;
 
-export const CrestPickerContainer = styled.View`
-  align-items: center;
-  margin-vertical: 20px;
-`;
-
-export const CrestPickerLabel = styled.Text`
-  color: ${COLORS.white};
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 15px;
-`;
-
-export const CrestCircle = styled.TouchableOpacity`
-  width: 140px;
-  height: 140px;
-  border-radius: 70px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 2px dashed rgba(255, 255, 255, 0.5);
-  justify-content: center;
-  align-items: center;
-  position: relative;
-`;
-
-export const CrestPlaceholder = styled.Image`
-  width: 90px;
-  height: 90px;
-  opacity: 0.6;
-`;
-
-export const CrestImage = styled.Image`
-  width: 100%;
-  height: 100%;
-  border-radius: 70px;
-`;
-
 export const EditIconContainer = styled.View`
   position: absolute;
   bottom: 5px;
@@ -168,4 +133,9 @@ export const EditIconContainer = styled.View`
 
 export const EditIcon = styled(FontAwesome)`
   color: ${COLORS.black};
+`;
+
+
+export const EyeButton = styled.TouchableOpacity`
+  padding-left: 10px; 
 `;

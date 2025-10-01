@@ -1,13 +1,20 @@
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StatusBar, ScrollView, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
 
 import {
   BackButton,
   BackIcon,
+  CrestCircle,
+  CrestImage,
+  CrestPickerContainer,
+  CrestPickerLabel,
+  CrestPlaceholder,
+  EditIcon,
+  EditIconContainer,
   Form,
   GradientBg,
   InputWrapper,
@@ -16,19 +23,13 @@ import {
   PrimaryText,
   Safe,
   Screen,
-  TextInputStyled,
-  StepsContainer,
   StepCircle,
-  StepText,
   StepLine,
-  CrestPickerContainer,
-  CrestPickerLabel,
-  CrestCircle,
-  CrestPlaceholder,
-  CrestImage,
-  EditIconContainer,
-  EditIcon,
+  StepsContainer,
+  StepText,
+  TextInputStyled
 } from './styles';
+import { Organization } from '@/model/organization';
 
 export const OrganizationRegisterStep2 = () => {
   const [teamName, setTeamName] = useState<string>('');
@@ -37,6 +38,7 @@ export const OrganizationRegisterStep2 = () => {
 
   const navigation = useNavigation<RootStackNavigationProps>();
   const route = useRoute();
+
   const step1Data = route.params;
 
   const pickImage = async () => {
@@ -46,7 +48,7 @@ export const OrganizationRegisterStep2 = () => {
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -63,14 +65,14 @@ export const OrganizationRegisterStep2 = () => {
       return;
     }
 
-    const registrationData = {
+    const organizationData: Partial<Organization> = {
       ...step1Data,
       teamName: teamName.trim(),
       teamCrestUri: teamCrest,
     };
 
     Alert.alert('Continuar', 'Dados da Etapa 2 coletados. Próxima etapa!');
-    // navigation.navigate('OrganizationRegisterStep3', registrationData);
+    navigation.navigate('OrganizationRegisterStep3', organizationData);
   };
 
   return (
@@ -94,25 +96,25 @@ export const OrganizationRegisterStep2 = () => {
               contentContainerStyle={{
                 flexGrow: 1,
                 justifyContent: 'center',
-                paddingHorizontal: 20,
+                paddingHorizontal: 10,
               }}
               showsVerticalScrollIndicator={false}
             >
               <Logo source={require('@/assets/logo.png')} resizeMode="contain" />
 
               <StepsContainer>
-                <StepCircle active={false}>
-                  <StepText active={false}>1</StepText>
+                <StepCircle active={true}>
+                  <StepText active={true}>1</StepText>
                 </StepCircle>
-                <StepLine />
+                <StepLine active={true} />
                 <StepCircle active={true}>
                   <StepText active={true}>2</StepText>
                 </StepCircle>
-                <StepLine />
+                <StepLine active={false} />
                 <StepCircle active={false}>
                   <StepText active={false}>3</StepText>
                 </StepCircle>
-                <StepLine />
+                <StepLine active={false} />
                 <StepCircle active={false}>
                   <StepText active={false}>4</StepText>
                 </StepCircle>
@@ -132,18 +134,18 @@ export const OrganizationRegisterStep2 = () => {
                 <CrestPickerContainer>
                   <CrestPickerLabel>Escudo do Time</CrestPickerLabel>
                   <CrestCircle onPress={pickImage}>
-                    {/* {teamCrest ? (
+                    {teamCrest ? (
                       <CrestImage source={{ uri: teamCrest }} />
                     ) : (
-                      <CrestPlaceholder source={require('@/assets/placeholder-crest.png')} resizeMode="contain" />
-                    )} */}
+                      <CrestPlaceholder source={require('@/assets/teams/logo_team_default.png')} resizeMode="contain" />
+                    )}
                     <EditIconContainer>
                       <EditIcon name="camera" size={16} />
                     </EditIconContainer>
                   </CrestCircle>
                 </CrestPickerContainer>
 
-                <PrimaryButton onPress={handleContinue} disabled={loading} style={{ marginTop: 20 }}>
+                <PrimaryButton onPress={handleContinue} disabled={loading} style={{ marginTop: 10 }}>
                   <PrimaryText>{loading ? 'Carregando...' : 'Continuar'}</PrimaryText>
                 </PrimaryButton>
               </Form>

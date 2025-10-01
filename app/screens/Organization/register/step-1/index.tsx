@@ -2,7 +2,7 @@ import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
 import { useNavigation } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
 import {
   BackButton,
   BackIcon,
@@ -12,6 +12,7 @@ import {
   Logo,
   PrimaryButton,
   PrimaryText,
+  Row,
   Safe,
   Screen,
   StepCircle,
@@ -22,28 +23,71 @@ import {
 } from './styles';
 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Organization } from '@/model/organization';
 
 export const OrganizationRegisterStep1 = () => {
-  const [email, setEmail] = useState<string>('');
-  const [cnpj, setCnpj] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [complement, setComplement] = useState<string>('');
-  const [cep, setCep] = useState<string>('');
+  const [organizationData, setOrganizationData] = useState<Partial<Organization>>({
+    email: '',
+    cnpj: '',
+    phone: '',
+    cep: '',
+    addressStreet: '',
+    addressCity: '',
+    addressState: '',
+    addressComplement: '',
+  });
+
   const [loading, setLoading] = useState(false);
+  const [cepLoading, setCepLoading] = useState(false);
 
   const navigation = useNavigation<RootStackNavigationProps>();
 
+  const handleCepLookup = async (cepValue: string) => {
+    const formattedCep = cepValue.replace(/\D/g, '');
+    if (formattedCep.length !== 8) return;
+
+    setCepLoading(true);
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${formattedCep}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        Alert.alert('CEP não encontrado', 'Por favor, verifique o CEP digitado.');
+
+        setOrganizationData(prev => ({ ...prev, addressStreet: '', addressCity: '', addressState: '' }));
+      } else {
+        setOrganizationData(prev => ({
+          ...prev,
+          addressStreet: data.logradouro || '',
+          addressCity: data.localidade || '',
+          addressState: data.uf || '',
+          addressComplement: data.complemento || '',
+        }));
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível buscar o CEP. Verifique sua conexão.');
+    } finally {
+      setCepLoading(false);
+    }
+  };
+
   const handleContinue = () => {
-    console.log("Entrei")
-    navigation.navigate('OrganizationRegisterStep2')
+    const { email, cnpj, phone, cep, addressStreet, addressCity, addressState } = organizationData;
 
-    // if (!email || !cnpj || !phone || !address || !cep) {
-    //   Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios.');
-    //   return;
-    // }
+    if (!email || !cnpj || !phone || !cep || !addressStreet || !addressCity || !addressState) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
 
-    // Alert.alert('Continuar', 'Dados da Etapa 1 coletados. Próxima etapa!');
+    navigation.navigate('OrganizationRegisterStep2', organizationData);
+  };
+
+
+  const handleInputChange = (field: keyof Organization, value: string) => {
+    setOrganizationData(prevState => ({
+      ...prevState,
+      [field]: value,
+    }));
   };
 
   return (
@@ -67,7 +111,7 @@ export const OrganizationRegisterStep1 = () => {
               contentContainerStyle={{
                 flexGrow: 1,
                 justifyContent: 'center',
-                paddingHorizontal: 20,
+                paddingHorizontal: 10,
               }}
               showsVerticalScrollIndicator={false}
             >
@@ -77,15 +121,15 @@ export const OrganizationRegisterStep1 = () => {
                 <StepCircle active={true}>
                   <StepText active={true}>1</StepText>
                 </StepCircle>
-                <StepLine />
+                <StepLine active={false} />
                 <StepCircle active={false}>
                   <StepText active={false}>2</StepText>
                 </StepCircle>
-                <StepLine />
+                <StepLine active={false} />
                 <StepCircle active={false}>
                   <StepText active={false}>3</StepText>
                 </StepCircle>
-                <StepLine />
+                <StepLine active={false} />
                 <StepCircle active={false}>
                   <StepText active={false}>4</StepText>
                 </StepCircle>
@@ -99,12 +143,11 @@ export const OrganizationRegisterStep1 = () => {
                     placeholderTextColor="#7A7A7A"
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    value={email}
-                    onChangeText={setEmail}
+                    value={organizationData.email}
+                    onChangeText={(text) => handleInputChange('email', text)}
                     returnKeyType="next"
                   />
                 </InputWrapper>
-
 
                 <InputWrapper>
                   <FontAwesome name="building" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
@@ -112,36 +155,39 @@ export const OrganizationRegisterStep1 = () => {
                     placeholder="CNPJ"
                     placeholderTextColor="#7A7A7A"
                     keyboardType="numeric"
-                    value={cnpj}
-                    onChangeText={setCnpj}
+                    value={organizationData.cnpj}
+                    onChangeText={(text) => handleInputChange('cnpj', text)}
                     returnKeyType="next"
                   />
 
                 </InputWrapper>
 
-
-                <InputWrapper>
+                <InputWrapper >
                   <FontAwesome name="phone" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
                     placeholder="Telefone"
                     placeholderTextColor="#7A7A7A"
                     keyboardType="phone-pad"
-                    value={phone}
-                    onChangeText={setPhone}
+                    value={organizationData.phone}
+                    onChangeText={(text) => handleInputChange('phone', text)}
                     returnKeyType="next"
                   />
                 </InputWrapper>
-
                 <InputWrapper>
                   <FontAwesome name="location-arrow" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
                     placeholder="CEP"
                     placeholderTextColor="#7A7A7A"
                     keyboardType="numeric"
-                    value={cep}
-                    onChangeText={setCep}
+                    value={organizationData.cep}
+                    onChangeText={(text) => {
+                      handleInputChange('cep', text);
+                      if (text.length === 8) handleCepLookup(text);
+                    }}
+                    maxLength={8}
                     returnKeyType="done"
                   />
+                  {cepLoading && <ActivityIndicator color={COLORS.blue} />}
                 </InputWrapper>
 
                 <InputWrapper>
@@ -149,24 +195,45 @@ export const OrganizationRegisterStep1 = () => {
                   <TextInputStyled
                     placeholder="Endereço"
                     placeholderTextColor="#7A7A7A"
-                    value={address}
-                    onChangeText={setAddress}
+                    value={organizationData.addressStreet}
+                    onChangeText={(text) => handleInputChange('addressStreet', text)}
                     returnKeyType="next"
                   />
                 </InputWrapper>
 
+                <Row>
+                  <InputWrapper width="55%">
+                    <FontAwesome name="map" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
+                    <TextInputStyled
+                      placeholder="Cidade"
+                      placeholderTextColor="#7A7A7A"
+                      value={organizationData.addressCity}
+                      onChangeText={(text) => handleInputChange('addressCity', text)}
+                    />
+                  </InputWrapper>
+                  <InputWrapper width="40%">
+                    <FontAwesome name="flag" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
+                    <TextInputStyled
+                      placeholder="UF"
+                      placeholderTextColor="#7A7A7A"
+                      value={organizationData.addressState}
+                      onChangeText={(text) => handleInputChange('addressState', text)}
+                      maxLength={2}
+                      autoCapitalize="characters"
+                    />
+                  </InputWrapper>
+                </Row>
                 <InputWrapper>
                   <FontAwesome name="info-circle" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
-                    placeholder="Complemento"
+                    placeholder="Complemento (opcional)"
                     placeholderTextColor="#7A7A7A"
-                    value={complement}
-                    onChangeText={setComplement}
-                    returnKeyType="next"
+                    value={organizationData.addressComplement}
+                    onChangeText={(text) => handleInputChange('addressComplement', text)}
                   />
                 </InputWrapper>
 
-                <PrimaryButton onPress={handleContinue} disabled={loading} style={{ marginTop: 20 }}>
+                <PrimaryButton onPress={handleContinue} disabled={loading} style={{ marginTop: 10 }}>
                   <PrimaryText>{loading ? 'Carregando...' : 'Continuar'}</PrimaryText>
                 </PrimaryButton>
               </Form>

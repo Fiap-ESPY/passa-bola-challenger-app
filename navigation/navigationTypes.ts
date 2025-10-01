@@ -1,3 +1,4 @@
+import { Organization } from '@/model/organization';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 export type RootStackParamList = {
@@ -13,11 +14,11 @@ export type RootStackParamList = {
   AdminEvents: undefined;
   AdminCreateEvent: { championshipId?: number | null };
   AdminCreateNews: { newsId?: number | null };
-  OrganizationRegisterStep1: undefined;
-  OrganizationRegisterStep2: undefined;
-  OrganizationRegisterStep3: undefined;
-  OrganizationRegisterStep4: undefined;
-  OrganizationRegisterStep5: undefined;
+  OrganizationRegisterStep1: Partial<Organization> | undefined;
+  OrganizationRegisterStep2: Partial<Organization> | undefined;
+  OrganizationRegisterStep3: Partial<Organization> | undefined;
+  OrganizationRegisterStep4: Partial<Organization> | undefined;
+  OrganizationRegisterStep5: Partial<Organization> | undefined;
 };
 
 export type BottomTabParamList = {
