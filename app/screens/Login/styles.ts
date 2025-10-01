@@ -94,7 +94,7 @@ export const PrimaryButton = styled.Pressable`
   background-color: ${COLORS.black};
   align-items: center;
   justify-content: center;
-  margin: 0 4px 18px;
+  margin: 0 4px 10px;
 `;
 
 export const PrimaryText = styled.Text`

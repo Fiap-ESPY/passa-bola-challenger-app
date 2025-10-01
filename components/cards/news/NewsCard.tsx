@@ -1,3 +1,6 @@
+import ActionButton from '@/components/buttons/actionbutton/ActionButton';
+import { COLORS } from '@/theme/colors';
+import { FontAwesome } from '@expo/vector-icons';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ImageSourcePropType } from 'react-native';
@@ -18,10 +21,13 @@ type NewsCardProps = {
   title: string;
   description: string;
   pill: string;
-  image: ImageSourcePropType;
+  image?: ImageSourcePropType | null;
   source: string;
   date: string;
   onClick: () => void;
+  isAdmin?: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 };
 
 const NewsCard = ({
@@ -32,6 +38,9 @@ const NewsCard = ({
   onClick,
   date,
   pill,
+  isAdmin = false,
+  onEdit,
+  onDelete,
 }: NewsCardProps) => {
   const formattedDate = format(parseISO(date), 'dd/MM/yyyy', {
     locale: ptBR,
@@ -39,7 +48,7 @@ const NewsCard = ({
 
   return (
     <NewsItem activeOpacity={0.8} onPress={onClick}>
-      <NewsThumb source={image} alt="News thumb image" />
+      {image && <NewsThumb source={image} alt="News thumb image" />} 
 
       <NewsInfo>
         <NewsMetaRow>
@@ -52,6 +61,22 @@ const NewsCard = ({
         <NewsExcerpt numberOfLines={2}>{description}</NewsExcerpt>
         <NewsDate>{formattedDate}</NewsDate>
         <NewsText>Fonte: {source}</NewsText>
+        {isAdmin && (
+          <>
+            <ActionButton
+              backgroundColor={COLORS.grayMedium}
+              label="Editar notícia"
+              onPress={onEdit}
+              icon={<FontAwesome name="edit" size={18} color={COLORS.white} />}
+            />
+            <ActionButton
+              backgroundColor={COLORS.red}
+              label="Remover notícia"
+              onPress={onDelete}
+              icon={<FontAwesome name="trash" size={18} color={COLORS.white} />}
+            />
+          </>
+        )}
       </NewsInfo>
     </NewsItem>
   );

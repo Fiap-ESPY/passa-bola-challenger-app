@@ -31,7 +31,7 @@ const NewsDetails = () => {
 
   return (
     <Container>
-      <HeaderImage
+      {newsItem?.image && <HeaderImage
         source={newsItem?.image}
         resizeMode="cover"
         alt="Detail header image"
@@ -41,7 +41,8 @@ const NewsDetails = () => {
             <BackIcon name="arrow-left" />
           </BackButton>
         </HeaderContent>
-      </HeaderImage>
+      </HeaderImage>}
+
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 80 }}>
         <Section>
           <SectionTitle>{newsItem?.title.toLocaleUpperCase()}</SectionTitle>

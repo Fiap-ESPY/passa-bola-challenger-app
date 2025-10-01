@@ -7,11 +7,13 @@ import { NEWS_DATA } from '@/data/newsData';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
+import { COLORS } from '@/theme/colors';
 import { loadNews, saveNews } from '@/utils/news/newsStore';
+import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { router, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, StatusBar } from 'react-native';
+import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
   BackButton,
   BackIcon,
@@ -21,6 +23,7 @@ import {
   FeaturedImage,
   FeaturedOverlay,
   FeaturedTitle,
+  FloatingButton,
   HeaderCard,
   HeaderGrad,
   HeaderTitle,
@@ -47,25 +50,32 @@ const News = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const unsub = listenAuth(user => {
-        if (user) {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      });
+      let active = true;
 
-      return () => unsub();
-    }, [navigation])
+      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
+
+      (async () => {
+        const stored = await loadNews();
+        if (active && stored && Array.isArray(stored)) {
+          setNews(stored);
+          setHydrated(true);
+        }
+      })();
+
+      return () => {
+        active = false;
+        unsubAuth();
+      };
+    }, [])
   );
 
   useEffect(() => {
     (async () => {
-      const stored = await loadNews<NewsItem[]>();
+      const stored = await loadNews();
       if (stored && Array.isArray(stored)) {
         setNews(stored);
       } else {
-        await saveNews(NEWS_DATA);
+        await setNews(NEWS_DATA);
       }
       setHydrated(true);
     })();
@@ -77,6 +87,21 @@ const News = () => {
       await saveNews(news);
     })();
   }, [news, hydrated]);
+
+  const handleDelete = useCallback((id: number | string) => {
+    Alert.alert(
+      'Remover notícia',
+      'Tem certeza que deseja remover essa notícia?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Remover',
+          style: 'destructive',
+          onPress: () => setNews(curr => curr.filter(e => e.id !== id)),
+        },
+      ]
+    );
+  }, []);
 
   const filteredData = useMemo(() => {
     const base = news.filter(item =>
@@ -172,21 +197,40 @@ const News = () => {
           </FeaturedImage>
         </FeaturedCard>
 
-        {filteredData.map(item => (
+        {filteredData.map(newsItem => (
           <NewsCard
-            key={item.id}
-            title={item.title}
-            description={item.description}
-            image={item.image}
-            date={item.date}
-            source={item.source}
-            pill={item.pill}
+            key={newsItem.id}
+            title={newsItem.title}
+            description={newsItem.description}
+            image={newsItem.image}
+            date={newsItem.date}
+            source={newsItem.source}
+            pill={newsItem.pill}
+            isAdmin={isAdmin}
             onClick={() =>
-              navigation.navigate('NewsDetails', { newsId: item.id })
+              navigation.navigate('NewsDetails', { newsId: newsItem.id })
             }
+            onEdit={() =>
+              navigation.navigate('AdminCreateNews', {
+                newsId: newsItem.id,
+              })
+            }
+            onDelete={() => handleDelete(newsItem.id)}
           />
         ))}
       </ScrollView>
+      {isAdmin && (
+        <FloatingButton
+          activeOpacity={0.85}
+          onPress={() =>
+            navigation.navigate('AdminCreateNews', {
+              newsId: null,
+            })
+          }
+        >
+          <FontAwesome name="plus" size={25} color={COLORS.white} />
+        </FloatingButton>
+      )}
     </Screen>
   );
 };

@@ -3,21 +3,28 @@ import { RoundType } from './enum/roundType';
 import { Team } from './team';
 
 export type Match = {
-  id: string;
+  id: number;
   round: RoundType;
   label: string;
   home: Team & { score?: number };
   away: Team & { score?: number };
 };
 
-export interface MatchEvent {
+export interface RuleSection {
+  title: string;
+  items: string[];
+}
+
+export interface Championship {
   id: number;
   title: string;
-  type: string;
-  image?: ImageSourcePropType;
+  type: 'racha' | 'campeonato';
+  image?: ImageSourcePropType | null;
   address: string;
   dateAndHour: string;
   isAvailable: boolean;
   brackEvents?: Match[];
   tournamentWinner?: Team | null;
+  description?: string;
+  rules?: RuleSection[];
 }

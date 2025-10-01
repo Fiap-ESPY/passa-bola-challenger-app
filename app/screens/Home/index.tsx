@@ -1,15 +1,14 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
-import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
+import ChampionshipCard from '@/components/cards/championship/ChampionshipCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
+import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
-import { clearEvents, loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import { FontAwesome } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { useNavigation } from 'expo-router';
+import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
@@ -26,7 +25,6 @@ import {
   Tabs,
   TabText,
 } from './styles';
-import { clearNews } from '@/utils/news/newsStore';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -37,7 +35,7 @@ enum EventFilterType {
 const Home = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
-  const [events, setEvents] = useState(MATCH_EVENTS_DATA);
+  const [events, setEvents] = useState(CHAMPIONSHIP_DATA);
   const [hydrated, setHydrated] = useState(false);
 
   const [eventFilterType, setEventFilterType] = useState<EventFilterType>(
@@ -73,7 +71,7 @@ const Home = () => {
       if (stored && Array.isArray(stored)) {
         setEvents(stored);
       } else {
-        await saveEvents(MATCH_EVENTS_DATA);
+        await saveEvents(CHAMPIONSHIP_DATA);
       }
       setHydrated(true);
     })();
@@ -89,7 +87,7 @@ const Home = () => {
   const handleDelete = useCallback((id: number | string) => {
     Alert.alert(
       'Remover evento',
-      'Tem certeza que deseja remover este evento?',
+      'Tem certeza que deseja remover esse evento?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -165,15 +163,21 @@ const Home = () => {
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
       >
-        {filteredData.map(match => (
-          <CardWrapper key={match.id}>
-            <MatchEventCard
-              matchEvent={match}
+        {filteredData.map(championship => (
+          <CardWrapper key={championship.id}>
+            <ChampionshipCard
+              championship={championship}
               onClick={() =>
-                navigation.navigate('MatchDetails', { matchId: match.id })
+                navigation.navigate('ChampionshipDetails', {
+                  championshipId: championship.id,
+                })
               }
-              onDelete={() => handleDelete(match.id)}
-              onEdit={() => Alert.alert('Página em desenvolvimento...')}
+              onDelete={() => handleDelete(championship.id)}
+              onEdit={() =>
+                navigation.navigate('AdminCreateEvent', {
+                  championshipId: championship.id,
+                })
+              }
               isAdmin={isAdmin}
             />
           </CardWrapper>
@@ -182,7 +186,11 @@ const Home = () => {
       {isAdmin && (
         <FloatingButton
           activeOpacity={0.85}
-          onPress={() => navigation.navigate('AdminCreateEvent')}
+          onPress={() =>
+            navigation.navigate('AdminCreateEvent', {
+              championshipId: null,
+            })
+          }
         >
           <FontAwesome name="plus" size={25} color={COLORS.white} />
         </FloatingButton>

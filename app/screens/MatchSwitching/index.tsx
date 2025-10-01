@@ -1,10 +1,11 @@
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
+import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
+import { Championship, Match } from '@/model/championship';
 import { RoundType } from '@/model/enum/roundType';
-import { Match, MatchEvent } from '@/model/match';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
 import { useRoute } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StatusBar } from 'react-native';
 import {
@@ -47,6 +48,7 @@ const ROUNDS_LABEL: Record<RoundType, string> = {
 
 const MatchSwitching = () => {
   const router = useRouter();
+  const navigation = useNavigation<RootStackNavigationProps>();
 
   const route = useRoute();
   const { matchId } = route.params as { matchId: number };
@@ -58,8 +60,8 @@ const MatchSwitching = () => {
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
 
-  const matchItem: MatchEvent | undefined = useMemo(
-    () => MATCH_EVENTS_DATA.find(news => news.id === refId),
+  const matchItem: Championship | undefined = useMemo(
+    () => CHAMPIONSHIP_DATA.find(match => match.id === refId),
     [refId]
   );
 
@@ -152,7 +154,14 @@ const MatchSwitching = () => {
               <SectionTitle>{ROUNDS_LABEL.R16}</SectionTitle>
               <Section>
                 {groupedByRound.R16.map(match => (
-                  <MatchCard key={match.id}>
+                  <MatchCard
+                    key={match.id}
+                    onPress={() =>
+                      navigation.navigate('MatchStatistics', {
+                        matchId: match.id,
+                      })
+                    }
+                  >
                     <Badge>
                       <BadgeText>{match.label}</BadgeText>
                     </Badge>
@@ -201,7 +210,14 @@ const MatchSwitching = () => {
               <SectionTitle>{ROUNDS_LABEL.QF}</SectionTitle>
               <Section>
                 {groupedByRound.QF.map(match => (
-                  <MatchCard key={match.id}>
+                  <MatchCard
+                    key={match.id}
+                    onPress={() =>
+                      navigation.navigate('MatchStatistics', {
+                        matchId: match.id,
+                      })
+                    }
+                  >
                     <Badge>
                       <BadgeText>{match.label}</BadgeText>
                     </Badge>
@@ -245,7 +261,14 @@ const MatchSwitching = () => {
               <SectionTitle>{ROUNDS_LABEL.SF}</SectionTitle>
               <Section>
                 {groupedByRound.SF.map(match => (
-                  <MatchCard key={match.id}>
+                  <MatchCard
+                    key={match.id}
+                    onPress={() =>
+                      navigation.navigate('MatchStatistics', {
+                        matchId: match.id,
+                      })
+                    }
+                  >
                     <Badge>
                       <BadgeText>{match.label}</BadgeText>
                     </Badge>
@@ -289,7 +312,14 @@ const MatchSwitching = () => {
               <SectionTitle>{ROUNDS_LABEL.F}</SectionTitle>
               <Section>
                 {groupedByRound.F.map(match => (
-                  <MatchCard key={match.id}>
+                  <MatchCard
+                    key={match.id}
+                    onPress={() =>
+                      navigation.navigate('MatchStatistics', {
+                        matchId: match.id,
+                      })
+                    }
+                  >
                     <Badge>
                       <BadgeText>{match.label}</BadgeText>
                     </Badge>
@@ -328,7 +358,7 @@ const MatchSwitching = () => {
         {matchItem?.tournamentWinner && (
           <>
             <SectionTitle />
-            <WinnerTitle>Vencedor</WinnerTitle>
+            <WinnerTitle>Vencedor!</WinnerTitle>
             <WinnerCard
               colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
               start={{ x: 0, y: 0 }}

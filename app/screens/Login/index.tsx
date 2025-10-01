@@ -64,8 +64,9 @@ export const Login = () => {
   const onForgot = () => {
     Alert.alert('Página em desenvolvimento...');
   };
+
   const onSignUp = () => {
-    Alert.alert('Página em desenvolvimento...');
+    navigation.navigate('OrganizationRegisterStep1');
   };
 
   return (

@@ -140,3 +140,27 @@ export const FeaturedTitle = styled.Text`
   font-weight: 800;
   font-size: 18px;
 `;
+
+export const FloatingButton = styled.TouchableOpacity`
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+
+  width: 76px;
+  height: 76px;
+  border-radius: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  background-color: ${COLORS.blue};
+
+  /* sombra iOS */
+  shadow-color: #000;
+  shadow-opacity: 0.15;
+  shadow-radius: 8px;
+  shadow-offset: 0px 4px;
+
+  /* sombra Android */
+  elevation: 6;
+`;

@@ -7,14 +7,21 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 // SCREENS
+import AdminCreateEvent from '../screens/Admin/createEvent';
 import AdminHome from '../screens/Admin/home';
+import ChampionshipDetails from '../screens/ChampionshipDetails';
+import ChampionshipStatistics from '../screens/ChampionshipStatistics';
 import HomeScreen from '../screens/Home';
 import LoginScreen from '../screens/Login';
-import MatchDetails from '../screens/MatchDetails';
+import MatchStatistics from '../screens/MatchStatistics';
 import MatchSwitching from '../screens/MatchSwitching';
 import NewsScreen from '../screens/News';
 import NewsDetails from '../screens/NewsDetails';
-import AdminCreateEvent from '../screens/Admin/createEvent';
+import AdminCreateNews from '../screens/Admin/createNews';
+import OrganizationRegisterStep1 from '../screens/Organization/register/step-1';
+import OrganizationRegisterStep2 from '../screens/Organization/register/step-2';
+import OrganizationRegisterStep3 from '../screens/Organization/register/step-3';
+import OrganizationRegisterStep4 from '../screens/Organization/register/step-4';
 
 export default function StackNavigation() {
   const Stack = createStackNavigator<RootStackParamList>();
@@ -22,13 +29,26 @@ export default function StackNavigation() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="BottomTabs" component={BottomTabsNavigation} />
-      <Stack.Screen name="MatchDetails" component={MatchDetails} />
+      <Stack.Screen
+        name="ChampionshipDetails"
+        component={ChampionshipDetails}
+      />
+      <Stack.Screen
+        name="ChampionshipStatistics"
+        component={ChampionshipStatistics}
+      />
       <Stack.Screen name="NewsDetails" component={NewsDetails} />
       <Stack.Screen name="MatchSwitching" component={MatchSwitching} />
       <Stack.Screen name="AdminHome" component={AdminHome} />
       <Stack.Screen name="AdminNews" component={NewsScreen} />
       <Stack.Screen name="AdminEvents" component={HomeScreen} />
       <Stack.Screen name="AdminCreateEvent" component={AdminCreateEvent} />
+      <Stack.Screen name="AdminCreateNews" component={AdminCreateNews} />
+      <Stack.Screen name="MatchStatistics" component={MatchStatistics} />
+      <Stack.Screen name="OrganizationRegisterStep1" component={OrganizationRegisterStep1} />
+      <Stack.Screen name="OrganizationRegisterStep2" component={OrganizationRegisterStep2} />
+      <Stack.Screen name="OrganizationRegisterStep3" component={OrganizationRegisterStep3} />
+      <Stack.Screen name="OrganizationRegisterStep4" component={OrganizationRegisterStep4} />
     </Stack.Navigator>
   );
 }
