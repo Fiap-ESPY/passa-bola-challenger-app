@@ -6,7 +6,7 @@ import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { listenAuth } from '@/services/auth';
 import { COLORS } from '@/theme/colors';
-import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import { clearEvents, loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,6 +15,8 @@ import {
   BackButton,
   BackIcon,
   CardWrapper,
+  EmptyContainer,
+  EmptyText,
   FloatingButton,
   HeaderCard,
   HeaderGrad,
@@ -25,6 +27,8 @@ import {
   Tabs,
   TabText,
 } from './styles';
+import { UserSession } from '@/utils/session/session';
+import { UserRole } from '@/model/enum/userRole';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -43,12 +47,19 @@ const Home = () => {
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isOrganization, setIsOrganization] = useState<boolean>(false);
 
   useFocusEffect(
     useCallback(() => {
       let active = true;
 
-      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
+      UserSession.hasRole(UserRole.ADMIN).then(isAdmin => {
+        if (active) setIsAdmin(isAdmin);
+      });
+
+      UserSession.hasRole(UserRole.ORGANIZATION).then(isOrganization => {
+        if (active) setIsOrganization(isOrganization);
+      });
 
       (async () => {
         const stored = await loadEvents();
@@ -60,7 +71,6 @@ const Home = () => {
 
       return () => {
         active = false;
-        unsubAuth();
       };
     }, [])
   );
@@ -98,6 +108,8 @@ const Home = () => {
       ]
     );
   }, []);
+
+  clearEvents();
 
   const filteredData = useMemo(() => {
     const base = events.filter(event =>
@@ -160,29 +172,37 @@ const Home = () => {
         </Tabs>
       </HeaderCard>
 
-      <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
-      >
-        {filteredData.map(championship => (
-          <CardWrapper key={championship.id}>
-            <ChampionshipCard
-              championship={championship}
-              onClick={() =>
-                navigation.navigate('ChampionshipDetails', {
-                  championshipId: championship.id,
-                })
-              }
-              onDelete={() => handleDelete(championship.id)}
-              onEdit={() =>
-                navigation.navigate('AdminCreateEvent', {
-                  championshipId: championship.id,
-                })
-              }
-              isAdmin={isAdmin}
-            />
-          </CardWrapper>
-        ))}
-      </ScrollView>
+      {filteredData.some(event => event.isAvailable) ?
+
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        >
+          {filteredData.map(championship => (
+            <CardWrapper key={championship.id}>
+              <ChampionshipCard
+                championship={championship}
+                onClick={() =>
+                  navigation.navigate('ChampionshipDetails', {
+                    championshipId: championship.id,
+                  })
+                }
+                onDelete={() => handleDelete(championship.id)}
+                onEdit={() =>
+                  navigation.navigate('AdminCreateEvent', {
+                    championshipId: championship.id,
+                  })
+                }
+                isAdmin={isAdmin}
+                isOrganization={isOrganization}
+              />
+            </CardWrapper>
+          ))}
+        </ScrollView>
+        : <EmptyContainer>
+          <EmptyText>Nenhum campeonato disponível no momento.</EmptyText>
+        </EmptyContainer>
+      }
+
       {isAdmin && (
         <FloatingButton
           activeOpacity={0.85}

@@ -41,24 +41,32 @@ export const Login = () => {
       return;
     }
 
-    setLoading(true);
-    try {
-      await login(email.trim(), password);
+    const admin_user = {
+      email,
+      role: UserRole.ADMIN,
+      loggedInAt: new Date().toISOString(),
+    };
 
-      const admin_user = {
-        email,
-        role: UserRole.ADMIN,
-        loggedInAt: new Date().toISOString(),
-      };
+    await UserSession.save(admin_user);
 
-      await UserSession.save(admin_user);
-      navigation.navigate('AdminHome');
-    } catch (e: any) {
-      Alert.alert('Erro', 'E-mail ou senha inválidos.');
-      console.error('Firebase login error:', e);
-    } finally {
-      setLoading(false);
-    }
+    navigation.navigate('BottomTabs', { screen: 'home' });
+
+    // setLoading(true);
+    // try {
+    //   await login(email.trim(), password);
+
+      
+
+    //   await UserSession.save(admin_user);
+
+    //   navigation.navigate('BottomTabs', { screen: 'home' });
+    //   // navigation.navigate('AdminHome');
+    // } catch (e: any) {
+    //   Alert.alert('Erro', 'E-mail ou senha inválidos.');
+    //   console.error('Firebase login error:', e);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const onForgot = () => {

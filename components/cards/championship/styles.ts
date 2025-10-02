@@ -110,3 +110,27 @@ export const HourText = styled.Text`
   color: ${COLORS.sub};
   margin-left: 4px;
 `;
+
+export const StatusTag = styled.View<{ available: boolean }>`
+  position: absolute; 
+  top: 12px;         
+  right: 12px;     
+  z-index: 1;         
+
+  background-color: ${({ available }) =>available ? COLORS.green : COLORS.tagText};
+  padding: 5px 10px;
+  border-radius: 15px;
+
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.2;
+  shadow-radius: 2px;
+  elevation: 3;
+`;
+
+export const StatusTagText = styled.Text`
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize; 
+`;

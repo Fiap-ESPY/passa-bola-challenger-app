@@ -29,7 +29,7 @@ const AdminHome = () => {
       await signOut(auth);
 
       navigation.navigate('BottomTabs', { screen: 'home' });
-      UserSession.clear;
+      UserSession.clear();
     } catch (e) {
       Alert.alert(
         'Erro ao sair',

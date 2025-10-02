@@ -15,6 +15,8 @@ import {
   ImageOverlay,
   Label,
   LabelText,
+  StatusTag,
+  StatusTagText,
 } from './styles';
 
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
@@ -27,6 +29,7 @@ type ChampionshipCardProps = {
   onDelete: () => void;
   onEdit: () => void;
   isAdmin: boolean;
+  isOrganization: boolean;
 };
 
 const ChampionshipCard = ({
@@ -35,6 +38,7 @@ const ChampionshipCard = ({
   onEdit,
   onDelete,
   isAdmin,
+  isOrganization
 }: ChampionshipCardProps) => {
   const formattedDate = format(
     parseISO(championship.dateAndHour),
@@ -47,6 +51,10 @@ const ChampionshipCard = ({
   const formattedHour = format(parseISO(championship.dateAndHour), 'HH:mm', {
     locale: ptBR,
   });
+
+  if (!isAdmin && !isOrganization && !championship.isAvailable) {
+    return <></>;
+  }
 
   return (
     <Card>
@@ -61,7 +69,12 @@ const ChampionshipCard = ({
             end={{ x: 0, y: 1 }}
             colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
           />
-          <EventTitle>{championship.title}</EventTitle>
+          <EventTitle>{championship.title}</EventTitle>{
+            isAdmin &&
+            <StatusTag available={championship.isAvailable}>
+              <StatusTagText>{championship.isAvailable ? 'Disponível'.toLocaleUpperCase() : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
+            </StatusTag>
+          }
         </ImageBackground>
       ) : (
         <GradientBackground
@@ -111,6 +124,14 @@ const ChampionshipCard = ({
             />
           </>
         )}
+        {isOrganization &&
+          <ActionButton
+            label="Inscrever time"
+            onPress={onClick}
+            icon={
+              <FontAwesome name="info-circle" size={18} color={COLORS.white} />
+            }
+          />}
       </DescriptionArea>
     </Card>
   );

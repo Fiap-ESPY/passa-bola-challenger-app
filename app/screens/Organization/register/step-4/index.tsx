@@ -1,10 +1,11 @@
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import React, { useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StatusBar, View } from 'react-native';
 
+import { saveOrganization } from '@/utils/organization/organizationStore';
 import {
   BackButton,
   BackIcon,
@@ -22,19 +23,22 @@ import {
   StepText,
   TextInputStyled,
 } from './styles';
+import { UserSession } from '@/utils/session/session';
+import { UserRole } from '@/model/enum/userRole';
+import { Organization } from '@/model/organization';
 
 export const OrganizationRegisterStep4 = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigation = useNavigation<RootStackNavigationProps>();
   const route = useRoute();
   const previousStepsData = route.params;
 
-  const handleRegister = () => {
+  const handleRegister = useCallback(async () => {
     if (!password || !confirmPassword) {
       Alert.alert('Erro', 'Por favor, preencha ambos os campos de senha.');
       return;
@@ -50,19 +54,30 @@ export const OrganizationRegisterStep4 = () => {
 
     setLoading(true);
 
-    const finalRegistrationData = {
+    const organizationDataPayload: Partial<Organization> = {
       ...previousStepsData,
       password: password,
     };
 
-    console.log('Dados Finais do Cadastro:', JSON.stringify(finalRegistrationData, null, 2));
+    await saveOrganization([organizationDataPayload]);
 
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert('Sucesso!', 'Sua organização foi cadastrada com sucesso.');
+    const organization_user = {
+      email: organizationDataPayload.email ?? '',
+      role: UserRole.ORGANIZATION,
+      loggedInAt: new Date().toISOString(),
+    };
 
-    }, 1500);
-  };
+    if (!!organization_user.email) {
+      Alert.alert('Erro', 'Não foi possível recuperar o e-mail da organização.');
+      return;
+    }
+
+    await UserSession.save(organization_user);
+
+    Alert.alert('Sucesso', 'Organização criada com sucesso!', [
+      { text: 'OK', onPress: () => navigation.navigate('BottomTabs', { screen: 'home' }) },
+    ]);
+  }, [password, confirmPassword, previousStepsData]);
 
   return (
     <Screen>

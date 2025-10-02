@@ -107,3 +107,17 @@ export const FloatingButton = styled.TouchableOpacity`
   /* sombra Android */
   elevation: 6;
 `;
+
+export const EmptyContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 50px;
+`;
+
+export const EmptyText = styled.Text`
+  font-size: 20px;
+  color: ${COLORS.tagText};
+  text-align: center; 
+`;
