@@ -1,13 +1,13 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import EventCard from '@/components/cards/event/EventCard';
+
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
 import { getAuth, signOut } from 'firebase/auth';
-import React from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
   CardWrapper,

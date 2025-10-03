@@ -1,6 +1,7 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import ChampionshipCard from '@/components/cards/championship/ChampionshipCard';
+import Dashboard from '@/components/dashboard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
 import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
@@ -9,7 +10,7 @@ import { COLORS } from '@/theme/colors';
 import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
   BackButton,
@@ -128,6 +129,7 @@ const Home = () => {
 
       <HeaderCard>
         <HeaderTitle>JOGOS</HeaderTitle>
+        <Dashboard />
         <SearchFilter
           searchValue={filterSearch}
           onChangeText={setFilterSearch}
