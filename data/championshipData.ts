@@ -31,7 +31,7 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
     type: 'campeonato',
     image: require('@/assets/events/copa_passa_bola_3.jpg'),
     address: 'Ginásio do Maracanãzinho, Rio de Janeiro, RJ',
-    dateAndHour: '2025-11-08T09:00:00Z',
+    dateAndHour: '2025-09-08T09:00:00Z',
     isAvailable: true,
     description:
       'O Campeonato de Futebol Feminino Amador reúne 12 times compostos por 10 jogadoras cada, promovendo a integração, o espírito esportivo e o incentivo à prática do futebol entre mulheres. Com partidas dinâmicas e disputas acirradas, o torneio valoriza o talento feminino no esporte.',

@@ -33,6 +33,9 @@ import {
   Tabs,
   TabText,
 } from './styles';
+import { UserSession } from '@/utils/session/session';
+import { UserRole } from '@/model/enum/userRole';
+
 
 type NewsItem = (typeof NEWS_DATA)[number];
 
@@ -51,8 +54,11 @@ const News = () => {
   useFocusEffect(
     useCallback(() => {
       let active = true;
-
       const unsubAuth = listenAuth(user => setIsAdmin(!!user));
+
+      UserSession.hasRole(UserRole.ADMIN).then(isAdmin => {
+        if (active) setIsAdmin(isAdmin);
+      });
 
       (async () => {
         const stored = await loadNews();
@@ -126,7 +132,7 @@ const News = () => {
         alt="Gradient Background"
       >
         {isAdmin && (
-          <BackButton onPress={() => router.back()}>
+          <BackButton onPress={() => navigation.navigate('AdminHome')}>
             <BackIcon name="arrow-left" />
           </BackButton>
         )}
@@ -219,6 +225,7 @@ const News = () => {
           />
         ))}
       </ScrollView>
+
       {isAdmin && (
         <FloatingButton
           activeOpacity={0.85}
@@ -231,6 +238,7 @@ const News = () => {
           <FontAwesome name="plus" size={25} color={COLORS.white} />
         </FloatingButton>
       )}
+
     </Screen>
   );
 };

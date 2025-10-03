@@ -111,13 +111,22 @@ export const HourText = styled.Text`
   margin-left: 4px;
 `;
 
-export const StatusTag = styled.View<{ available: boolean }>`
-  position: absolute; 
-  top: 12px;         
-  right: 12px;     
-  z-index: 1;         
+export const StatusTag = styled.View<{
+  available?: boolean;
+  active?: boolean;
+}>`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  background-color: ${({ available, active }) => {
+    if (active) {
+      return '#ff242483';
+    }
 
-  background-color: ${({ available }) =>available ? COLORS.green : COLORS.tagText};
+    return available ? COLORS.green : COLORS.tagText;
+  }};
+
   padding: 5px 10px;
   border-radius: 15px;
 
@@ -132,5 +141,5 @@ export const StatusTagText = styled.Text`
   color: #fff;
   font-size: 10px;
   font-weight: 700;
-  text-transform: capitalize; 
+  text-transform: capitalize;
 `;

@@ -23,3 +23,4 @@ export const saveEvents = async (events: Championship[]): Promise<void> => {
 export const clearEvents = async (): Promise<void> => {
   await AsyncStorage.removeItem(KEY);
 };
+

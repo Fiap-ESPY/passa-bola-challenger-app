@@ -12,6 +12,7 @@ import {
   ImageBackground,
   ScrollView,
   Text,
+  Alert
 } from 'react-native';
 
 import { COLORS } from '@/theme/colors';
@@ -30,16 +31,25 @@ import {
   SectionTitle,
 } from './styles';
 
+
+
 const ChampionshipDetails = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
   const router = useRouter();
   const route = useRoute();
-  const { championshipId } = route.params as { championshipId: number };
+  const [isDisponibilize, setDisponibilize] = useState<boolean>(false)
+  
+  const { championshipId, isAdmin } = route.params as { championshipId: number, isAdmin: boolean };
 
   const [championship, setChampionship] = useState<Championship | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const refId = useMemo(() => championshipId, [championshipId]);
+
+
+  const handleDisponibilize = () => {
+    setDisponibilize(true)
+  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -162,23 +172,47 @@ const ChampionshipDetails = () => {
       </ScrollView>
 
       {championship.type === 'campeonato' && (
-        <Footer>
-          <ActionButton
-            label={'Chaveamento'}
-            onPress={() =>
-              navigation.navigate('MatchSwitching', { matchId: refId })
-            }
-          />
-          <ActionButton
-            label={'Estatísticas'}
-            onPress={() =>
-              navigation.navigate('ChampionshipStatistics', {
-                championshipId: refId,
-              })
-            }
-          />
-        </Footer>
-      )}
+        isDisponibilize ? (
+          <Footer>
+            <ActionButton
+              label={'Chaveamento'}
+              onPress={() =>
+                navigation.navigate('MatchSwitching', { matchId: refId })
+              }
+            />
+            <ActionButton
+              label={'Estatísticas'}
+              onPress={() =>
+                navigation.navigate('ChampionshipStatistics', {
+                  championshipId: refId,
+                })
+              }
+            />
+          </Footer>
+        ) : (
+          isAdmin && (
+            <Footer>
+              <ActionButton
+                backgroundColor={COLORS.blue}
+                label={'Finalizar Inscrições'}
+                onPress={() => {
+                  Alert.alert(
+                     'Finalizar Incrições',
+                     'Deseja encerrar as inscrições', 
+                    [
+                      { text: 'Cancelar', style: 'cancel' },
+                      { text: 'Finalizar', style: 'destructive', onPress: handleDisponibilize },
+                    ],
+                  )
+                 
+                }}
+              />
+            </Footer>
+          )
+        )
+      )
+
+      }
     </Container>
   );
 };

@@ -4,7 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 export type RootStackParamList = {
   BottomTabs: { screen: string };
   NewScreen: undefined;
-  ChampionshipDetails: { championshipId: number };
+  ChampionshipDetails: { championshipId: number, isAdmin: boolean };
   ChampionshipStatistics: { championshipId: number };
   NewsDetails: { newsId: number };
   MatchSwitching: { matchId: number };

@@ -184,6 +184,7 @@ const Home = () => {
                 onClick={() =>
                   navigation.navigate('ChampionshipDetails', {
                     championshipId: championship.id,
+                    isAdmin: isAdmin, 
                   })
                 }
                 onDelete={() => handleDelete(championship.id)}
