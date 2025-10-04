@@ -1,9 +1,9 @@
 import { Match } from '@/model/championship';
 import { RoundType } from '@/model/enum/roundType';
 
-export const BRACKET_EVENTS_DATA: Match[] = [
+export const BRACKET_EVENTS_DATA_1: Match[] = [
   {
-    id: 1,
+    id: "1",
     round: RoundType.R16,
     label: 'Confronto 1',
     home: {
@@ -60,7 +60,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 2,
+    id: "2",
     round: RoundType.R16,
     label: 'Confronto 2',
     home: {
@@ -108,7 +108,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 3,
+    id: "3",
     round: RoundType.R16,
     label: 'Confronto 3',
     home: {
@@ -156,7 +156,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 4,
+    id: "4",
     round: RoundType.R16,
     label: 'Confronto 4',
     home: {
@@ -194,7 +194,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 5,
+    id: "5",
     round: RoundType.R16,
     label: 'Confronto 5',
     home: {
@@ -242,7 +242,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 6,
+    id: "6",
     round: RoundType.R16,
     label: 'Confronto 6',
     home: {
@@ -290,7 +290,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 7,
+    id: "7",
     round: RoundType.R16,
     label: 'Confronto 7',
     home: {
@@ -329,7 +329,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 8,
+    id: "8",
     round: RoundType.R16,
     label: 'Confronto 8',
     home: {
@@ -377,7 +377,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 9,
+    id: "9",
     round: RoundType.QF,
     label: 'Confronto 1',
     home: {
@@ -416,7 +416,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 10,
+    id: "10",
     round: RoundType.QF,
     label: 'Confronto 2',
     home: {
@@ -455,7 +455,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 11,
+    id: "11",
     round: RoundType.QF,
     label: 'Confronto 3',
     home: {
@@ -484,7 +484,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 12,
+    id: "12",
     round: RoundType.QF,
     label: 'Confronto 4',
     home: {
@@ -523,7 +523,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 13,
+    id: "13",
     round: RoundType.SF,
     label: 'Confronto 1',
     home: {
@@ -571,7 +571,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 14,
+    id: "14",
     round: RoundType.SF,
     label: 'Confronto 2',
     home: {
@@ -619,7 +619,7 @@ export const BRACKET_EVENTS_DATA: Match[] = [
     },
   },
   {
-    id: 15,
+    id: "15",
     round: RoundType.F,
     label: 'Final',
     home: {
@@ -662,6 +662,384 @@ export const BRACKET_EVENTS_DATA: Match[] = [
           yellowCards: 0,
           redCards: 0,
           photo: require('@/assets/players/angelical/luiza_almeida.jpg'),
+        },
+      ],
+    },
+  },
+];
+
+
+export const BRACKET_EVENTS_DATA_2: Match[] = [
+  {
+    id: "1",
+    round: RoundType.R16,
+    label: 'Confronto 1',
+    home: {
+      id: 1,
+      name: 'Enlace',
+      logo: require('@/assets/teams/enlance_team.png'),
+      score: 2,
+      scorers: [
+        {
+          id: 101,
+          name: 'Sofia Alves',
+          goals: 1,
+          assists: 1,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/enlance/sofia_alves.jpg'),
+        },
+        {
+          id: 102,
+          name: 'Laura Mendes',
+          goals: 1,
+          assists: 0,
+          yellowCards: 1,
+          redCards: 0,
+          photo: require('@/assets/players/enlance/laura_mendes.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 2,
+      name: 'Impacto',
+      logo: require('@/assets/teams/impacto_team.png'),
+      score: 3,
+      scorers: [
+        {
+          id: 201,
+          name: 'Maria Letícia Silva',
+          goals: 1,
+          assists: 2,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/impacto/maria_leticia.jpg'),
+        },
+        {
+          id: 202,
+          name: 'Ana Clara Fontora',
+          goals: 2,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/impacto/ana_clara.jpg'),
+        },
+      ],
+    },
+  },
+  {
+    id: "2",
+    round: RoundType.R16,
+    label: 'Confronto 2',
+    home: {
+      id: 3,
+      name: 'Arco',
+      logo: require('@/assets/teams/arco_team.png'),
+      score: 2,
+      scorers: [
+        {
+          id: 301,
+          name: 'Beatriz Costa',
+          goals: 2,
+          assists: 0,
+          yellowCards: 1,
+          redCards: 0,
+          photo: require('@/assets/players/arco/beatriz_costa.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 4,
+      name: 'Feras',
+      logo: require('@/assets/teams/feras_team.png'),
+      score: 4,
+      scorers: [
+        {
+          id: 801,
+          name: 'Júlia Martins',
+          goals: 3,
+          assists: 1,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/feras/julia_martins.jpg'),
+        },
+        {
+          id: 402,
+          name: 'Camila Rodrigues',
+          goals: 1,
+          assists: 1,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/feras/camila_rodrigues.jpg'),
+        },
+      ],
+    },
+  },
+  {
+    id: "3",
+    round: RoundType.R16,
+    label: 'Confronto 3',
+    home: {
+      id: 5,
+      name: 'Tribalistas',
+      logo: require('@/assets/teams/tribalistas_team.png'),
+      score: 3,
+      scorers: [
+        {
+          id: 501,
+          name: 'Isabela Ferreira',
+          goals: 2,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/tribalistas/isabela_ferreira.jpg'),
+        },
+        {
+          id: 502,
+          name: 'Manuela Souza',
+          goals: 1,
+          assists: 2,
+          yellowCards: 1,
+          redCards: 0,
+          photo: require('@/assets/players/tribalistas/manuela_souza.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 6,
+      name: 'Confraria',
+      logo: require('@/assets/teams/confraria_team.png'),
+      score: 1,
+      scorers: [
+        {
+          id: 601,
+          name: 'Mariana Lima',
+          goals: 1,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/confraria/mariana_lima.jpg'),
+        },
+      ],
+    },
+  },
+  {
+    id: "4",
+    round: RoundType.R16,
+    label: 'Confronto 4',
+    home: {
+      id: 7,
+      name: 'Legado',
+      logo: require('@/assets/teams/legado_team.png'),
+      score: 2,
+      scorers: [
+        {
+          id: 701,
+          name: 'Larissa Oliveira',
+          goals: 1,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/legado/larissa_oliveira.jpg'),
+        },
+        {
+          id: 702,
+          name: 'Valentina Pereira',
+          goals: 1,
+          assists: 1,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/legado/valentina_pereira.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 8,
+      name: 'Mancha',
+      logo: require('@/assets/teams/mancha_team.png'),
+      score: 0,
+      scorers: [],
+    },
+  },
+  {
+    id: "5",
+    round: RoundType.R16,
+    label: 'Confronto 5',
+    home: {
+      id: 9,
+      name: 'Pokas',
+      logo: require('@/assets/teams/pokas_team.png'),
+      score: 1,
+      scorers: [
+        {
+          id: 901,
+          name: 'Helena Gomes',
+          goals: 1,
+          assists: 0,
+          yellowCards: 1,
+          redCards: 1,
+          photo: require('@/assets/players/pokas/helena_gomes.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 10,
+      name: 'Angelical',
+      logo: require('@/assets/teams/angelical_team.png'),
+      score: 3,
+      scorers: [
+        {
+          id: 1001,
+          name: 'Gabriela Ribeiro',
+          goals: 2,
+          assists: 1,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/angelical/gabriela_ribeiro.jpg'),
+        },
+        {
+          id: 1002,
+          name: 'Luiza Almeida',
+          goals: 1,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/angelical/luiza_almeida.jpg'),
+        },
+      ],
+    },
+  },
+  {
+    id: "6",
+    round: RoundType.R16,
+    label: 'Confronto 6',
+    home: {
+      id: 11,
+      name: 'Guadalupe',
+      logo: require('@/assets/teams/guadalupe_team.png'),
+      score: 4,
+      scorers: [
+        {
+          id: 1101,
+          name: 'Alice Santos',
+          goals: 2,
+          assists: 1,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/guadalupe/alice_santos.jpg'),
+        },
+        {
+          id: 1102,
+          name: 'Clara Nogueira',
+          goals: 2,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/guadalupe/clara_nogueira.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 12,
+      name: 'Império',
+      logo: require('@/assets/teams/imperio_team.png'),
+      score: 2,
+      scorers: [
+        {
+          id: 1201,
+          name: 'Yasmin Rocha',
+          goals: 2,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/imperio/yasmin_rocha.jpg'),
+        },
+      ],
+    },
+  },
+  {
+    id: "7",
+    round: RoundType.R16,
+    label: 'Confronto 7',
+    home: {
+      id: 13,
+      name: 'Podium',
+      logo: require('@/assets/teams/podium_team.png'),
+      score: 3,
+      scorers: [
+        {
+          id: 1301,
+          name: 'Ester Dias',
+          goals: 3,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/podium/ester_dias.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 14,
+      name: 'Impacto',
+      logo: require('@/assets/teams/impacto_team.png'),
+      score: 1,
+      scorers: [
+        {
+          id: 201,
+          name: 'Maria Letícia Silva',
+          goals: 1,
+          assists: 0,
+          yellowCards: 1,
+          redCards: 0,
+          photo: require('@/assets/players/impacto/maria_leticia.jpg'),
+        },
+      ],
+    },
+  },
+  {
+    id: "8",
+    round: RoundType.R16,
+    label: 'Confronto 8',
+    home: {
+      id: 15,
+      name: 'Pomo',
+      logo: require('@/assets/teams/pomo_team.png'),
+      score: 2,
+      scorers: [
+        {
+          id: 1501,
+          name: 'Rebeca Barbosa',
+          goals: 1,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/pomo/rebeca_barbosa.jpg'),
+        },
+        {
+          id: 1502,
+          name: 'Sarah Azevedo',
+          goals: 1,
+          assists: 1,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/pomo/sarah_azevedo.jpg'),
+        },
+      ],
+    },
+    away: {
+      id: 16,
+      name: 'Trevo',
+      logo: require('@/assets/teams/trevo_logo.png'),
+      score: 1,
+      scorers: [
+        {
+          id: 1601,
+          name: 'Vitória Barros',
+          goals: 1,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+          photo: require('@/assets/players/default_player.jpg'),
         },
       ],
     },

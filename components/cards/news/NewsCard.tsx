@@ -1,12 +1,15 @@
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
+import { NewsDocument } from '@/services/news/newsService';
 import { COLORS } from '@/theme/colors';
 import { FontAwesome } from '@expo/vector-icons';
-import { format, parseISO } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ImageSourcePropType } from 'react-native';
+import { useMemo } from 'react';
 import {
+  ActionsContainer,
   NewsDate,
   NewsExcerpt,
+  NewsFooter,
   NewsInfo,
   NewsItem,
   NewsMetaDivider,
@@ -18,12 +21,7 @@ import {
 } from './styles';
 
 type NewsCardProps = {
-  title: string;
-  description: string;
-  pill: string;
-  image?: ImageSourcePropType | null;
-  source: string;
-  date: string;
+  newsItem: NewsDocument;
   onClick: () => void;
   isAdmin?: boolean;
   onEdit: () => void;
@@ -31,50 +29,59 @@ type NewsCardProps = {
 };
 
 const NewsCard = ({
-  title,
-  description,
-  image,
-  source,
+  newsItem,
   onClick,
-  date,
-  pill,
   isAdmin = false,
   onEdit,
   onDelete,
 }: NewsCardProps) => {
-  const formattedDate = format(parseISO(date), 'dd/MM/yyyy', {
-    locale: ptBR,
-  });
+
+  const formattedDate = useMemo(() => {
+    if (!newsItem.date) {
+      return '';
+    }
+
+    const dateObject = parse(newsItem.date, 'yyyy-MM-dd', new Date());
+
+    return format(dateObject, "dd/MM/yyyy", {
+      locale: ptBR,
+    });
+  }, [newsItem.date]);
 
   return (
     <NewsItem activeOpacity={0.8} onPress={onClick}>
-      {image && <NewsThumb source={image} alt="News thumb image" />} 
+      {newsItem.image && <NewsThumb source={{ uri: newsItem.image }} alt="News thumb image" />}
 
       <NewsInfo>
         <NewsMetaRow>
-          <NewsPill>{pill?.toLocaleUpperCase()}</NewsPill>
+          <NewsPill>{newsItem.pill?.toLocaleUpperCase()}</NewsPill>
           <NewsMetaDivider />
         </NewsMetaRow>
 
-        <NewsTitle numberOfLines={2}>{title?.toLocaleUpperCase()}</NewsTitle>
+        <NewsTitle numberOfLines={2}>{newsItem.title?.toLocaleUpperCase()}</NewsTitle>
 
-        <NewsExcerpt numberOfLines={2}>{description}</NewsExcerpt>
-        <NewsDate>{formattedDate}</NewsDate>
-        <NewsText>Fonte: {source}</NewsText>
+        <NewsExcerpt numberOfLines={2}>{newsItem.description}</NewsExcerpt>
+        <NewsFooter>
+          <NewsDate>{formattedDate}</NewsDate>
+          <NewsText>{newsItem.source}</NewsText>
+        </NewsFooter>
+
         {isAdmin && (
           <>
-            <ActionButton
-              backgroundColor={COLORS.grayMedium}
-              label="Editar notícia"
-              onPress={onEdit}
-              icon={<FontAwesome name="edit" size={18} color={COLORS.white} />}
-            />
-            <ActionButton
-              backgroundColor={COLORS.red}
-              label="Remover notícia"
-              onPress={onDelete}
-              icon={<FontAwesome name="trash" size={18} color={COLORS.white} />}
-            />
+            <ActionsContainer>
+              <ActionButton
+                backgroundColor={COLORS.grayMedium}
+                label="Editar"
+                onPress={onEdit}
+                icon={<FontAwesome name="edit" size={18} color={COLORS.white} />}
+              />
+              <ActionButton
+                backgroundColor={COLORS.red}
+                label="Remover"
+                onPress={onDelete}
+                icon={<FontAwesome name="trash" size={18} color={COLORS.white} />}
+              />
+            </ActionsContainer>
           </>
         )}
       </NewsInfo>

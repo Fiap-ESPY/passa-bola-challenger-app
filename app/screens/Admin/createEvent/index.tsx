@@ -1,24 +1,23 @@
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Alert,
   Image,
-  ImageSourcePropType,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StatusBar,
-  Switch,
+  Switch
 } from 'react-native';
 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 
-import { BRACKET_EVENTS_DATA } from '@/data/brackEventData';
-import type { Championship, RuleSection } from '@/model/championship';
+import { RuleSection } from '@/model/championship';
+import { ChampionshipInput, championshipService } from '@/services/championship/championshipService';
+import { storageService } from '@/services/storage/storageService';
 import { COLORS } from '@/theme/colors';
-import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
 import { useRoute } from '@react-navigation/native';
 import {
   AddButton,
@@ -53,26 +52,24 @@ const initialFormData = {
   title: '',
   type: 'campeonato' as 'racha' | 'campeonato',
   address: '',
-  image: null as ImageSourcePropType | null,
-  date: new Date(),
+  image: null,
+  dateAndHour: new Date().toISOString(),
   isAvailable: true,
+  isPublished: false,
   description: '',
   rules: [{ title: '', items: [''] }] as RuleSection[],
 };
 
-type FormData = typeof initialFormData;
+type FormData = Omit<ChampionshipInput, 'id'>;
 
 const AdminCreateEvent = () => {
   const route = useRoute();
-  const { championshipId } = route.params as { championshipId: number };
-
+  const { championshipId } = (route.params as { championshipId?: string }) || {};
   const isEditMode = !!championshipId;
 
-  const [formData, setFormData] = useState(initialFormData);
-
-  const [existing, setExisting] = useState<Championship[]>([]);
-  const [hydrated, setHydrated] = useState<boolean>(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [formData, setFormData] = React.useState<FormData>(initialFormData);
+  const [loading, setLoading] = React.useState(isEditMode);
+  const [showDatePicker, setShowDatePicker] = React.useState(false);
 
   const updateField = <K extends keyof FormData>(
     field: K,
@@ -82,62 +79,68 @@ const AdminCreateEvent = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      const stored = await loadEvents();
-      if (stored && Array.isArray(stored)) setExisting(stored);
-      setHydrated(true);
-    })();
-  }, []);
+    if (!isEditMode) return;
 
-  useEffect(() => {
-    if (isEditMode && hydrated) {
-      const eventToEdit = existing.find(e => e.id === championshipId);
-      if (eventToEdit) {
-        setFormData({
-          title: eventToEdit.title,
-          type: eventToEdit.type,
-          address: eventToEdit.address,
-          image: eventToEdit.image || null,
-          date: new Date(eventToEdit.dateAndHour),
-          isAvailable: eventToEdit.isAvailable,
-          description: eventToEdit.description || '',
-          rules:
-            eventToEdit.rules && eventToEdit.rules.length > 0
-              ? eventToEdit.rules
-              : [{ title: '', items: [''] }],
-        });
+    const fetchChampionship = async () => {
+      try {
+        const eventToEdit = await championshipService.getChampionshipByDocId(championshipId);
+        if (eventToEdit) {
+          setFormData({
+            title: eventToEdit.title,
+            type: eventToEdit.type,
+            address: eventToEdit.address,
+            image: eventToEdit.image || null,
+            dateAndHour: eventToEdit.dateAndHour,
+            isAvailable: eventToEdit.isAvailable,
+            isPublished: eventToEdit.type === 'racha' ? true : false,
+            description: eventToEdit.description || '',
+            rules:
+              eventToEdit.rules && eventToEdit.rules.length > 0
+                ? eventToEdit.rules
+                : [{ title: '', items: [''] }],
+          });
+        }
+      } catch (error) {
+        Alert.alert('Erro', 'Não foi possível carregar os dados do evento.');
+        router.back();
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [isEditMode, hydrated, existing, championshipId]);
+    };
+
+    fetchChampionship();
+  }, [isEditMode, championshipId]);
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permissão necessária',
-        'Precisamos de acesso à sua galeria.'
-      );
-      return;
-    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'images',
       allowsEditing: true,
       aspect: [16, 9],
-      quality: 1,
+      quality: 0.7,
     });
-    if (!result.canceled) {
-      updateField('image', { uri: result.assets[0].uri });
+
+    if (result.canceled) return;
+
+    setLoading(true);
+    try {
+      const imageUri = result.assets[0].uri;
+      const downloadURL = await storageService.uploadFileAndGetURL(imageUri, 'news-covers');
+      updateField('image', downloadURL);
+    } catch (error) {
+      Alert.alert('Erro', 'Falha no upload da imagem.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const onChangeDate = (_event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || formData.date;
+    const currentDate = selectedDate || new Date(formData.dateAndHour);
     setShowDatePicker(Platform.OS === 'ios');
-    updateField('date', currentDate);
+    updateField('dateAndHour', currentDate.toISOString());
   };
 
   const handleRuleSectionChange = (text: string, sectionIndex: number) => {
-    const newRules = [...formData.rules];
+    const newRules = [...formData?.rules ?? []];
     newRules[sectionIndex].title = text;
     updateField('rules', newRules);
   };
@@ -147,86 +150,72 @@ const AdminCreateEvent = () => {
     sectionIndex: number,
     itemIndex: number
   ) => {
-    const newRules = [...formData.rules];
+    const newRules = [...formData.rules ?? []];
     newRules[sectionIndex].items[itemIndex] = text;
     updateField('rules', newRules);
   };
 
   const addRuleSection = () => {
-    updateField('rules', [...formData.rules, { title: '', items: [''] }]);
+    updateField('rules', [...formData?.rules ?? [], { title: '', items: [''] }]);
   };
 
   const removeRuleSection = (sectionIndex: number) => {
-    const newRules = formData.rules.filter(
-      (_, index) => index !== sectionIndex
-    );
+    const newRules = formData?.rules?.filter((_, index) => index !== sectionIndex);
     updateField('rules', newRules);
   };
 
   const addRuleItem = (sectionIndex: number) => {
-    const newRules = [...formData.rules];
+    const newRules = [...formData?.rules ?? []];
     newRules[sectionIndex].items.push('');
     updateField('rules', newRules);
   };
 
   const removeRuleItem = (sectionIndex: number, itemIndex: number) => {
-    const newRules = [...formData.rules];
+    const newRules = [...formData?.rules ?? []];
     newRules[sectionIndex].items = newRules[sectionIndex].items.filter(
       (_, i) => i !== itemIndex
     );
     updateField('rules', newRules);
   };
 
-  const handleSubmit = useCallback(async () => {
-    if (!hydrated || !formData.title.trim() || !formData.address.trim()) {
-      Alert.alert(
-        'Erro',
-        'Por favor, preencha os campos de título e endereço.'
-      );
+  const handleSubmit = React.useCallback(async () => {
+    if (!formData.title.trim() || !formData.address.trim()) {
+      Alert.alert('Erro', 'Por favor, preencha os campos de título e endereço.');
       return;
     }
 
-    const filteredRules = formData.rules
-      .map(section => ({
-        title: section.title.trim(),
-        items: section.items.map(item => item.trim()).filter(item => item),
-      }))
-      .filter(section => section.title && section.items.length > 0);
+    setLoading(true);
 
-    const eventDataPayload = {
-      title: formData.title.trim(),
-      type: formData.type,
-      address: formData.address.trim(),
-      image: formData.image,
-      dateAndHour: formData.date.toISOString(),
-      isAvailable: formData.isAvailable,
-      description: formData.description.trim(),
-      rules: filteredRules,
-    };
+    try {
+      const filteredRules = formData?.rules
+        ?.map(section => ({
+          title: section.title.trim(),
+          items: section.items.map(item => item.trim()).filter(Boolean),
+        }))
+        ?.filter(section => section.title && section.items.length > 0);
 
-    if (isEditMode) {
-      const updatedEvents = existing.map(event =>
-        event.id === championshipId ? { ...event, ...eventDataPayload } : event
-      );
-      await saveEvents(updatedEvents);
-      Alert.alert('Sucesso', 'Evento atualizado com sucesso!', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
-    } else {
-      const numericIds = existing.map(e => Number(e.id)).filter(n => !isNaN(n));
-      const nextNumeric = numericIds.length ? Math.max(...numericIds) + 1 : 1;
-      const newEvent: Championship = {
-        id: nextNumeric,
-        ...eventDataPayload,
-        brackEvents: formData.type === 'campeonato' ? BRACKET_EVENTS_DATA : [],
-        tournamentWinner: null,
+      const eventDataPayload: ChampionshipInput = {
+        ...formData,
+        rules: filteredRules,
       };
-      await saveEvents([...existing, newEvent]);
-      Alert.alert('Sucesso', 'Evento criado com sucesso!', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
+
+      if (isEditMode) {
+        await championshipService.updateChampionship(championshipId, eventDataPayload);
+        Alert.alert('Sucesso', 'Evento atualizado com sucesso!', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      } else {
+        await championshipService.addChampionship(eventDataPayload);
+        Alert.alert('Sucesso', 'Evento criado com sucesso!', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Ocorreu um problema ao salvar o evento.');
+    } finally {
+      setLoading(false);
     }
-  }, [existing, hydrated, formData, isEditMode, championshipId]);
+  }, [formData, isEditMode, championshipId]);
 
   return (
     <Screen>
@@ -243,7 +232,7 @@ const AdminCreateEvent = () => {
         </HeaderContent>
       </HeaderGradient>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -286,7 +275,7 @@ const AdminCreateEvent = () => {
             <InputPressable onPress={() => setShowDatePicker(true)}>
               <InputIcon name="calendar" />
               <InputValue>
-                {formData.date.toLocaleString('pt-BR', {
+                {new Date(formData.dateAndHour).toLocaleString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
@@ -298,7 +287,7 @@ const AdminCreateEvent = () => {
 
             {showDatePicker && (
               <DateTimePicker
-                value={formData.date}
+                value={new Date(formData.dateAndHour)}
                 mode="datetime"
                 display="default"
                 onChange={onChangeDate}
@@ -325,7 +314,7 @@ const AdminCreateEvent = () => {
             />
 
             <Label>Regras</Label>
-            {formData.rules.map((section, sectionIndex) => (
+            {formData?.rules?.map((section, sectionIndex) => (
               <RuleSectionContainer key={sectionIndex}>
                 <RuleItemRow>
                   <RuleInput
@@ -388,7 +377,7 @@ const AdminCreateEvent = () => {
             <InputPressable onPress={pickImage}>
               {formData.image ? (
                 <Image
-                  source={formData.image}
+                  source={{ uri: formData.image }}
                   style={{ width: 60, height: 40, borderRadius: 8 }}
                 />
               ) : (
@@ -399,9 +388,9 @@ const AdminCreateEvent = () => {
               </InputValue>
             </InputPressable>
 
-            <SubmitButton activeOpacity={0.9} onPress={handleSubmit}>
+            <SubmitButton activeOpacity={0.9} onPress={handleSubmit} disabled={loading}>
               <SubmitText>
-                {isEditMode ? 'Salvar Alterações' : 'Criar Evento'}
+                {loading ? 'Salvando...' : (isEditMode ? 'Salvar Alterações' : 'Criar Evento')}
               </SubmitText>
             </SubmitButton>
           </Form>

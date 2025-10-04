@@ -24,4 +24,6 @@ export const COLORS = {
   orange: '#FB8C00',
   orangeLight: '#FFF3E0',
   successBg: '#E8F5E9',
+  pinkLight: '#F576B1',
+  
 };

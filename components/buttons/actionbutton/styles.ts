@@ -6,14 +6,17 @@ export const ButtonContainer = styled.Pressable<{
   backgroundColor?: string;
 }>`
   flex: 1;
-  margin-top: 10px;
-  padding: 12px;
+  margin-top: 8px;
+  padding: 10px;
   border-radius: 20px;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ isDisabled, backgroundColor }) =>
-    isDisabled ? COLORS.gray : backgroundColor || COLORS.green};
+  background-color: ${({ isDisabled, backgroundColor }) => {
+    const baseColor = backgroundColor || COLORS.green;
+
+    return isDisabled ? `${baseColor}80` : baseColor;
+  }};
 `;
 
 export const ButtonText = styled.Text`

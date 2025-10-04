@@ -1,15 +1,18 @@
 import type { Championship } from '@/model/championship';
-import { BRACKET_EVENTS_DATA } from './brackEventData';
+import { BRACKET_EVENTS_DATA_1, BRACKET_EVENTS_DATA_2 } from './brackEventData';
 
 export const CHAMPIONSHIP_DATA: Championship[] = [
   {
     id: 1,
     title: 'Futebol Amistoso - São Paulo x Rio de Janeiro',
     type: 'racha',
-    image: require('@/assets/events/morumbis.jpg'),
+    image: require('@/assets/championship/morumbis.jpg'),
     address: 'Estádio do Morumbi, São Paulo, SP',
     dateAndHour: '2025-10-12T16:00:00Z',
     isAvailable: true,
+    isPublished: true,
+    maxTeams: 8,
+    registeredTeams: 8,
     description:
       'Um grande encontro amistoso para celebrar o esporte. Junte sua galera e venha participar deste racha histórico entre as duas maiores cidades do país. O foco é a diversão e a confraternização.',
     rules: [
@@ -22,17 +25,20 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
         ],
       },
     ],
-    brackEvents: [],
+    matches: [],
     tournamentWinner: null,
   },
   {
     id: 2,
     title: 'Copa Passa a Bola - 4ª edição',
     type: 'campeonato',
-    image: require('@/assets/events/copa_passa_bola_3.jpg'),
-    address: 'Ginásio do Maracanãzinho, Rio de Janeiro, RJ',
-    dateAndHour: '2025-11-08T09:00:00Z',
+    image: require('@/assets/championship/copa_passa_bola_4.jpg'),
+    address: 'Estádio do Corinthians, São Paulo, SP',
+    dateAndHour: '2025-10-04T09:00:00Z',
     isAvailable: true,
+    isPublished: false,
+    maxTeams: 16,
+    registeredTeams: 15,
     description:
       'O Campeonato de Futebol Feminino Amador reúne 12 times compostos por 10 jogadoras cada, promovendo a integração, o espírito esportivo e o incentivo à prática do futebol entre mulheres. Com partidas dinâmicas e disputas acirradas, o torneio valoriza o talento feminino no esporte.',
     rules: [
@@ -59,17 +65,60 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
         ],
       },
     ],
-    brackEvents: BRACKET_EVENTS_DATA,
+    matches: [],
     tournamentWinner: null,
   },
   {
     id: 3,
+    title: 'Copa Passa a Bola - 3ª edição',
+    type: 'campeonato',
+    image: require('@/assets/championship/copa_passa_bola_3.jpg'),
+    address: 'Ginásio do Maracanãzinho, Rio de Janeiro, RJ',
+    dateAndHour: '2025-09-08T09:00:00Z',
+    isAvailable: true,
+    isPublished: true,
+    maxTeams: 16,
+    registeredTeams: 16,
+    description:
+      'O Campeonato de Futebol Feminino Amador reúne 12 times compostos por 10 jogadoras cada, promovendo a integração, o espírito esportivo e o incentivo à prática do futebol entre mulheres. Com partidas dinâmicas e disputas acirradas, o torneio valoriza o talento feminino no esporte.',
+    rules: [
+      {
+        title: 'Composição dos Times',
+        items: [
+          'Cada equipe poderá inscrever até 10 jogadoras.',
+          'Em campo, cada time jogará com 7 jogadoras (6 na linha + 1 goleira).',
+          'Substituições são ilimitadas, mas devem ocorrer com autorização da arbitragem.',
+        ],
+      },
+      {
+        title: 'Duração das Partidas',
+        items: [
+          'Cada partida terá 2 tempos de 20 minutos, com 5 minutos de intervalo.',
+          'Em caso de empate no mata-mata, a decisão será por pênaltis (3 cobranças por time).',
+        ],
+      },
+      {
+        title: 'Sistema de Disputa: Mata-Mata',
+        items: [
+          'Participam 12 equipes em sistema eliminatório simples.',
+          'Quartas de Final -> Semifinais -> Final.',
+        ],
+      },
+    ],
+    matches: BRACKET_EVENTS_DATA_2,
+    tournamentWinner: null,
+  },
+  {
+    id: 4,
     title: 'Copa Passa a Bola - 2ª edição',
     type: 'campeonato',
     address: 'Ginásio do Ibirapuera, São Paulo, SP',
     dateAndHour: '2024-05-20T19:30:00Z',
     isAvailable: false,
+    isPublished: true,
     image: require('@/assets/news/copa_passa_bola_1.png'),
+    maxTeams: 16,
+    registeredTeams: 16,
     description:
       'A segunda edição da Copa Passa a Bola marcou o início de uma tradição no futebol feminino amador. O evento foi um sucesso, reunindo equipes talentosas em uma disputa emocionante que culminou com a vitória do time Feras.',
     rules: [
@@ -88,7 +137,7 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
         ],
       },
     ],
-    brackEvents: BRACKET_EVENTS_DATA,
+    matches: BRACKET_EVENTS_DATA_1,
     tournamentWinner: {
       id: 4,
       name: 'Feras',

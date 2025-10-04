@@ -1,13 +1,16 @@
-import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
-import { Championship } from '@/model/championship';
+import { UserSessionData } from '@/services/auth/authService';
+import { ChampionshipDocument, championshipService } from '@/services/championship/championshipService';
 import { COLORS } from '@/theme/colors';
+import { UserSession } from '@/utils/session/session';
 import { useRoute } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
-import { ScrollView, StatusBar } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StatusBar, Text } from 'react-native';
+import { Container } from '../ChampionshipDetails/styles';
 import {
   BackButton,
   BackIcon,
+  ContainerPhoto,
   HeaderCard,
   HeaderContent,
   HeaderGradient,
@@ -16,12 +19,15 @@ import {
   PlayerDetail,
   PlayerName,
   PlayerPhoto,
+  PlayerRank,
   PlayerRow,
   PlayerStatistics,
   PlayerStatisticsContainer,
   PlayerStatisticsIcon,
   PlayerStatisticsValue,
+  PlayerTeamContainer,
   PlayerTeamLogo,
+  PlayerTeamName,
   PodiumColumn,
   PodiumContainer,
   PodiumGoalsContainer,
@@ -32,7 +38,7 @@ import {
   PodiumPhoto,
   PodiumRank,
   Screen,
-  SummaryContainer,
+  SummaryContainer
 } from './styles';
 import { calculateTopScorers } from './utils';
 
@@ -40,16 +46,13 @@ const ChampioshipStatistics = () => {
   const router = useRouter();
 
   const route = useRoute();
-  const { championshipId } = route.params as { championshipId: number };
+  const { championshipId } = route.params as { championshipId: string };
 
-  const refId = useMemo(() => championshipId, [championshipId]);
+  const [championship, setChampionship] = useState<ChampionshipDocument | null>(null);
+  const [session, setSession] = useState<UserSessionData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const championship: Championship | undefined = useMemo(
-    () => CHAMPIONSHIP_DATA.find(championship => championship.id === refId),
-    [refId]
-  );
-
-  const topScorers = calculateTopScorers(championship?.brackEvents ?? []);
+  const topScorers = calculateTopScorers(championship?.matches ?? []);
 
   const sortedTopScorers = useMemo(
     () => [...topScorers].sort((a, b) => b.totalGoals - a.totalGoals),
@@ -59,16 +62,61 @@ const ChampioshipStatistics = () => {
   const podiumPlayers = sortedTopScorers.slice(0, 3);
   const remainingPlayers = sortedTopScorers.slice(3);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!championshipId) {
+        Alert.alert("Erro", "ID do campeonato não encontrado.");
+        router.back();
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const [fetchedChampionship, userSession] = await Promise.all([
+          championshipService.getChampionshipByDocId(championshipId),
+          UserSession.get()
+        ]);
+
+        setChampionship(fetchedChampionship);
+        setSession(userSession);
+
+      } catch (error) {
+        Alert.alert("Erro", "Não foi possível carregar os detalhes do campeonato.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [championshipId]);
+
+  if (isLoading) {
+    return (
+      <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.blue} />
+      </Container>
+    );
+  }
+
+  if (!championship) {
+    return (
+      <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Campeonato não encontrado!</Text>
+      </Container>
+    );
+  }
+
   const renderPodiumPlayer = (
     player: any,
     position: '1st' | '2nd' | '3rd',
     rank: number
   ) => (
     <PodiumItem key={player.id} position={position}>
-      <PodiumPhoto source={player.photo} position={position} />
+      <ContainerPhoto>
+        <PodiumPhoto source={{ uri: player.photo }} position={position} />
+      </ContainerPhoto>
       <PodiumColumn position={position}>
-        <PodiumRank>{rank}º</PodiumRank>
-        <PodiumName numberOfLines={1}>{player.name}</PodiumName>
+        <PodiumRank>{rank}</PodiumRank>
+        <PodiumName numberOfLines={2}>{player.name}</PodiumName>
         <PodiumGoalsContainer>
           <PodiumGoalsIcon
             source={require('@/assets/players/statistics/soccer_ball.png')}
@@ -113,29 +161,33 @@ const ChampioshipStatistics = () => {
         <SummaryContainer>
           {remainingPlayers
             .sort((a, b) => b.totalGoals - a.totalGoals)
-            .map(player => (
+            .map((player, index) => (
               <PlayerRow key={player.id}>
-                <PlayerPhoto source={player.photo} resizeMode="cover" />
+                {player.photo && (
+                  <PlayerPhoto source={{ uri: player.photo }} resizeMode="cover" />
+                )}
                 <PlayerContainer>
                   <PlayerDetail>
-                    <PlayerTeamLogo
-                      source={player.teamLogo}
-                      resizeMode="contain"
-                      alt="Team logo image"
-                    />
                     <PlayerName>{player.name}</PlayerName>
+                    <PlayerRank>{index + 1}°</PlayerRank>
                   </PlayerDetail>
+
                   <PlayerStatisticsContainer>
+                    <PlayerTeamContainer>
+                      {player.teamLogo && (
+                        <PlayerTeamLogo source={{ uri: player.teamLogo }} resizeMode="contain" />
+                      )}
+                      <PlayerTeamName>{player.teamName}</PlayerTeamName>
+                    </PlayerTeamContainer>
+
                     <PlayerStatistics>
                       <PlayerStatisticsIcon
                         source={require('@/assets/players/statistics/soccer_ball.png')}
                         resizeMode="contain"
-                        alt="Soccer ball icon"
                       />
-                      <PlayerStatisticsValue>
-                        {player.totalGoals ?? 0}
-                      </PlayerStatisticsValue>
+                      <PlayerStatisticsValue>{player.totalGoals ?? 0}</PlayerStatisticsValue>
                     </PlayerStatistics>
+
                   </PlayerStatisticsContainer>
                 </PlayerContainer>
               </PlayerRow>
@@ -147,3 +199,4 @@ const ChampioshipStatistics = () => {
 };
 
 export default ChampioshipStatistics;
+

@@ -2,19 +2,24 @@ import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import ChampionshipCard from '@/components/cards/championship/ChampionshipCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
+import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { listenAuth } from '@/services/auth';
+import { authService, UserSessionData } from '@/services/auth/authService';
+import { ChampionshipDocument, championshipService } from '@/services/championship/championshipService';
+import { seedChampionshipsToFirestore } from '@/services/seedData';
 import { COLORS } from '@/theme/colors';
-import { loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, ScrollView, StatusBar } from 'react-native';
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, StatusBar } from 'react-native';
 import {
   BackButton,
   BackIcon,
   CardWrapper,
+  EmptyChampionshipSVG,
+  EmptyContainer,
+  EmptyText,
   FloatingButton,
   HeaderCard,
   HeaderGrad,
@@ -25,6 +30,7 @@ import {
   Tabs,
   TabText,
 } from './styles';
+import { Container } from '../ChampionshipDetails/styles';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -35,80 +41,111 @@ enum EventFilterType {
 const Home = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
-  const [events, setEvents] = useState(CHAMPIONSHIP_DATA);
-  const [hydrated, setHydrated] = useState(false);
+  const [championships, setChampionships] = useState<ChampionshipDocument[]>([]);
+  const [isLoading, setisLoading] = useState(true);
+  const [isChecking, setIsChecking] = useState(true);
+
+  const [session, setSession] = useState<UserSessionData | null>(null);
 
   const [eventFilterType, setEventFilterType] = useState<EventFilterType>(
     EventFilterType.ALL_EVENTS
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  const isAdmin = useMemo(() => session?.role === UserRole.ADMIN, [session]);
+  const isOrganization = useMemo(() => session?.role === UserRole.ORGANIZATION, [session]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-      let active = true;
+      const fetchData = async () => {
+        setisLoading(true);
+        try {
+          const userSession = await UserSession.get();
+          setSession(userSession);
 
-      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
-
-      (async () => {
-        const stored = await loadEvents();
-        if (active && stored && Array.isArray(stored)) {
-          setEvents(stored);
-          setHydrated(true);
+          const fetchedChampionships = await championshipService.getAllChampionships();
+          setChampionships(fetchedChampionships);
+        } catch (error) {
+          console.error("Failed to fetch data:", error);
+          Alert.alert("Erro", "Não foi possível carregar os campeonatos.");
+        } finally {
+          setisLoading(false);
         }
-      })();
-
-      return () => {
-        active = false;
-        unsubAuth();
       };
+
+      fetchData();
     }, [])
   );
 
   useEffect(() => {
-    (async () => {
-      const stored = await loadEvents();
-      if (stored && Array.isArray(stored)) {
-        setEvents(stored);
-      } else {
-        await saveEvents(CHAMPIONSHIP_DATA);
+    const unsubscribe = authService.onAuthChange(async (session: UserSessionData | null) => {
+
+      if (!session) {
+        await UserSession.clear();
+        Alert.alert('Sessão expirada', 'Faça login novamente.');
+        navigation.navigate('BottomTabs', { screen: 'login' });
       }
-      setHydrated(true);
-    })();
+      setIsChecking(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!hydrated) return;
-    (async () => {
-      await saveEvents(events);
-    })();
-  }, [events, hydrated]);
 
-  const handleDelete = useCallback((id: number | string) => {
+  const handleDelete = useCallback((docId: string) => {
     Alert.alert(
-      'Remover evento',
-      'Tem certeza que deseja remover esse evento?',
+      'Remover Campeonato',
+      'Tem certeza que deseja remover este campeonato?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
           text: 'Remover',
           style: 'destructive',
-          onPress: () => setEvents(curr => curr.filter(e => e.id !== id)),
+          onPress: async () => {
+            try {
+              await championshipService.deleteChampionship(docId);
+              setChampionships(curr => curr.filter(c => c.docId !== docId));
+              Alert.alert('Sucesso', 'Campeonato removido.');
+            } catch (error) {
+              Alert.alert('Erro', 'Não foi possível remover o campeonato.');
+            }
+          },
         },
       ]
     );
   }, []);
 
   const filteredData = useMemo(() => {
-    const base = events.filter(event =>
+    const base = championships.filter(event =>
       event.title.toLowerCase().includes(filterSearch.toLowerCase())
     );
     if (eventFilterType === EventFilterType.NEXT_EVENTS)
       return base.filter(e => e.isAvailable);
     if (eventFilterType === EventFilterType.PAST_EVENTS)
       return base.filter(e => !e.isAvailable);
-    return base;
-  }, [events, eventFilterType, filterSearch]);
+
+    return base.sort(
+      (a, b) => new Date(b.dateAndHour).getTime() - new Date(a.dateAndHour).getTime()
+    );
+  }, [championships, eventFilterType, filterSearch]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    const fetchedChampionships = await championshipService.getAllChampionships();
+    setChampionships(fetchedChampionships);
+
+    setRefreshing(false);
+  }, []);
+
+  if (isLoading || isChecking) {
+    return (
+      <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.blue} />
+      </Container>
+    );
+  }
 
   return (
     <Screen>
@@ -162,34 +199,56 @@ const Home = () => {
 
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[COLORS.blue]}
+            tintColor={COLORS.blue}
+          />
+        }
       >
-        {filteredData.map(championship => (
-          <CardWrapper key={championship.id}>
-            <ChampionshipCard
-              championship={championship}
-              onClick={() =>
-                navigation.navigate('ChampionshipDetails', {
-                  championshipId: championship.id,
-                })
-              }
-              onDelete={() => handleDelete(championship.id)}
-              onEdit={() =>
-                navigation.navigate('AdminCreateEvent', {
-                  championshipId: championship.id,
-                })
-              }
-              isAdmin={isAdmin}
-            />
-          </CardWrapper>
-        ))}
+        {isLoading ? (
+          <EmptyContainer>
+            <ActivityIndicator size="large" color={COLORS.blue} />
+          </EmptyContainer>
+        ) : filteredData.length > 0 ? (
+
+          filteredData.map(championship => (
+            <CardWrapper key={championship.docId}>
+              <ChampionshipCard
+                championship={championship}
+                onClick={() =>
+                  navigation.navigate('ChampionshipDetails', {
+                    championshipId: championship.docId
+                  })
+                }
+                onDelete={() => handleDelete(championship.docId)}
+                onEdit={() => {
+                  navigation.navigate('AdminCreateEvent', {
+                    championshipId: championship.docId,
+                  });
+                }}
+                isAdmin={!!isAdmin}
+                isOrganization={!!isOrganization}
+              />
+            </CardWrapper>
+          ))
+        ) : (
+          <EmptyContainer>
+            <EmptyChampionshipSVG source={require('@/assets/championship/empty_championship.png')} />
+            <EmptyText>Nenhum campeonato ativo encontrado</EmptyText>
+          </EmptyContainer>
+        )}
       </ScrollView>
+
       {isAdmin && (
         <FloatingButton
-          activeOpacity={0.85}
           onPress={() =>
-            navigation.navigate('AdminCreateEvent', {
-              championshipId: null,
-            })
+            // navigation.navigate('AdminCreateEvent', {
+            //   championshipId: null,
+            // })
+            seedChampionshipsToFirestore()
           }
         >
           <FontAwesome name="plus" size={25} color={COLORS.white} />

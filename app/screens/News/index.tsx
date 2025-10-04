@@ -3,17 +3,16 @@ import logoImage from '@/assets/logo.png';
 import passaBolaImage from '@/assets/news/passa_bola.png';
 import NewsCard from '@/components/cards/news/NewsCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { NEWS_DATA } from '@/data/newsData';
 import { NewsCategoryType } from '@/model/enum/newsCategoryType';
+import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { listenAuth } from '@/services/auth';
+import { NewsDocument, newsService } from '@/services/news/newsService';
 import { COLORS } from '@/theme/colors';
-import { loadNews, saveNews } from '@/utils/news/newsStore';
+import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { router, useNavigation } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, ScrollView, StatusBar } from 'react-native';
+import { useFocusEffect, useNavigation } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, StatusBar } from 'react-native';
 import {
   BackButton,
   BackIcon,
@@ -33,71 +32,60 @@ import {
   Tabs,
   TabText,
 } from './styles';
-
-type NewsItem = (typeof NEWS_DATA)[number];
+import { seedNewsToFirestore } from '@/services/seedData';
 
 const News = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
-  const [news, setNews] = useState<NewsItem[]>(NEWS_DATA);
-  const [hydrated, setHydrated] = useState(false);
+  const [news, setNews] = useState<NewsDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const [eventFilterType, setEventFilterType] = useState<
     NewsCategoryType | undefined
   >(undefined);
   const [filterSearch, setFilterSearch] = useState<string>('');
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-      let active = true;
+      const fetchData = async () => {
+        setLoading(true);
+        try {
+          const userSession = await UserSession.get();
+          setIsAdmin(userSession?.role === UserRole.ADMIN);
 
-      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
-
-      (async () => {
-        const stored = await loadNews();
-        if (active && stored && Array.isArray(stored)) {
-          setNews(stored);
-          setHydrated(true);
+          const newsList = await newsService.getAllNews();
+          setNews(newsList);
+        } catch (error) {
+          console.error('Failed to fetch news:', error);
+          Alert.alert('Erro', 'Não foi possível carregar as notícias.');
+        } finally {
+          setLoading(false);
         }
-      })();
-
-      return () => {
-        active = false;
-        unsubAuth();
       };
+
+      fetchData();
     }, [])
   );
 
-  useEffect(() => {
-    (async () => {
-      const stored = await loadNews();
-      if (stored && Array.isArray(stored)) {
-        setNews(stored);
-      } else {
-        await setNews(NEWS_DATA);
-      }
-      setHydrated(true);
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    (async () => {
-      await saveNews(news);
-    })();
-  }, [news, hydrated]);
-
-  const handleDelete = useCallback((id: number | string) => {
+  const handleDelete = useCallback((docId: string) => {
     Alert.alert(
-      'Remover notícia',
-      'Tem certeza que deseja remover essa notícia?',
+      'Remover Notícia',
+      'Tem certeza que deseja remover esta notícia?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
           text: 'Remover',
           style: 'destructive',
-          onPress: () => setNews(curr => curr.filter(e => e.id !== id)),
+          onPress: async () => {
+            try {
+              await newsService.deleteNews(docId);
+              setNews(curr => curr.filter(item => item.docId !== docId));
+            } catch (error) {
+              Alert.alert('Erro', 'Não foi possível remover a notícia.');
+            }
+          },
         },
       ]
     );
@@ -108,14 +96,22 @@ const News = () => {
       item.title.toLowerCase().includes(filterSearch.toLowerCase())
     );
 
-    if (eventFilterType === NewsCategoryType.BRASILEIRAO_NEWS) {
-      return base.filter(n => n.category === NewsCategoryType.BRASILEIRAO_NEWS);
+    if (eventFilterType) {
+      return base.filter(n => n.category === eventFilterType);
     }
-    if (eventFilterType === NewsCategoryType.PASSA_BOLA_NEWS) {
-      return base.filter(n => n.category === NewsCategoryType.PASSA_BOLA_NEWS);
-    }
-    return base;
+    return base.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );;
   }, [news, eventFilterType, filterSearch]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    const fetchedNews = await newsService.getAllNews();
+    setNews(fetchedNews);
+
+    setRefreshing(false);
+  }, []);
 
   return (
     <Screen>
@@ -126,7 +122,7 @@ const News = () => {
         alt="Gradient Background"
       >
         {isAdmin && (
-          <BackButton onPress={() => router.back()}>
+          <BackButton onPress={() => navigation.navigate('AdminHome')}>
             <BackIcon name="arrow-left" />
           </BackButton>
         )}
@@ -135,12 +131,10 @@ const News = () => {
 
       <HeaderCard>
         <HeaderTitle>NOTÍCIAS</HeaderTitle>
-
         <SearchFilter
           searchValue={filterSearch}
           onChangeText={setFilterSearch}
         />
-
         <Tabs>
           <TabPill
             onPress={() => setEventFilterType(undefined)}
@@ -173,59 +167,68 @@ const News = () => {
         </Tabs>
       </HeaderCard>
 
-      <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <FeaturedCard activeOpacity={0.8}>
-          <FeaturedImage
-            source={passaBolaImage}
-            resizeMode="cover"
-            alt="Passa bola image"
-          >
-            <FeaturedOverlay
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              colors={['rgba(0,0,0,0.30)', 'rgba(0,0,0,0.2)']}
+      {loading ? (
+        <ActivityIndicator size="large" color={COLORS.blue} style={{ marginTop: 50 }} />
+      ) : (
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[COLORS.blue]}
+              tintColor={COLORS.blue}
             />
-            <FeaturedBadge>
-              <FeaturedBadgeText>Fique atualizado!</FeaturedBadgeText>
-            </FeaturedBadge>
-            <FeaturedTitle numberOfLines={2}>
-              NOVIDADES DO NOSSO INSTAGRAM AQUI
-            </FeaturedTitle>
-          </FeaturedImage>
-        </FeaturedCard>
+          }
+        >
+          <FeaturedCard activeOpacity={0.8}>
+            <FeaturedImage
+              source={passaBolaImage}
+              resizeMode="cover"
+              alt="Passa bola image"
+            >
+              <FeaturedOverlay
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                colors={['rgba(0,0,0,0.30)', 'rgba(0,0,0,0.2)']}
+              />
+              <FeaturedBadge>
+                <FeaturedBadgeText>Fique atualizado!</FeaturedBadgeText>
+              </FeaturedBadge>
+              <FeaturedTitle numberOfLines={2}>
+                NOVIDADES DO NOSSO INSTAGRAM AQUI
+              </FeaturedTitle>
+            </FeaturedImage>
+          </FeaturedCard>
 
-        {filteredData.map(newsItem => (
-          <NewsCard
-            key={newsItem.id}
-            title={newsItem.title}
-            description={newsItem.description}
-            image={newsItem.image}
-            date={newsItem.date}
-            source={newsItem.source}
-            pill={newsItem.pill}
-            isAdmin={isAdmin}
-            onClick={() =>
-              navigation.navigate('NewsDetails', { newsId: newsItem.id })
-            }
-            onEdit={() =>
-              navigation.navigate('AdminCreateNews', {
-                newsId: newsItem.id,
-              })
-            }
-            onDelete={() => handleDelete(newsItem.id)}
-          />
-        ))}
-      </ScrollView>
+          {filteredData.map(newsItem => (
+            <NewsCard
+              key={newsItem.docId}
+              newsItem={newsItem}
+              isAdmin={isAdmin}
+              onClick={() =>
+                navigation.navigate('NewsDetails', { newsId: newsItem.docId })
+              }
+              onEdit={() =>
+                navigation.navigate('AdminCreateNews', {
+                  newsId: newsItem.docId,
+                })
+              }
+              onDelete={() => handleDelete(newsItem.docId)}
+            />
+          ))}
+        </ScrollView>
+      )}
+
       {isAdmin && (
         <FloatingButton
           activeOpacity={0.85}
           onPress={() =>
-            navigation.navigate('AdminCreateNews', {
-              newsId: null,
-            })
+            // navigation.navigate('AdminCreateNews', {
+            //   newsId: null,
+            // })
+            seedNewsToFirestore()
           }
         >
           <FontAwesome name="plus" size={25} color={COLORS.white} />
