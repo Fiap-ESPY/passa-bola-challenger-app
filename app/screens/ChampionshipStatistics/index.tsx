@@ -1,149 +1,196 @@
-import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
-import { Championship } from '@/model/championship';
+import { UserSessionData } from '@/services/auth/authService';
+import { ChampionshipDocument, championshipService } from '@/services/championship/championshipService';
 import { COLORS } from '@/theme/colors';
+import { UserSession } from '@/utils/session/session';
 import { useRoute } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
-import { ScrollView, StatusBar } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StatusBar, Text } from 'react-native';
+import { Container } from '../ChampionshipDetails/styles';
 import {
-  BackButton,
-  BackIcon,
-  HeaderCard,
-  HeaderContent,
-  HeaderGradient,
-  HeaderTitle,
-  PlayerContainer,
-  PlayerDetail,
-  PlayerName,
-  PlayerPhoto,
-  PlayerRow,
-  PlayerStatistics,
-  PlayerStatisticsContainer,
-  PlayerStatisticsIcon,
-  PlayerStatisticsValue,
-  PlayerTeamLogo,
-  PodiumColumn,
-  PodiumContainer,
-  PodiumGoalsContainer,
-  PodiumGoalsIcon,
-  PodiumGoalsValue,
-  PodiumItem,
-  PodiumName,
-  PodiumPhoto,
-  PodiumRank,
-  Screen,
-  SummaryContainer,
+    BackButton,
+    BackIcon,
+    HeaderCard,
+    HeaderContent,
+    HeaderGradient,
+    HeaderTitle,
+    PlayerContainer,
+    PlayerDetail,
+    PlayerName,
+    PlayerPhoto,
+    PlayerRow,
+    PlayerStatistics,
+    PlayerStatisticsContainer,
+    PlayerStatisticsIcon,
+    PlayerStatisticsValue,
+    PlayerTeamLogo,
+    PodiumColumn,
+    PodiumContainer,
+    PodiumGoalsContainer,
+    PodiumGoalsIcon,
+    PodiumGoalsValue,
+    PodiumItem,
+    PodiumName,
+    PodiumPhoto,
+    PodiumRank,
+    Screen,
+    SummaryContainer
 } from './styles';
 import { calculateTopScorers } from './utils';
 
 const ChampioshipStatistics = () => {
-  const router = useRouter();
+    const router = useRouter();
 
-  const route = useRoute();
-  const { championshipId } = route.params as { championshipId: number };
+    const route = useRoute();
+    const { championshipId } = route.params as { championshipId: string };
 
-  const refId = useMemo(() => championshipId, [championshipId]);
+    const [championship, setChampionship] = useState<ChampionshipDocument | null>(null);
+    const [session, setSession] = useState<UserSessionData | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const championship: Championship | undefined = useMemo(
-    () => CHAMPIONSHIP_DATA.find(championship => championship.id === refId),
-    [refId]
-  );
+    const topScorers = calculateTopScorers(championship?.matches ?? []);
 
-  const topScorers = calculateTopScorers(championship?.brackEvents ?? []);
+    const sortedTopScorers = useMemo(
+        () => [...topScorers].sort((a, b) => b.totalGoals - a.totalGoals),
+        [topScorers]
+    );
 
-  const sortedTopScorers = useMemo(
-    () => [...topScorers].sort((a, b) => b.totalGoals - a.totalGoals),
-    [topScorers]
-  );
+    const podiumPlayers = sortedTopScorers.slice(0, 3);
+    const remainingPlayers = sortedTopScorers.slice(3);
 
-  const podiumPlayers = sortedTopScorers.slice(0, 3);
-  const remainingPlayers = sortedTopScorers.slice(3);
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!championshipId) {
+                Alert.alert("Erro", "ID do campeonato não encontrado.");
+                router.back();
+                return;
+            }
+            setIsLoading(true);
+            try {
+                const [fetchedChampionship, userSession] = await Promise.all([
+                    championshipService.getChampionshipByDocId(championshipId),
+                    UserSession.get()
+                ]);
 
-  const renderPodiumPlayer = (
-    player: any,
-    position: '1st' | '2nd' | '3rd',
-    rank: number
-  ) => (
-    <PodiumItem key={player.id} position={position}>
-      <PodiumPhoto source={player.photo} position={position} />
-      <PodiumColumn position={position}>
-        <PodiumRank>{rank}º</PodiumRank>
-        <PodiumName numberOfLines={1}>{player.name}</PodiumName>
-        <PodiumGoalsContainer>
-          <PodiumGoalsIcon
-            source={require('@/assets/players/statistics/soccer_ball.png')}
-          />
-          <PodiumGoalsValue>{player.totalGoals}</PodiumGoalsValue>
-        </PodiumGoalsContainer>
-      </PodiumColumn>
-    </PodiumItem>
-  );
+                setChampionship(fetchedChampionship);
+                setSession(userSession);
 
-  return (
-    <Screen>
-      <StatusBar barStyle="light-content" />
+            } catch (error) {
+                Alert.alert("Erro", "Não foi possível carregar os detalhes do campeonato.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-      <HeaderGradient
-        colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      >
-        <HeaderContent>
-          <BackButton onPress={() => router.back()}>
-            <BackIcon name="arrow-left" />
-          </BackButton>
-        </HeaderContent>
-      </HeaderGradient>
+        fetchData();
+    }, [championshipId]);
 
-      <HeaderCard>
-        <HeaderTitle>ESTATÍSTICAS CAMPEONATO</HeaderTitle>
+    if (isLoading) {
+        return (
+            <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color={COLORS.blue} />
+            </Container>
+        );
+    }
 
-        {podiumPlayers.length > 0 && (
-          <PodiumContainer>
-            {podiumPlayers[1] && renderPodiumPlayer(podiumPlayers[1], '2nd', 2)}
-            {podiumPlayers[0] && renderPodiumPlayer(podiumPlayers[0], '1st', 1)}
-            {podiumPlayers[2] && renderPodiumPlayer(podiumPlayers[2], '3rd', 3)}
-          </PodiumContainer>
-        )}
-      </HeaderCard>
-      <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <SummaryContainer>
-          {remainingPlayers
-            .sort((a, b) => b.totalGoals - a.totalGoals)
-            .map(player => (
-              <PlayerRow key={player.id}>
-                <PlayerPhoto source={player.photo} resizeMode="cover" />
-                <PlayerContainer>
-                  <PlayerDetail>
-                    <PlayerTeamLogo
-                      source={player.teamLogo}
-                      resizeMode="contain"
-                      alt="Team logo image"
-                    />
-                    <PlayerName>{player.name}</PlayerName>
-                  </PlayerDetail>
-                  <PlayerStatisticsContainer>
-                    <PlayerStatistics>
-                      <PlayerStatisticsIcon
+    if (!championship) {
+        return (
+            <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Campeonato não encontrado!</Text>
+            </Container>
+        );
+    }
+
+    const renderPodiumPlayer = (
+        player: any,
+        position: '1st' | '2nd' | '3rd',
+        rank: number
+    ) => (
+        <PodiumItem key={player.id} position={position}>
+            <PodiumPhoto source={{ uri: player.photo }} position={position} />
+            <PodiumColumn position={position}>
+                <PodiumRank>{rank}º</PodiumRank>
+                <PodiumName numberOfLines={1}>{player.name}</PodiumName>
+                <PodiumGoalsContainer>
+                    <PodiumGoalsIcon
                         source={require('@/assets/players/statistics/soccer_ball.png')}
-                        resizeMode="contain"
-                        alt="Soccer ball icon"
-                      />
-                      <PlayerStatisticsValue>
-                        {player.totalGoals ?? 0}
-                      </PlayerStatisticsValue>
-                    </PlayerStatistics>
-                  </PlayerStatisticsContainer>
-                </PlayerContainer>
-              </PlayerRow>
-            ))}
-        </SummaryContainer>
-      </ScrollView>
-    </Screen>
-  );
+                    />
+                    <PodiumGoalsValue>{player.totalGoals}</PodiumGoalsValue>
+                </PodiumGoalsContainer>
+            </PodiumColumn>
+        </PodiumItem>
+    );
+
+    return (
+        <Screen>
+            <StatusBar barStyle="light-content" />
+
+            <HeaderGradient
+                colors={[`${COLORS.grad1}`, `${COLORS.grad2}`]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+            >
+                <HeaderContent>
+                    <BackButton onPress={() => router.back()}>
+                        <BackIcon name="arrow-left" />
+                    </BackButton>
+                </HeaderContent>
+            </HeaderGradient>
+
+            <HeaderCard>
+                <HeaderTitle>ESTATÍSTICAS CAMPEONATO</HeaderTitle>
+
+                {podiumPlayers.length > 0 && (
+                    <PodiumContainer>
+                        {podiumPlayers[1] && renderPodiumPlayer(podiumPlayers[1], '2nd', 2)}
+                        {podiumPlayers[0] && renderPodiumPlayer(podiumPlayers[0], '1st', 1)}
+                        {podiumPlayers[2] && renderPodiumPlayer(podiumPlayers[2], '3rd', 3)}
+                    </PodiumContainer>
+                )}
+            </HeaderCard>
+            <ScrollView
+                contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+                showsVerticalScrollIndicator={false}
+            >
+                <SummaryContainer>
+                    {remainingPlayers
+                        .sort((a, b) => b.totalGoals - a.totalGoals)
+                        .map(player => (
+                            <PlayerRow key={player.id}>
+                                {player.photo && (
+                                    <PlayerPhoto source={{ uri: player.photo }} resizeMode="cover" />
+                                )}
+                                <PlayerContainer>
+                                    <PlayerDetail>
+                                        {player.teamLogo && (
+                                            <PlayerTeamLogo
+                                                source={{ uri: player.teamLogo }}
+                                                resizeMode="contain"
+                                                alt="Team logo image"
+                                            />
+                                        )
+                                        }
+                                        <PlayerName>{player.name}</PlayerName>
+                                    </PlayerDetail>
+                                    <PlayerStatisticsContainer>
+                                        <PlayerStatistics>
+                                            <PlayerStatisticsIcon
+                                                source={require('@/assets/players/statistics/soccer_ball.png')}
+                                                resizeMode="contain"
+                                                alt="Soccer ball icon"
+                                            />
+                                            <PlayerStatisticsValue>
+                                                {player.totalGoals ?? 0}
+                                            </PlayerStatisticsValue>
+                                        </PlayerStatistics>
+                                    </PlayerStatisticsContainer>
+                                </PlayerContainer>
+                            </PlayerRow>
+                        ))}
+                </SummaryContainer>
+            </ScrollView>
+        </Screen>
+    );
 };
 
 export default ChampioshipStatistics;

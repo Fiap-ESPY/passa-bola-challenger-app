@@ -1,5 +1,5 @@
 export enum NewsCategoryType {
-  GENERAL,
-  PASSA_BOLA_NEWS,
-  BRASILEIRAO_NEWS,
+  GENERAL = 'Geral',
+  PASSA_BOLA_NEWS = 'Passa Bola',
+  BRASILEIRAO_NEWS = 'Brasileirão',
 }

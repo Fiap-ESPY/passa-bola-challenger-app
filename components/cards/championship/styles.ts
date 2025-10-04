@@ -3,7 +3,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import styled from 'styled-components/native';
 
-export const Card = styled.View`
+export const Card = styled.TouchableOpacity`
   background-color: ${COLORS.white};
   border-radius: 16px;
   overflow: hidden;
@@ -140,6 +140,32 @@ export const StatusTag = styled.View<{
 export const StatusTagText = styled.Text`
   color: #fff;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: capitalize;
 `;
+
+export const TotalTeamsText = styled.Text`
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: capitalize;
+  position: absolute;
+  top: 40px;
+  right: 12px;
+  z-index: 1;
+  background-color: ${COLORS.blue};
+  padding: 5px 10px;
+  border-radius: 15px;
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.2;
+  shadow-radius: 2px;
+  elevation: 3;
+`;
+
+export const ActionsContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px; 
+`;
+

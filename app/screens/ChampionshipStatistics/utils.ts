@@ -6,8 +6,8 @@ export interface ArtilheiraStats {
   id: number;
   name: string;
   teamName: string;
-  teamLogo?: ImageSourcePropType;
-  photo?: ImageSourcePropType;
+  teamLogo?: string | null;
+  photo?: string | null;
   totalGoals: number;
 }
 
@@ -15,21 +15,21 @@ const processScorers = (
   playerStats: Map<number, ArtilheiraStats>,
   scorers: Player[],
   teamName: string,
-  teamLogo?: ImageSourcePropType
+  teamLogo?: string | null
 ) => {
   if (!scorers) return;
 
   scorers.forEach(scorer => {
     if (playerStats.has(scorer.id)) {
       const existingPlayer = playerStats.get(scorer.id)!;
-      existingPlayer.totalGoals += scorer.goals;
+      existingPlayer.totalGoals += scorer?.goals ?? 0;
     } else {
       playerStats.set(scorer.id, {
         id: scorer.id,
-        name: scorer.name,
+        name: scorer.name ?? 'Desconhecido',
         teamName: teamName,
-        photo: scorer.photo,
-        totalGoals: scorer.goals,
+        photo: scorer.photo ?? require('@/assets/players/default_player.jpg'),
+        totalGoals: scorer.goals ?? 0,
         teamLogo: teamLogo,
       });
     }

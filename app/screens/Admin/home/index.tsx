@@ -5,9 +5,8 @@ import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from 'expo-router';
-import { getAuth, signOut } from 'firebase/auth';
-import React from 'react';
+import { useFocusEffect, useNavigation } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
   CardWrapper,
@@ -19,17 +18,16 @@ import {
   Screen,
   WelcomeText,
 } from './styles';
+import { authService, UserSessionData } from '@/services/auth/authService';
 
 const AdminHome = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
   const handleLogout = async () => {
     try {
-      const auth = getAuth();
-      await signOut(auth);
-
+      await authService.logout();
+      await UserSession.clear();
       navigation.navigate('BottomTabs', { screen: 'home' });
-      UserSession.clear();
     } catch (e) {
       Alert.alert(
         'Erro ao sair',
@@ -76,17 +74,17 @@ const AdminHome = () => {
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
       >
-        <WelcomeText>Bem-vindo, Administrador! </WelcomeText>
+        <WelcomeText>Bem-vindo, Administrador!</WelcomeText>
 
         <CardWrapper>
           <EventCard
             title="Campeonatos"
-            onClick={() => navigation.navigate('AdminEvents')}
-            image={require('@/assets/events/events.jpg')}
+            onClick={() => navigation.navigate('BottomTabs', { screen: 'home' })}
+            image={require('@/assets/championship/championships.jpg')}
           />
           <EventCard
             title="Notícias"
-            onClick={() => navigation.navigate('AdminNews')}
+            onClick={() => navigation.navigate('BottomTabs', { screen: 'news' })}
             image={require('@/assets/news/news.jpg')}
           />
         </CardWrapper>

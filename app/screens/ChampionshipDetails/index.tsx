@@ -1,7 +1,3 @@
-import ActionButton from '@/components/buttons/actionbutton/ActionButton';
-import { CHAMPIONSHIP_DATA } from '@/data/championshipData';
-import { Championship } from '@/model/championship';
-import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { useRoute } from '@react-navigation/native';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -9,14 +5,19 @@ import { useNavigation, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   ImageBackground,
   ScrollView,
-  Text,
-  Alert
+  Text
 } from 'react-native';
 
+import ActionButton from '@/components/buttons/actionbutton/ActionButton';
+import { UserRole } from '@/model/enum/userRole';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { UserSessionData } from '@/services/auth/authService';
+import { ChampionshipDocument, championshipService } from '@/services/championship/championshipService';
 import { COLORS } from '@/theme/colors';
-import { loadEvents } from '@/utils/events/eventsStore';
+import { UserSession } from '@/utils/session/session';
 import {
   BackButton,
   BackIcon,
@@ -28,56 +29,53 @@ import {
   RuleList,
   Section,
   SectionText,
-  SectionTitle,
+  SectionTitle
 } from './styles';
 
-
-
 const ChampionshipDetails = () => {
-  const navigation = useNavigation<RootStackNavigationProps>();
   const router = useRouter();
   const route = useRoute();
-  const [isDisponibilize, setDisponibilize] = useState<boolean>(false)
-  
-  const { championshipId, isAdmin } = route.params as { championshipId: number, isAdmin: boolean };
 
-  const [championship, setChampionship] = useState<Championship | null>(null);
+  const { championshipId } = route.params as { championshipId: string };
+
+  const [championship, setChampionship] = useState<ChampionshipDocument | null>(null);
+  const [session, setSession] = useState<UserSessionData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const refId = useMemo(() => championshipId, [championshipId]);
+  const navigation = useNavigation<RootStackNavigationProps>();
 
+  const isAdmin = useMemo(() => session?.role === UserRole.ADMIN, [session]);
 
-  const handleDisponibilize = () => {
-    setDisponibilize(true)
+  const handlePublish = () => {
+
   }
 
   useEffect(() => {
-    setIsLoading(true);
-
-    const fetchChampionship = async () => {
-      const storedEvents = await loadEvents();
-      const eventsFromStorage = storedEvents || [];
-
-      const allEventsMap = new Map<number, Championship>();
-
-      for (const event of CHAMPIONSHIP_DATA) {
-        allEventsMap.set(event.id, event);
+    const fetchData = async () => {
+      if (!championshipId) {
+        Alert.alert("Erro", "ID do campeonato não encontrado.");
+        router.back();
+        return;
       }
+      setIsLoading(true);
+      try {
+        const [fetchedChampionship, userSession] = await Promise.all([
+          championshipService.getChampionshipByDocId(championshipId),
+          UserSession.get()
+        ]);
 
-      for (const event of eventsFromStorage) {
-        allEventsMap.set(event.id, event);
+        setChampionship(fetchedChampionship);
+        setSession(userSession);
+
+      } catch (error) {
+        Alert.alert("Erro", "Não foi possível carregar os detalhes do campeonato.");
+      } finally {
+        setIsLoading(false);
       }
-
-      const combinedEvents = Array.from(allEventsMap.values());
-
-      const foundChampionship = combinedEvents.find(c => c.id === refId);
-
-      setChampionship(foundChampionship || null);
-      setIsLoading(false);
     };
 
-    fetchChampionship();
-  }, [refId]);
+    fetchData();
+  }, [championshipId]);
 
   const formattedDate = useMemo(() => {
     if (!championship?.dateAndHour) return null;
@@ -89,17 +87,18 @@ const ChampionshipDetails = () => {
     }
   }, [championship?.dateAndHour]);
 
+
   if (isLoading) {
     return (
       <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size="large" color={COLORS.blue} />
       </Container>
     );
   }
 
   if (!championship) {
     return (
-      <Container>
+      <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Text>Campeonato não encontrado!</Text>
       </Container>
     );
@@ -109,7 +108,7 @@ const ChampionshipDetails = () => {
     <Container>
       {championship.image ? (
         <ImageBackground
-          source={championship.image}
+          source={{ uri: championship.image as string }}
           style={{ width: '100%', height: 200 }}
           resizeMode="cover"
         >
@@ -170,48 +169,46 @@ const ChampionshipDetails = () => {
           </Section>
         )}
       </ScrollView>
+      {championship.type === 'campeonato' && championship.isPublished && (
+        <Footer>
+          <ActionButton
+            label="Chaveamento"
+            onPress={() =>
+              navigation.navigate('MatchSwitching', { championshipId: championship.docId })
+            }
+          />
+          <ActionButton
+            label="Estatísticas"
+            onPress={() =>
+              navigation.navigate('ChampionshipStatistics', {
+                championshipId: championship.docId,
+              })
+            }
+          />
+        </Footer>
+      )}
+      {isAdmin && !championship.isPublished &&
+        <Footer>
+          <ActionButton
+            isDisabled={championship.maxTeams !== championship.registeredTeams}
+            backgroundColor={COLORS.blue}
+            label={championship.maxTeams !== championship.registeredTeams
+              ? `${championship.registeredTeams} / ${championship.maxTeams} times cadastrados`
+              : 'Finalizar Inscrições'
+            }
+            onPress={() => {
+              Alert.alert(
+                'Finalizar Incrições',
+                'Deseja encerrar as inscrições',
+                [
+                  { text: 'Cancelar', style: 'cancel' },
+                  { text: 'Finalizar', style: 'destructive', onPress: handlePublish },
+                ],
+              )
 
-      {championship.type === 'campeonato' && (
-        isDisponibilize ? (
-          <Footer>
-            <ActionButton
-              label={'Chaveamento'}
-              onPress={() =>
-                navigation.navigate('MatchSwitching', { matchId: refId })
-              }
-            />
-            <ActionButton
-              label={'Estatísticas'}
-              onPress={() =>
-                navigation.navigate('ChampionshipStatistics', {
-                  championshipId: refId,
-                })
-              }
-            />
-          </Footer>
-        ) : (
-          isAdmin && (
-            <Footer>
-              <ActionButton
-                backgroundColor={COLORS.blue}
-                label={'Finalizar Inscrições'}
-                onPress={() => {
-                  Alert.alert(
-                     'Finalizar Incrições',
-                     'Deseja encerrar as inscrições', 
-                    [
-                      { text: 'Cancelar', style: 'cancel' },
-                      { text: 'Finalizar', style: 'destructive', onPress: handleDisponibilize },
-                    ],
-                  )
-                 
-                }}
-              />
-            </Footer>
-          )
-        )
-      )
-
+            }}
+          />
+        </Footer>
       }
     </Container>
   );

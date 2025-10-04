@@ -60,10 +60,9 @@ export const OrganizationRegisterStep3 = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
   const route = useRoute();
-  const step2Data = route.params;
+  const step2Data = route.params as Partial<Organization>;
 
   const flatListRef = useRef<FlatList>(null);
-
 
   const handleInputChange = (field: keyof Player, value: string, index: number) => {
     const updatedPlayers = [...players];

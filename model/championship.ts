@@ -1,9 +1,8 @@
-import { ImageSourcePropType } from 'react-native';
 import { RoundType } from './enum/roundType';
 import { Team } from './team';
 
 export type Match = {
-  id: number;
+  id: string;
   round: RoundType;
   label: string;
   home: Team & { score?: number };
@@ -19,12 +18,15 @@ export interface Championship {
   id: number;
   title: string;
   type: 'racha' | 'campeonato';
-  image?: ImageSourcePropType | null;
+  image?: string | null;
   address: string;
   dateAndHour: string;
   isAvailable: boolean;
-  brackEvents?: Match[];
+  isPublished: boolean;
+  maxTeams?: number;
+  registeredTeams?: number;
+  matches?: Match[];
   tournamentWinner?: Team | null;
   description?: string;
-  rules?: RuleSection[];
+  rules?: RuleSection[] | undefined;
 }

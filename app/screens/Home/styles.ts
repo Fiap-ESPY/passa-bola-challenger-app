@@ -113,11 +113,21 @@ export const EmptyContainer = styled.View`
   justify-content: center;
   align-items: center;
   padding: 20px;
-  margin-bottom: 50px;
+  margin-top: 50px;
 `;
 
 export const EmptyText = styled.Text`
-  font-size: 20px;
+  font-size: 16px;
+  font-weight: 600;
   color: ${COLORS.tagText};
   text-align: center; 
+  width: 230px;
+  margin-top: 12px;
+  opacity: 0.7; 
+`;
+
+export const EmptyChampionshipSVG = styled.Image`
+  width: 220px;
+  height: 220px;
+  opacity: 0.7; 
 `;

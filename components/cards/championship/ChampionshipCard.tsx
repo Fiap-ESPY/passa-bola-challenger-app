@@ -2,6 +2,7 @@ import { Championship } from '@/model/championship';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
+  ActionsContainer,
   BoldText,
   Card,
   ClockIcon,
@@ -17,6 +18,7 @@ import {
   LabelText,
   StatusTag,
   StatusTagText,
+  TotalTeamsText,
 } from './styles';
 
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
@@ -40,6 +42,7 @@ const ChampionshipCard = ({
   isAdmin,
   isOrganization
 }: ChampionshipCardProps) => {
+
   const formattedDate = format(
     parseISO(championship.dateAndHour),
     'dd/MM/yyyy',
@@ -57,10 +60,10 @@ const ChampionshipCard = ({
   }
 
   return (
-    <Card>
+    <Card onPress={onClick} activeOpacity={0.8}>
       {championship?.image ? (
         <ImageBackground
-          source={championship?.image}
+          source={{ uri: championship.image }}
           resizeMode="cover"
           alt="Image Background"
         >
@@ -69,11 +72,14 @@ const ChampionshipCard = ({
             end={{ x: 0, y: 1 }}
             colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
           />
-          <EventTitle>{championship.title}</EventTitle>{
-            isAdmin &&
-            <StatusTag available={championship.isAvailable}>
-              <StatusTagText>{championship.isAvailable ? 'Disponível'.toLocaleUpperCase() : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
-            </StatusTag>
+          <EventTitle>{championship.title}</EventTitle>
+          {isAdmin &&
+            <>
+              <StatusTag available={championship.isAvailable}>
+                <StatusTagText>{championship.isAvailable ? 'Disponível'.toLocaleUpperCase() : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
+              </StatusTag>
+              <TotalTeamsText>{championship.registeredTeams ?? 0}/{championship.maxTeams ?? 0} times</TotalTeamsText>
+            </>
           }
         </ImageBackground>
       ) : (
@@ -86,6 +92,11 @@ const ChampionshipCard = ({
             <LabelText>{championship.type.toLocaleUpperCase()}</LabelText>
           </Label>
           <EventTitle>{championship.title}</EventTitle>
+          {isAdmin &&
+            <StatusTag available={championship.isAvailable}>
+              <StatusTagText>{championship.isAvailable ? 'Disponível'.toLocaleUpperCase() : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
+            </StatusTag>
+          }
         </GradientBackground>
       )}
 
@@ -101,37 +112,25 @@ const ChampionshipCard = ({
           </ClockWrapper>
         </EventDescription>
 
-        <ActionButton
-          label="Informações"
-          onPress={onClick}
-          icon={
-            <FontAwesome name="info-circle" size={18} color={COLORS.white} />
-          }
-        />
+        
         {isAdmin && (
           <>
-            <ActionButton
-              backgroundColor={COLORS.grayMedium}
-              label="Editar evento"
-              onPress={onEdit}
-              icon={<FontAwesome name="edit" size={18} color={COLORS.white} />}
-            />
-            <ActionButton
-              backgroundColor={COLORS.red}
-              label="Remover evento"
-              onPress={onDelete}
-              icon={<FontAwesome name="trash" size={18} color={COLORS.white} />}
-            />
+            <ActionsContainer>
+              <ActionButton
+                backgroundColor={COLORS.grayMedium}
+                label="Editar"
+                onPress={onEdit}
+                icon={<FontAwesome name="edit" size={18} color={COLORS.white} />}
+              />
+              <ActionButton
+                backgroundColor={COLORS.red}
+                label="Remover"
+                onPress={onDelete}
+                icon={<FontAwesome name="trash" size={18} color={COLORS.white} />}
+              />
+            </ActionsContainer>
           </>
         )}
-        {isOrganization &&
-          <ActionButton
-            label="Inscrever time"
-            onPress={onClick}
-            icon={
-              <FontAwesome name="info-circle" size={18} color={COLORS.white} />
-            }
-          />}
       </DescriptionArea>
     </Card>
   );

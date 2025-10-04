@@ -1,6 +1,5 @@
-import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { login } from '@/services/auth';
+import { authService } from '@/services/auth/authService';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
 import { useNavigation } from 'expo-router';
@@ -26,6 +25,7 @@ import {
   SecondaryText,
   TextInputStyled,
 } from './styles';
+import { UserRole } from '@/model/enum/userRole';
 
 export const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -37,36 +37,37 @@ export const Login = () => {
 
   const onLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Erro', 'E-mail e senha devem ser preenchidos.');
+      Alert.alert('Erro', 'E-mail e palavra-passe devem ser preenchidos.');
       return;
     }
 
-    const admin_user = {
-      email,
-      role: UserRole.ADMIN,
-      loggedInAt: new Date().toISOString(),
-    };
+    setLoading(true);
+    try {
+      const sessionData = await authService.login(email.trim(), password);
 
-    await UserSession.save(admin_user);
+      await UserSession.save(sessionData);
 
-    navigation.navigate('BottomTabs', { screen: 'home' });
+      if (sessionData.role === UserRole.ADMIN) {
+        navigation.navigate('AdminHome');
+      } else if (sessionData.role === UserRole.ORGANIZATION) {
+        navigation.navigate('BottomTabs', { screen: 'home' });
+      } else {
+        console.warn(`Role não reconhecida: ${sessionData.role}. A redirecionar para a home padrão.`);
+        navigation.navigate('BottomTabs', { screen: 'home' });
+      }
 
-    // setLoading(true);
-    // try {
-    //   await login(email.trim(), password);
+    } catch (error: any) {
+      let errorMessage = 'E-mail ou palavra-passe inválidos.';
 
-      
+      if (error.code === 'auth/invalid-credential') {
+        errorMessage = 'As credenciais fornecidas estão incorretas. Verifique o seu e-mail e palavra-passe.';
+      }
 
-    //   await UserSession.save(admin_user);
-
-    //   navigation.navigate('BottomTabs', { screen: 'home' });
-    //   // navigation.navigate('AdminHome');
-    // } catch (e: any) {
-    //   Alert.alert('Erro', 'E-mail ou senha inválidos.');
-    //   console.error('Firebase login error:', e);
-    // } finally {
-    //   setLoading(false);
-    // }
+      Alert.alert('Erro no Login', errorMessage);
+      console.error('Firebase login error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onForgot = () => {
@@ -107,7 +108,7 @@ export const Login = () => {
 
               <InputWrapper>
                 <TextInputStyled
-                  placeholder="Senha"
+                  placeholder="Palavra-passe"
                   placeholderTextColor="#7A7A7A"
                   secureTextEntry={!showPass}
                   value={password}
@@ -148,3 +149,4 @@ export const Login = () => {
 };
 
 export default Login;
+

@@ -4,6 +4,6 @@ import { Player } from './player';
 export type Team = {
   id: number;
   name: string;
-  logo?: ImageSourcePropType;
+  logo?: string | null;
   scorers?: Player[];
 };
