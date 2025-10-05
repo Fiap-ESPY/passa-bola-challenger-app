@@ -3,7 +3,7 @@ import { COLORS } from '@/theme/colors';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useRef, useState } from 'react';
-import { Alert, FlatList, StatusBar, View } from 'react-native';
+import { Alert, FlatList, StatusBar, View, ActivityIndicator } from 'react-native';
 
 import {
   BackButton,
@@ -36,6 +36,7 @@ import {
 import { FontAwesome } from '@expo/vector-icons';
 import { Organization } from '@/model/organization';
 import { Player } from '@/model/player';
+import { storageService } from '@/services/storage/storageService';
 
 const POSITIONS = [
   { key: 'GOL', label: 'GOL' },
@@ -44,18 +45,19 @@ const POSITIONS = [
   { key: 'ATA', label: 'ATA' },
 ];
 
+type PlayerFormData = Omit<Player, 'photo'> & { photo?: string };
+
 export const OrganizationRegisterStep3 = () => {
-  const createEmptyPlayer = (): Player => ({
-    id: Math.random(),
+  const createEmptyPlayer = (): PlayerFormData => ({
+    id: Date.now() + Math.random(),
     name: undefined,
     age: undefined,
     position: undefined,
     photo: undefined,
   });
 
-  const [players, setPlayers] = useState<Player[]>([createEmptyPlayer()]);
+  const [players, setPlayers] = useState<PlayerFormData[]>([createEmptyPlayer()]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<RootStackNavigationProps>();
 
@@ -64,29 +66,33 @@ export const OrganizationRegisterStep3 = () => {
 
   const flatListRef = useRef<FlatList>(null);
 
-  const handleInputChange = (field: keyof Player, value: string, index: number) => {
+  const handleInputChange = (field: keyof PlayerFormData, value: string, index: number) => {
     const updatedPlayers = [...players];
     updatedPlayers[index] = { ...updatedPlayers[index], [field]: value };
     setPlayers(updatedPlayers);
   };
 
   const pickImage = async (index: number) => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permissão necessária', 'Precisamos de acesso à sua galeria para escolher a foto.');
-      return;
-    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'images',
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.7,
     });
 
-    if (!result.canceled) {
+    if (result.canceled) return;
+
+    setLoading(true);
+    try {
+      const imageUri = result.assets[0].uri;
+    
       const updatedPlayers = [...players];
-      updatedPlayers[index].photo = { uri: result.assets[0].uri };
+      updatedPlayers[index].photo = imageUri;
       setPlayers(updatedPlayers);
+    } catch (error) {
+      Alert.alert('Erro de Upload', 'Não foi possível enviar a foto da jogadora.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,11 +102,9 @@ export const OrganizationRegisterStep3 = () => {
       Alert.alert('Campos incompletos', 'Por favor, preencha todos os dados da jogadora antes de adicionar outra.');
       return;
     }
-
     if (currentIndex === players.length - 1) {
       setPlayers(prev => [...prev, createEmptyPlayer()]);
     }
-
     setTimeout(() => {
       flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true });
     }, 100);
@@ -114,22 +118,23 @@ export const OrganizationRegisterStep3 = () => {
 
   const handleContinue = () => {
     if (!players[0].name || !players[0].age || !players[0].position || !players[0].photo) {
-      Alert.alert('Cadastro Incompleto', 'Cadastre pelo menos uma jogadora com todos os dados.');
+      Alert.alert('Cadastro Incompleto', 'Cadastre pelo menos uma jogadora com todos os dados e foto.');
       return;
     }
-
     const finalPlayers = players.filter(p => p.name && p.age && p.position && p.photo);
-
     if (finalPlayers.length === 0) {
       Alert.alert('Erro', 'Nenhuma jogadora foi cadastrada completamente.');
       return;
     }
+
     const organizationData: Partial<Organization> = {
       ...step2Data,
-      players: finalPlayers,
+      team: {
+        ...(step2Data.team || { id: Date.now(), name: 'Nome do Time Padrão' }),
+        players: finalPlayers as Player[],
+      },
     };
 
-    Alert.alert('Sucesso!', `${finalPlayers.length} jogadora(s) cadastrada(s).`);
     navigation.navigate('OrganizationRegisterStep4', organizationData);
   };
 
@@ -140,27 +145,16 @@ export const OrganizationRegisterStep3 = () => {
   }).current;
 
   const handleDeletePlayer = (indexToDelete: number) => {
-    Alert.alert(
-      'Confirmar Ação',
-      'Tem certeza que deseja remover esta jogadora?',
+    Alert.alert('Confirmar Ação', 'Tem certeza que deseja remover esta jogadora?',
       [
+        { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Remover',
-          style: 'destructive',
+          text: 'Remover', style: 'destructive',
           onPress: () => {
             if (players.length > 1) {
-              const updatedPlayers = players.filter((_, index) => index !== indexToDelete);
-              setPlayers(updatedPlayers);
-
-              if (flatListRef.current) {
-                const newIndex = Math.max(0, indexToDelete - 1);
-                setTimeout(() => flatListRef.current?.scrollToIndex({ index: newIndex, animated: true }), 100);
-              }
-
+              setPlayers(prev => prev.filter((_, index) => index !== indexToDelete));
+              const newIndex = Math.max(0, indexToDelete - 1);
+              setTimeout(() => flatListRef.current?.scrollToIndex({ index: newIndex, animated: true }), 100);
             } else {
               setPlayers([createEmptyPlayer()]);
             }
@@ -170,17 +164,17 @@ export const OrganizationRegisterStep3 = () => {
     );
   };
 
-  const renderPlayerForm = ({ item, index }: { item: Player; index: number }) => {
+  const renderPlayerForm = ({ item, index }: { item: PlayerFormData; index: number }) => {
     const hasData = item.name || item.age || item.position || item.photo;
     const isLastPlayer = index === players.length - 1;
 
     return (
       <PlayerCard>
-        {hasData &&
+        {hasData && !isLastPlayer && (
           <DeleteButton onPress={() => handleDeletePlayer(index)}>
             <FontAwesome name="trash" size={27} color={COLORS.red} />
           </DeleteButton>
-        }
+        )}
         {index > 0 && (
           <PrevButton onPress={handlePrevPlayer}>
             <NextIcon name="arrow-left" size={20} color={COLORS.white} />
@@ -188,14 +182,13 @@ export const OrganizationRegisterStep3 = () => {
         )}
 
         <PlayerPhotoCircle onPress={() => pickImage(index)}>
-          {item.photo ? (
-            <PlayerImage source={item.photo} />
+          {loading && currentIndex === index ? (
+            <ActivityIndicator size="large" color={COLORS.white} />
+          ) : item.photo ? (
+            <PlayerImage source={{ uri: item.photo }} />
           ) : (
             <>
-              <PlayerImage
-                source={require('@/assets/players/default_player.jpg')}
-                style={{ opacity: 0.8 }}
-              />
+              <PlayerImage source={require('@/assets/players/default_player.jpg')} style={{ opacity: 0.8 }} />
               <GalleryIconContainer>
                 <GalleryIcon name="camera" size={16} />
               </GalleryIconContainer>
@@ -208,7 +201,6 @@ export const OrganizationRegisterStep3 = () => {
           placeholderTextColor="#7A7A7A"
           value={item.name}
           onChangeText={text => handleInputChange('name', text, index)}
-          editable={!isScrolling}
         />
         <PlayerInput
           placeholder="Idade"
@@ -216,7 +208,6 @@ export const OrganizationRegisterStep3 = () => {
           value={String(item.age ?? '')}
           onChangeText={text => handleInputChange('age', text, index)}
           keyboardType="numeric"
-          editable={!isScrolling}
         />
         <PositionSelectorContainer>
           {POSITIONS.map(pos => (
@@ -273,15 +264,12 @@ export const OrganizationRegisterStep3 = () => {
               contentContainerStyle={{ alignItems: 'center' }}
               onViewableItemsChanged={onViewableItemsChanged}
               viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-              style={{ flex: 1, maxHeight: 850 }}
-              onScrollBeginDrag={() => setIsScrolling(true)}
-              onScrollEndDrag={() => setIsScrolling(false)}
             />
           </CarouselContainer>
 
-          <View style={{ paddingHorizontal: 20 }}>
+          <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
             <PrimaryButton onPress={handleContinue} disabled={loading}>
-              <PrimaryText>{loading ? 'Carregando...' : 'Continuar'}</PrimaryText>
+              <PrimaryText>{loading ? 'A carregar...' : 'Continuar'}</PrimaryText>
             </PrimaryButton>
           </View>
         </Safe>

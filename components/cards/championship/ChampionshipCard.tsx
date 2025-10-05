@@ -24,6 +24,7 @@ import {
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
 import { COLORS } from '@/theme/colors';
 import { FontAwesome } from '@expo/vector-icons';
+import { OrganizationDocument } from '@/services/organization/organizationService';
 
 type ChampionshipCardProps = {
   championship: Championship;
@@ -32,6 +33,7 @@ type ChampionshipCardProps = {
   onEdit: () => void;
   isAdmin: boolean;
   isOrganization: boolean;
+  organization?: OrganizationDocument | null;
 };
 
 const ChampionshipCard = ({
@@ -40,7 +42,8 @@ const ChampionshipCard = ({
   onEdit,
   onDelete,
   isAdmin,
-  isOrganization
+  isOrganization,
+  organization
 }: ChampionshipCardProps) => {
 
   const formattedDate = format(
@@ -73,14 +76,14 @@ const ChampionshipCard = ({
             colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
           />
           <EventTitle>{championship.title}</EventTitle>
-          {isAdmin &&
+          {isAdmin || isOrganization && (
             <>
               <StatusTag available={championship.isAvailable}>
-                <StatusTagText>{championship.isAvailable ? 'Disponível'.toLocaleUpperCase() : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
+                <StatusTagText>{championship.isAvailable ? (organization?.team?.id && championship.registeredTeams?.includes(organization?.team?.id) ? 'Inscrito!' : 'Disponível'.toLocaleUpperCase()) : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
               </StatusTag>
-              <TotalTeamsText>{championship.registeredTeams ?? 0}/{championship.maxTeams ?? 0} times</TotalTeamsText>
+              <TotalTeamsText>{championship.registeredTeams?.length ?? 0}/{championship.maxTeams ?? 0} times</TotalTeamsText>
             </>
-          }
+          )}
         </ImageBackground>
       ) : (
         <GradientBackground
@@ -112,7 +115,7 @@ const ChampionshipCard = ({
           </ClockWrapper>
         </EventDescription>
 
-        
+
         {isAdmin && (
           <>
             <ActionsContainer>

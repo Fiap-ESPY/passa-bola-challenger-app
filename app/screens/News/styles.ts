@@ -164,3 +164,27 @@ export const FloatingButton = styled.TouchableOpacity`
   /* sombra Android */
   elevation: 6;
 `;
+
+export const EmptyContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin-top: 50px;
+`;
+
+export const EmptyText = styled.Text`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${COLORS.tagText};
+  text-align: center; 
+  width: 230px;
+  margin-top: 12px;
+  opacity: 0.7; 
+`;
+
+export const EmptyNewsSVG = styled.Image`
+  width: 220px;
+  height: 220px;
+  opacity: 0.7; 
+`;

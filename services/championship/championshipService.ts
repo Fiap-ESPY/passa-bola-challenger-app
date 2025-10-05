@@ -1,7 +1,9 @@
 import { db, storage } from '@/config/firebaseConfig';
-import { Championship } from '@/model/championship';
+import { Championship, Match } from '@/model/championship';
+import { Team } from '@/model/team';
 import {
     addDoc,
+    arrayUnion,
     collection,
     deleteDoc,
     doc,
@@ -116,7 +118,7 @@ const deleteChampionship = async (docId: string): Promise<void> => {
 
         if (championshipData.image) {
             try {
-                const imageRef = ref(storage, championshipData.image); 
+                const imageRef = ref(storage, championshipData.image);
                 await deleteObject(imageRef);
                 console.log('Imagem deletada com sucesso.');
             } catch (err) {
@@ -132,10 +134,61 @@ const deleteChampionship = async (docId: string): Promise<void> => {
     }
 };
 
+/**
+ * Adiciona uma equipa ao array 'registeredTeams' de um campeonato.
+ * @param {string} docId - O ID do documento do campeonato.
+ * @param {Team} team - O objeto da equipa a ser adicionada.
+ */
+const addTeamToChampionship = async (docId: string, teamId: number): Promise<void> => {
+    try {
+        const docRef = doc(db, 'championships', docId);
+
+        await updateDoc(docRef, {
+            registeredTeams: arrayUnion(teamId),
+        });
+    } catch (error) {
+        console.error('Erro ao adicionar a equipe ao campeonato:', error);
+        throw new Error('Não foi possível inscrever a equipe.');
+    }
+};
+
+/**
+ * Publica um campeonato, alterando o campo 'isPublished' para true.
+ * @param {string} docId - O ID do documento do campeonato.
+ */
+const publishChampionship = async (docId: string): Promise<void> => {
+    try {
+        const docRef = doc(db, 'championships', docId);
+        await updateDoc(docRef, {
+            isPublished: true,
+        });
+    } catch (error) {
+        console.error('Erro ao publicar campeonato:', error);
+        throw new Error('Não foi possível publicar o campeonato.');
+    }
+};
+
+
+const startTournament = async (docId: string, matches: Match[]): Promise<void> => {
+    try {
+        const docRef = doc(db, 'championships', docId);
+
+        await updateDoc(docRef, {
+            matches: matches
+        });
+    } catch (error) {
+        console.error('Erro ao iniciar torneio:', error);
+        throw error;
+    }
+};
+
 export const championshipService = {
     addChampionship,
     getAllChampionships,
     getChampionshipByDocId,
     updateChampionship,
     deleteChampionship,
+    addTeamToChampionship,
+    publishChampionship,
+    startTournament
 };

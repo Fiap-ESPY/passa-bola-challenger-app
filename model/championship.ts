@@ -24,7 +24,7 @@ export interface Championship {
   isAvailable: boolean;
   isPublished: boolean;
   maxTeams?: number;
-  registeredTeams?: number;
+  registeredTeams?: number[];
   matches?: Match[];
   tournamentWinner?: Team | null;
   description?: string;

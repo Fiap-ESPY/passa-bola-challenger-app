@@ -2,11 +2,12 @@ import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import EventCard from '@/components/cards/event/EventCard';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { authService } from '@/services/auth/authService';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
-import { useFocusEffect, useNavigation } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useNavigation } from 'expo-router';
+import React from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
   CardWrapper,
@@ -18,7 +19,6 @@ import {
   Screen,
   WelcomeText,
 } from './styles';
-import { authService, UserSessionData } from '@/services/auth/authService';
 
 const AdminHome = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
@@ -79,12 +79,12 @@ const AdminHome = () => {
         <CardWrapper>
           <EventCard
             title="Campeonatos"
-            onClick={() => navigation.navigate('BottomTabs', { screen: 'home' })}
+            onClick={() => navigation.navigate('AdminEvents')}
             image={require('@/assets/championship/championships.jpg')}
           />
           <EventCard
             title="Notícias"
-            onClick={() => navigation.navigate('BottomTabs', { screen: 'news' })}
+            onClick={() => navigation.navigate('AdminNews')}
             image={require('@/assets/news/news.jpg')}
           />
         </CardWrapper>

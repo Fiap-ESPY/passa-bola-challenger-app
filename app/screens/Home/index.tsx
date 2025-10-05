@@ -6,13 +6,14 @@ import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { authService, UserSessionData } from '@/services/auth/authService';
 import { ChampionshipDocument, championshipService } from '@/services/championship/championshipService';
-import { seedChampionshipsToFirestore } from '@/services/seedData';
+import { OrganizationDocument, organizationService } from '@/services/organization/organizationService';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, RefreshControl, ScrollView, StatusBar } from 'react-native';
+import { Container } from '../ChampionshipDetails/styles';
 import {
   BackButton,
   BackIcon,
@@ -30,7 +31,6 @@ import {
   Tabs,
   TabText,
 } from './styles';
-import { Container } from '../ChampionshipDetails/styles';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -51,6 +51,7 @@ const Home = () => {
     EventFilterType.ALL_EVENTS
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
+  const [organization, setOrganization] = useState<OrganizationDocument | null>(null);
 
   const isAdmin = useMemo(() => session?.role === UserRole.ADMIN, [session]);
   const isOrganization = useMemo(() => session?.role === UserRole.ORGANIZATION, [session]);
@@ -63,6 +64,11 @@ const Home = () => {
         try {
           const userSession = await UserSession.get();
           setSession(userSession);
+
+          if (userSession?.role === UserRole.ORGANIZATION && userSession.uid) {
+            const findOrganization = await organizationService.getOrganizationById(userSession.uid)
+            setOrganization(findOrganization);
+          }
 
           const fetchedChampionships = await championshipService.getAllChampionships();
           setChampionships(fetchedChampionships);
@@ -80,10 +86,8 @@ const Home = () => {
 
   useEffect(() => {
     const unsubscribe = authService.onAuthChange(async (session: UserSessionData | null) => {
-
       if (!session) {
         await UserSession.clear();
-        Alert.alert('Sessão expirada', 'Faça login novamente.');
         navigation.navigate('BottomTabs', { screen: 'login' });
       }
       setIsChecking(false);
@@ -116,20 +120,41 @@ const Home = () => {
     );
   }, []);
 
-  const filteredData = useMemo(() => {
-    const base = championships.filter(event =>
-      event.title.toLowerCase().includes(filterSearch.toLowerCase())
-    );
-    if (eventFilterType === EventFilterType.NEXT_EVENTS)
-      return base.filter(e => e.isAvailable);
-    if (eventFilterType === EventFilterType.PAST_EVENTS)
-      return base.filter(e => !e.isAvailable);
 
-    return base.sort(
+  const filteredData = useMemo(() => {
+    let base: ChampionshipDocument[] = [];
+
+    base = championships.length !== 0 ? championships.filter(event =>
+      event.title?.toLowerCase().includes(filterSearch.toLowerCase())
+    ) : [];
+
+    if (isOrganization && organization) {
+      base = base?.filter(event =>
+        event.type === 'campeonato' &&
+        (((event.registeredTeams?.length ?? 0) < (event?.maxTeams ?? 0) && event.isAvailable) || event.registeredTeams?.includes(organization.team.id))
+      );
+    }
+
+    if (!isAdmin && !isOrganization) {
+      base = base?.filter(event => 
+        event.type === 'campeonato' &&
+        ((event.registeredTeams?.length ?? 0) === (event?.maxTeams ?? 0) && event.isAvailable && event.isPublished) || event.type === 'racha'
+      );
+    }
+
+    const now = new Date();
+    let timeFiltered = base;
+    if (eventFilterType === EventFilterType.NEXT_EVENTS) {
+      timeFiltered = base.filter(e => new Date(e.dateAndHour) >= now);
+    }
+    if (eventFilterType === EventFilterType.PAST_EVENTS) {
+      timeFiltered = base.filter(e => new Date(e.dateAndHour) < now);
+    }
+
+    return timeFiltered.slice().sort(
       (a, b) => new Date(b.dateAndHour).getTime() - new Date(a.dateAndHour).getTime()
     );
-  }, [championships, eventFilterType, filterSearch]);
-
+  }, [championships, eventFilterType, filterSearch, isOrganization]);
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
 
@@ -213,7 +238,6 @@ const Home = () => {
             <ActivityIndicator size="large" color={COLORS.blue} />
           </EmptyContainer>
         ) : filteredData.length > 0 ? (
-
           filteredData.map(championship => (
             <CardWrapper key={championship.docId}>
               <ChampionshipCard
@@ -231,13 +255,14 @@ const Home = () => {
                 }}
                 isAdmin={!!isAdmin}
                 isOrganization={!!isOrganization}
+                organization={organization}
               />
             </CardWrapper>
           ))
         ) : (
           <EmptyContainer>
             <EmptyChampionshipSVG source={require('@/assets/championship/empty_championship.png')} />
-            <EmptyText>Nenhum campeonato ativo encontrado</EmptyText>
+            <EmptyText>Nenhum campeonato encontrado</EmptyText>
           </EmptyContainer>
         )}
       </ScrollView>
@@ -245,10 +270,9 @@ const Home = () => {
       {isAdmin && (
         <FloatingButton
           onPress={() =>
-            // navigation.navigate('AdminCreateEvent', {
-            //   championshipId: null,
-            // })
-            seedChampionshipsToFirestore()
+            navigation.navigate('AdminCreateEvent', {
+              championshipId: null,
+            })
           }
         >
           <FontAwesome name="plus" size={25} color={COLORS.white} />

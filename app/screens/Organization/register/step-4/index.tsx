@@ -9,7 +9,7 @@ import { auth } from '@/config/firebaseConfig';
 import { Organization } from '@/model/organization';
 import { authService } from '@/services/auth/authService';
 import { UserSession } from '@/utils/session/session';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Auth, createUserWithEmailAndPassword } from 'firebase/auth';
 import {
     BackButton,
     BackIcon,
@@ -27,6 +27,9 @@ import {
     StepText,
     TextInputStyled,
 } from './styles';
+import { UserRole } from '@/model/enum/userRole';
+import { organizationService } from '@/services/organization/organizationService';
+import { TeamInput, teamService } from '@/services/team/teamService';
 
 export const OrganizationRegisterStep4 = () => {
     const [password, setPassword] = useState<string>('');
@@ -56,17 +59,33 @@ export const OrganizationRegisterStep4 = () => {
         setLoading(true);
 
         const email = step3Data?.email ?? '';
+        const name = step3Data?.name ?? '';
 
-        if (!email) {
-            Alert.alert('Erro', 'O e-mail é obrigatório.');
+        if (!email || !name) {
+            Alert.alert('Erro', 'E-mail e nome da organização são obrigatórios.');
             setLoading(false);
             return;
         }
 
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const sessionData = await authService.register({
+                email: email.trim(),
+                pass: password,
+                name: name,
+                role: UserRole.ORGANIZATION
+            });
 
-            const sessionData = await authService.login(email.trim(), password);
+            const organizationToCreate = {
+                id: sessionData.uid,
+                email: email.trim(),
+                ...step3Data,
+            } as Organization;
+           
+            await organizationService.addOrganization(organizationToCreate);
+
+            if (step3Data.team) {
+                await teamService.addTeam(step3Data.team)
+            }
 
             await UserSession.save(sessionData);
 
@@ -160,3 +179,7 @@ export const OrganizationRegisterStep4 = () => {
 };
 
 export default OrganizationRegisterStep4;
+
+function register(auth: Auth, email: string, password: string) {
+    throw new Error('Function not implemented.');
+}

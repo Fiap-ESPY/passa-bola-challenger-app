@@ -19,6 +19,7 @@ export type RootStackParamList = {
   OrganizationRegisterStep3: Partial<Organization> | undefined;
   OrganizationRegisterStep4: Partial<Organization> | undefined;
   OrganizationRegisterStep5: Partial<Organization> | undefined;
+  OrganizationProfile: { organizationId: string };
 };
 
 export type BottomTabParamList = {

@@ -182,16 +182,16 @@ const MatchStatistics = () => {
                     </WinnerBadge>
                     <WinnerContent>
                         <WinnerAvatar>
-                            {matchWinner?.logo && (
+                            {matchWinner?.logo && (matchItem?.away.score != 0 || matchItem?.home.score != 0)  ? (
                                 <TeamLogo
                                     source={{ uri: matchWinner?.logo }}
                                     resizeMode="contain"
                                     alt="Team logo image"
                                 />
-                            )}
+                            ) : <></>}
                         </WinnerAvatar>
 
-                        <WinnerName numberOfLines={1}>{matchWinner?.name}</WinnerName>
+                        <WinnerName numberOfLines={1}>{matchItem?.away.score != 0 || matchItem?.home.score != 0 ? matchWinner?.name : "A definir"}</WinnerName>
                     </WinnerContent>
                 </WinnerCard>
             </HeaderCard>
