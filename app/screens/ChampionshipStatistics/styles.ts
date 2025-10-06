@@ -269,3 +269,28 @@ export const PlayerStatisticsIcon = styled.Image`
   width: 27px;
   height: 27px;
 `;
+
+
+export const EmptyContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+`;
+
+export const EmptyText = styled.Text`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${COLORS.tagText};
+  text-align: center; 
+  width: 230px;
+  opacity: 0.7; 
+  margin-bottom: 40px;
+`;
+
+export const EmptyChampionshipSVG = styled.Image`
+  width: 200px;
+  height: 200px;
+  opacity: 0.7; 
+  margin-top: 50px;
+`;

@@ -1,10 +1,11 @@
+import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { authService } from '@/services/auth/authService';
+import { authService, UserSessionData } from '@/services/auth/authService';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
-import { useNavigation } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
+import { useFocusEffect, useNavigation } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import {
   DividerLine,
   DividerRow,
@@ -25,7 +26,9 @@ import {
   SecondaryText,
   TextInputStyled,
 } from './styles';
-import { UserRole } from '@/model/enum/userRole';
+import { OrganizationDocument, organizationService } from '@/services/organization/organizationService';
+import { Container } from '../ChampionshipDetails/styles';
+import OrganizationProfile from '../Organization/profile';
 
 export const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -34,6 +37,38 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<RootStackNavigationProps>();
+
+  const [session, setSession] = useState<UserSessionData | null>(null);
+
+  const [organization, setOrganization] = useState<OrganizationDocument | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        setIsLoading(true);
+        setOrganization(null);
+        try {
+          
+          const userSession = await UserSession.get();
+          setSession(userSession);
+
+          if (userSession?.role === UserRole.ORGANIZATION && userSession.uid) {
+            const findOrganization = await organizationService.getOrganizationById(userSession.uid)
+            setOrganization(findOrganization);
+          }
+
+        } catch (error) {
+          console.error("Failed to fetch data:", error);
+          Alert.alert("Erro", "Não foi possível carregar os campeonatos.");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchData();
+    }, [])
+  );
 
   const onLogin = async () => {
     if (!email || !password) {
@@ -78,73 +113,84 @@ export const Login = () => {
     navigation.navigate('OrganizationRegisterStep1');
   };
 
+  if (isLoading) {
+    return (
+      <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.blue} />
+      </Container>
+    );
+  }
+
   return (
-    <Screen>
-      <StatusBar barStyle="light-content" />
-      <GradientBg
-        colors={[COLORS.grad1, COLORS.grad2]}
-        start={{ x: 0.1, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <Safe>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            style={{ flex: 1, justifyContent: 'center' }}
-          >
-            <Logo source={require('@/assets/logo.png')} resizeMode="contain" />
+    organization ?
+      <OrganizationProfile organization={organization} /> 
+      :
+      <Screen>
+        <StatusBar barStyle="light-content" />
+        <GradientBg
+          colors={[COLORS.grad1, COLORS.grad2]}
+          start={{ x: 0.1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Safe>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              style={{ flex: 1, justifyContent: 'center' }}
+            >
+              <Logo source={require('@/assets/logo.png')} resizeMode="contain" />
 
-            <Form>
-              <InputWrapper>
-                <TextInputStyled
-                  placeholder="E-mail"
-                  placeholderTextColor="#7A7A7A"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={email}
-                  onChangeText={setEmail}
-                  returnKeyType="next"
-                />
-              </InputWrapper>
+              <Form>
+                <InputWrapper>
+                  <TextInputStyled
+                    placeholder="E-mail"
+                    placeholderTextColor="#7A7A7A"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail}
+                    returnKeyType="next"
+                  />
+                </InputWrapper>
 
-              <InputWrapper>
-                <TextInputStyled
-                  placeholder="Palavra-passe"
-                  placeholderTextColor="#7A7A7A"
-                  secureTextEntry={!showPass}
-                  value={password}
-                  onChangeText={setPassword}
-                  returnKeyType="done"
-                />
-                <RightIconButton
-                  onPress={() => setShowPass(s => !s)}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                  <RightIcon name={showPass ? 'eye' : 'eye-off'} />
-                </RightIconButton>
-              </InputWrapper>
+                <InputWrapper>
+                  <TextInputStyled
+                    placeholder="Palavra-passe"
+                    placeholderTextColor="#7A7A7A"
+                    secureTextEntry={!showPass}
+                    value={password}
+                    onChangeText={setPassword}
+                    returnKeyType="done"
+                  />
+                  <RightIconButton
+                    onPress={() => setShowPass(s => !s)}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <RightIcon name={showPass ? 'eye' : 'eye-off'} />
+                  </RightIconButton>
+                </InputWrapper>
 
-              <ForgotLink onPress={onForgot}>
-                <ForgotText>Esqueceu a Senha?</ForgotText>
-              </ForgotLink>
+                <ForgotLink onPress={onForgot}>
+                  <ForgotText>Esqueceu a Senha?</ForgotText>
+                </ForgotLink>
 
-              <PrimaryButton onPress={onLogin} disabled={loading}>
-                <PrimaryText>{loading ? 'Entrando...' : 'Entrar'}</PrimaryText>
-              </PrimaryButton>
+                <PrimaryButton onPress={onLogin} disabled={loading}>
+                  <PrimaryText>{loading ? 'Entrando...' : 'Entrar'}</PrimaryText>
+                </PrimaryButton>
 
-              <DividerRow>
-                <DividerLine />
-                <DividerText>Ou crie sua conta</DividerText>
-                <DividerLine />
-              </DividerRow>
+                <DividerRow>
+                  <DividerLine />
+                  <DividerText>Ou crie sua conta</DividerText>
+                  <DividerLine />
+                </DividerRow>
 
-              <SecondaryButton onPress={onSignUp}>
-                <SecondaryText>Cadastrar-se</SecondaryText>
-              </SecondaryButton>
-            </Form>
-          </KeyboardAvoidingView>
-        </Safe>
-      </GradientBg>
-    </Screen>
+                <SecondaryButton onPress={onSignUp}>
+                  <SecondaryText>Cadastrar-se</SecondaryText>
+                </SecondaryButton>
+              </Form>
+            </KeyboardAvoidingView>
+          </Safe>
+        </GradientBg>
+      </Screen>
   );
 };
 

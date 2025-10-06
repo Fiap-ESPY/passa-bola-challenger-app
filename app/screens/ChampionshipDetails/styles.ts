@@ -90,3 +90,32 @@ export const FooterButtonText = styled.Text`
   font-weight: 800;
   color: ${COLORS.white};
 `;
+
+export const TeamLogoImage = styled.Image`
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  border-width: 1px;
+  border-color: #4A5568;
+`;
+
+export const TeamRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  background-color: ${COLORS.blueLight};
+  border-radius: 10px;
+  margin: 5px 0px;
+`;
+
+export const TeamPhotoImage = styled.Image`
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+`;
+
+export const TeamName = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${COLORS.text};
+`;

@@ -11,6 +11,7 @@ export type RootStackParamList = {
   MatchStatistics: { matchId: string, championshipId: string };
   AdminHome: undefined;
   AdminNews: undefined;
+  AdminDashboard: undefined;
   AdminEvents: undefined;
   AdminCreateEvent: { championshipId?: string | null };
   AdminCreateNews: { newsId?: string | null };
@@ -19,6 +20,7 @@ export type RootStackParamList = {
   OrganizationRegisterStep3: Partial<Organization> | undefined;
   OrganizationRegisterStep4: Partial<Organization> | undefined;
   OrganizationRegisterStep5: Partial<Organization> | undefined;
+  OrganizationProfile: { organizationId: string };
 };
 
 export type BottomTabParamList = {

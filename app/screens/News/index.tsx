@@ -13,9 +13,11 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, RefreshControl, ScrollView, StatusBar } from 'react-native';
+import { EmptyContainer, EmptyText } from '../Home/styles';
 import {
   BackButton,
   BackIcon,
+  EmptyNewsSVG,
   FeaturedBadge,
   FeaturedBadgeText,
   FeaturedCard,
@@ -32,7 +34,6 @@ import {
   Tabs,
   TabText,
 } from './styles';
-import { seedNewsToFirestore } from '@/services/seedData';
 
 const News = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
@@ -202,7 +203,7 @@ const News = () => {
             </FeaturedImage>
           </FeaturedCard>
 
-          {filteredData.map(newsItem => (
+          {filteredData.length > 0 ? filteredData.map(newsItem => (
             <NewsCard
               key={newsItem.docId}
               newsItem={newsItem}
@@ -217,7 +218,12 @@ const News = () => {
               }
               onDelete={() => handleDelete(newsItem.docId)}
             />
-          ))}
+          )) : (
+            <EmptyContainer>
+              <EmptyNewsSVG source={require('@/assets/news/empty_news.png')} />
+              <EmptyText>Nenhuma notícia encontrada</EmptyText>
+            </EmptyContainer>
+          )}
         </ScrollView>
       )}
 
@@ -225,10 +231,9 @@ const News = () => {
         <FloatingButton
           activeOpacity={0.85}
           onPress={() =>
-            // navigation.navigate('AdminCreateNews', {
-            //   newsId: null,
-            // })
-            seedNewsToFirestore()
+            navigation.navigate('AdminCreateNews', {
+              newsId: null,
+            })
           }
         >
           <FontAwesome name="plus" size={25} color={COLORS.white} />

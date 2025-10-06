@@ -6,6 +6,7 @@ import { NEWS_DATA } from '@/data/newsData';
 import { storageService } from './storage/storageService';
 import { newsService } from './news/newsService';
 import { championshipService } from './championship/championshipService';
+import { teamService } from './team/teamService';
 
 export const seedChampionshipsToFirestore = async () => {
     const auth = getAuth();
@@ -153,4 +154,69 @@ export const seedNewsToFirestore = async () => {
 
     console.log(`Semeadura de notícias concluída. ${successCount} adicionadas.`);
     Alert.alert("Sucesso", `✅ ${successCount} notícias semeadas com sucesso!`);
+};
+
+
+export const seedTeamsToFirestore = async () => {
+    const auth = getAuth();
+    if (!auth.currentUser) {
+        Alert.alert("ERRO", "Faça login como administrador antes de executar o seed.");
+        return;
+    }
+
+    console.log('Iniciando semeadura de equipas com upload de imagens...');
+    Alert.alert("Atenção", "A iniciar a semeadura de equipas. Este processo pode demorar.");
+
+    const teamsMap = new Map<number, any>();
+
+    CHAMPIONSHIP_DATA.forEach(championship => {
+        championship.matches?.forEach(match => {
+            [match.home, match.away].forEach(team => {
+                if (team && !teamsMap.has(team.id)) {
+                    teamsMap.set(team.id, {
+                        id: team.id,
+                        name: team.name,
+                        logo: team.logo,
+                        players: team.scorers?.map(p => ({ id: p.id, name: p.name, photo: p.photo })) || [],
+                    });
+                }
+            });
+        });
+        if (championship.tournamentWinner && !teamsMap.has(championship.tournamentWinner.id)) {
+            teamsMap.set(championship.tournamentWinner.id, championship.tournamentWinner);
+        }
+    });
+
+    const uniqueTeams = Array.from(teamsMap.values());
+    let successCount = 0;
+
+    for (const team of uniqueTeams) {
+        try {
+            const { logo, players, ...restData } = team;
+
+            const logoUrl = logo ? await storageService.uploadFileAndGetURL(Image.resolveAssetSource(logo as ImageSourcePropType).uri, 'team-logos') : null;
+
+            const playersWithImages = players ? await Promise.all(
+                players.map(async (player: any) => {
+                    const photoUrl = player.photo ? await storageService.uploadFileAndGetURL(Image.resolveAssetSource(player.photo as ImageSourcePropType).uri, 'player-photos') : null;
+                    return { ...player, photo: photoUrl };
+                })
+            ) : [];
+
+            const dataToSave = {
+                ...restData,
+                logo: logoUrl,
+                players: playersWithImages,
+            };
+
+            await teamService.addTeam(dataToSave);
+            console.log(`✅ Equipa "${team.name}" adicionada com sucesso.`);
+            successCount++;
+        } catch (error) {
+            console.error(`❌ Erro ao adicionar a equipa "${team.name}":`, error);
+        }
+    }
+
+    console.log(`🏁 Semeadura de equipas concluída. ${successCount} adicionadas.`);
+    Alert.alert("Sucesso", `✅ ${successCount} equipas semeadas com sucesso!`);
 };

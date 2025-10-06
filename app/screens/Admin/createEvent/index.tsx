@@ -178,6 +178,24 @@ const AdminCreateEvent = () => {
     updateField('rules', newRules);
   };
 
+  const handleMaxTeamsChange = (text: string) => {
+    const numericValue = text.replace(/[^0-9]/g, '');
+
+    if (numericValue === '') {
+      updateField('maxTeams', undefined); 
+      return;
+    }
+
+    let num = parseInt(numericValue, 10);
+
+    if (num > 32) {
+      num = 32;
+      Alert.alert("Limite Atingido", "A quantidade máxima de equipes é 32.");
+    }
+
+    updateField('maxTeams', num);
+  };
+
   const handleSubmit = React.useCallback(async () => {
     if (!formData.title.trim() || !formData.address.trim()) {
       Alert.alert('Erro', 'Por favor, preencha os campos de título e endereço.');
@@ -249,6 +267,21 @@ const AdminCreateEvent = () => {
               placeholderTextColor="#9CA3AF"
             />
 
+            <Label>Imagem de Capa (Opcional)</Label>
+            <InputPressable onPress={pickImage}>
+              {formData.image ? (
+                <Image
+                  source={{ uri: formData.image }}
+                  style={{ width: 60, height: 40, borderRadius: 8 }}
+                />
+              ) : (
+                <InputIcon name="image" />
+              )}
+              <InputValue>
+                {formData.image ? 'Imagem selecionada' : 'Escolher imagem'}
+              </InputValue>
+            </InputPressable>
+
             <Label>Tipo</Label>
             <Segmented>
               <Segment
@@ -301,6 +334,15 @@ const AdminCreateEvent = () => {
               onChangeText={text => updateField('address', text)}
               placeholder="Ex: Ginásio do Maracanãzinho, RJ"
               placeholderTextColor="#9CA3AF"
+            />
+
+            <Label>Quantidade total de equipes</Label>
+            <Input
+              value={formData.maxTeams ? String(formData.maxTeams) : ''}
+              onChangeText={handleMaxTeamsChange}
+              placeholder="Ex: 16"
+              placeholderTextColor="#9CA3AF"
+              keyboardType="numeric"
             />
 
             <Label>Descrição</Label>
@@ -372,21 +414,6 @@ const AdminCreateEvent = () => {
                 value={formData.isAvailable}
               />
             </SwitchRow>
-
-            <Label>Imagem de Capa (Opcional)</Label>
-            <InputPressable onPress={pickImage}>
-              {formData.image ? (
-                <Image
-                  source={{ uri: formData.image }}
-                  style={{ width: 60, height: 40, borderRadius: 8 }}
-                />
-              ) : (
-                <InputIcon name="image" />
-              )}
-              <InputValue>
-                {formData.image ? 'Imagem selecionada' : 'Escolher imagem'}
-              </InputValue>
-            </InputPressable>
 
             <SubmitButton activeOpacity={0.9} onPress={handleSubmit} disabled={loading}>
               <SubmitText>

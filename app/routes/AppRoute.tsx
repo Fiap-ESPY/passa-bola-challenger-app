@@ -7,15 +7,16 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AdminCreateEvent from '../screens/Admin/createEvent';
 import AdminCreateNews from '../screens/Admin/createNews';
+import AdminDashboard from '../screens/Admin/dashboard';
 import AdminHome from '../screens/Admin/home';
 import ChampionshipDetails from '../screens/ChampionshipDetails';
+import ChampionshipStatistics from '../screens/ChampionshipStatistics';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
 import MatchStatistics from '../screens/MatchStatistics';
 import MatchSwitching from '../screens/MatchSwitching';
 import News from '../screens/News';
 import NewsDetails from '../screens/NewsDetails';
-import ChampionshipStatistics from '../screens/ChampionshipStatistics';
 import OrganizationRegisterStep1 from '../screens/Organization/register/step-1';
 import OrganizationRegisterStep2 from '../screens/Organization/register/step-2';
 import OrganizationRegisterStep3 from '../screens/Organization/register/step-3';
@@ -40,6 +41,9 @@ export default function StackNavigation() {
       <Stack.Screen name="MatchSwitching" component={MatchSwitching} />
      
       <Stack.Screen name="AdminHome" component={AdminHome} />
+      <Stack.Screen name="AdminNews" component={News} />
+      <Stack.Screen name="AdminEvents" component={Home} />
+      <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
       <Stack.Screen name="AdminCreateEvent" component={AdminCreateEvent} />
       <Stack.Screen name="AdminCreateNews" component={AdminCreateNews} />
       <Stack.Screen name="MatchStatistics" component={MatchStatistics} />
@@ -53,7 +57,7 @@ export default function StackNavigation() {
 
 const BottomTabsNavigation = () => {
   const BottomTabs = createBottomTabNavigator();
-
+  
   const screenOptions = {
     tabBarShowLabel: false,
     headerShown: false,
@@ -100,6 +104,7 @@ const BottomTabsNavigation = () => {
           ),
         }}
       />
+    
       <BottomTabs.Screen
         name="login"
         component={Login}

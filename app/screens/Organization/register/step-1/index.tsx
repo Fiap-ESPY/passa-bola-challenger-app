@@ -27,6 +27,7 @@ import { Organization } from '@/model/organization';
 
 export const OrganizationRegisterStep1 = () => {
   const [organizationData, setOrganizationData] = useState<Partial<Organization>>({
+    name: '',
     email: '',
     cnpj: '',
     phone: '',
@@ -136,6 +137,18 @@ export const OrganizationRegisterStep1 = () => {
               </StepsContainer>
 
               <Form>
+                <InputWrapper>
+                  <FontAwesome name="user" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
+                  <TextInputStyled
+                    placeholder="Nome"
+                    placeholderTextColor="#7A7A7A"
+                    keyboardType="default"
+                    autoCapitalize="none"
+                    value={organizationData.name}
+                    onChangeText={(text) => handleInputChange('name', text)}
+                    returnKeyType="next"
+                  />
+                </InputWrapper>
                 <InputWrapper>
                   <FontAwesome name="envelope" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled

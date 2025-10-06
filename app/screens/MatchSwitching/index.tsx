@@ -222,7 +222,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.home.name}</TeamName>
-                                                <Score>{match.home.score ?? '-'}</Score>
+                                                <Score>{match.home.score === 0 ? '-' : match.home.score}</Score>
                                             </Side>
 
                                             <VsImage
@@ -242,7 +242,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.away.name}</TeamName>
-                                                <Score>{match.away.score ?? '-'}</Score>
+                                                <Score>{match.away.score === 0 ? '-' : match.away.score}</Score>
                                             </Side>
                                         </MatchRow>
                                     </MatchCard>
@@ -282,7 +282,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.home.name}</TeamName>
-                                                <Score>{match.home.score ?? '-'}</Score>
+                                                <Score>{match.home.score === 0 ? '-' : match.home.score}</Score>
                                             </Side>
                                             <VsImage
                                                 source={require('@/assets/icons/vs_icon.png')}
@@ -300,7 +300,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.away.name}</TeamName>
-                                                <Score>{match.away.score ?? '-'}</Score>
+                                                <Score>{match.away.score === 0 ? '-' : match.away.score}</Score>
                                             </Side>
                                         </MatchRow>
                                     </MatchCard>
@@ -340,7 +340,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.home.name}</TeamName>
-                                                <Score>{match.home.score ?? '-'}</Score>
+                                                <Score>{match.home.score === 0 ? '-' : match.home.score}</Score>
                                             </Side>
                                             <VsImage
                                                 source={require('@/assets/icons/vs_icon.png')}
@@ -358,7 +358,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.away.name}</TeamName>
-                                                <Score>{match.away.score ?? '-'}</Score>
+                                                <Score>{match.away.score === 0 ? '-' : match.away.score}</Score>
                                             </Side>
                                         </MatchRow>
                                     </MatchCard>
@@ -398,7 +398,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.home.name}</TeamName>
-                                                <Score>{match.home.score ?? '-'}</Score>
+                                                <Score>{match.home.score === 0 ? '-' : match.home.score}</Score>
                                             </Side>
                                             <VsImage
                                                 source={require('@/assets/icons/vs_icon.png')}
@@ -416,7 +416,7 @@ const MatchSwitching = () => {
                                                     }
                                                 </TeamCircle>
                                                 <TeamName numberOfLines={1}>{match.away.name}</TeamName>
-                                                <Score>{match.away.score ?? '-'}</Score>
+                                                <Score>{match.away.score === 0 ? '-' : match.away.score}</Score>
                                             </Side>
                                         </MatchRow>
                                     </MatchCard>

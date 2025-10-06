@@ -12,7 +12,7 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
     isAvailable: true,
     isPublished: true,
     maxTeams: 8,
-    registeredTeams: 8,
+    registeredTeams: [],
     description:
       'Um grande encontro amistoso para celebrar o esporte. Junte sua galera e venha participar deste racha histórico entre as duas maiores cidades do país. O foco é a diversão e a confraternização.',
     rules: [
@@ -38,7 +38,23 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
     isAvailable: true,
     isPublished: false,
     maxTeams: 16,
-    registeredTeams: 15,
+    registeredTeams: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
     description:
       'O Campeonato de Futebol Feminino Amador reúne 12 times compostos por 10 jogadoras cada, promovendo a integração, o espírito esportivo e o incentivo à prática do futebol entre mulheres. Com partidas dinâmicas e disputas acirradas, o torneio valoriza o talento feminino no esporte.',
     rules: [
@@ -78,7 +94,24 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
     isAvailable: true,
     isPublished: true,
     maxTeams: 16,
-    registeredTeams: 16,
+    registeredTeams: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
     description:
       'O Campeonato de Futebol Feminino Amador reúne 12 times compostos por 10 jogadoras cada, promovendo a integração, o espírito esportivo e o incentivo à prática do futebol entre mulheres. Com partidas dinâmicas e disputas acirradas, o torneio valoriza o talento feminino no esporte.',
     rules: [
@@ -118,7 +151,24 @@ export const CHAMPIONSHIP_DATA: Championship[] = [
     isPublished: true,
     image: require('@/assets/news/copa_passa_bola_1.png'),
     maxTeams: 16,
-    registeredTeams: 16,
+    registeredTeams: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
     description:
       'A segunda edição da Copa Passa a Bola marcou o início de uma tradição no futebol feminino amador. O evento foi um sucesso, reunindo equipes talentosas em uma disputa emocionante que culminou com a vitória do time Feras.',
     rules: [

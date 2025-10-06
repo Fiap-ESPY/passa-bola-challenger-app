@@ -67,8 +67,11 @@ export const OrganizationRegisterStep2 = () => {
 
     const organizationData: Partial<Organization> = {
       ...step1Data,
-      teamName: teamName.trim(),
-      teamCrestUri: teamCrest,
+      team: {
+        id: Date.now(),
+        name: teamName.trim(),
+        logo: teamCrest
+      }
     };
 
     Alert.alert('Continuar', 'Dados da Etapa 2 coletados. Próxima etapa!');
