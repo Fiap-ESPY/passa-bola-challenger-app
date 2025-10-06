@@ -358,7 +358,7 @@ const ChampionshipDetails = () => {
       {isOrganization && !championship.isPublished &&
         <Footer>
           <ActionButton
-            isDisabled={championship.maxTeams === championship.registeredTeams?.length || organization?.team?.id && championship.registeredTeams?.includes(organization?.team?.id)}
+            isDisabled={(championship.maxTeams === championship.registeredTeams?.length) || (organization?.team?.id ? championship.registeredTeams?.includes(organization?.team?.id) : false)}
             backgroundColor={COLORS.blue}
             icon={organization?.team?.id && championship.registeredTeams?.includes(organization?.team?.id)
               ? <FontAwesome name="check" size={18} color={COLORS.white} />
