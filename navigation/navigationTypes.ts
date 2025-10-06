@@ -11,6 +11,7 @@ export type RootStackParamList = {
   MatchStatistics: { matchId: string, championshipId: string };
   AdminHome: undefined;
   AdminNews: undefined;
+  AdminDashboard: undefined;
   AdminEvents: undefined;
   AdminCreateEvent: { championshipId?: string | null };
   AdminCreateNews: { newsId?: string | null };

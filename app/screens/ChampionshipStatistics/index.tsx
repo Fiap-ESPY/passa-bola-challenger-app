@@ -11,6 +11,9 @@ import {
   BackButton,
   BackIcon,
   ContainerPhoto,
+  EmptyChampionshipSVG,
+  EmptyContainer,
+  EmptyText,
   HeaderCard,
   HeaderContent,
   HeaderGradient,
@@ -146,13 +149,18 @@ const ChampioshipStatistics = () => {
       <HeaderCard>
         <HeaderTitle>ESTATÍSTICAS CAMPEONATO</HeaderTitle>
 
-        {podiumPlayers.length > 0 && (
+        {podiumPlayers.length > 0 ? (
           <PodiumContainer>
             {podiumPlayers[1] && renderPodiumPlayer(podiumPlayers[1], '2nd', 2)}
             {podiumPlayers[0] && renderPodiumPlayer(podiumPlayers[0], '1st', 1)}
             {podiumPlayers[2] && renderPodiumPlayer(podiumPlayers[2], '3rd', 3)}
           </PodiumContainer>
-        )}
+        ) :
+          <EmptyContainer>
+            <EmptyChampionshipSVG source={require('@/assets/championship/empty_championship.png')} />
+            <EmptyText>Nenhuma estatística encontrada</EmptyText>
+          </EmptyContainer>
+        }
       </HeaderCard>
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
@@ -191,7 +199,8 @@ const ChampioshipStatistics = () => {
                   </PlayerStatisticsContainer>
                 </PlayerContainer>
               </PlayerRow>
-            ))}
+            ))
+          }
         </SummaryContainer>
       </ScrollView>
     </Screen>

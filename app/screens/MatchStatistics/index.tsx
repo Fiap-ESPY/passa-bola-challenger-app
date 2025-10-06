@@ -148,7 +148,7 @@ const MatchStatistics = () => {
                                 )}
                             </TeamCircle>
                             <TeamName numberOfLines={1}>{matchItem?.home.name}</TeamName>
-                            <Score>{matchItem?.home.score ?? '-'}</Score>
+                            <Score>{matchItem?.home.score === 0 ? '-' : matchItem?.home.score}</Score>
                         </Side>
 
                         <VsImage
@@ -168,7 +168,7 @@ const MatchStatistics = () => {
                                 )}
                             </TeamCircle>
                             <TeamName numberOfLines={1}>{matchItem?.away.name}</TeamName>
-                            <Score>{matchItem?.away.score ?? '-'}</Score>
+                            <Score>{matchItem?.away.score === 0 ? '-' : matchItem?.away.score}</Score>
                         </Side>
                     </MatchRow>
                 </MatchCard>
@@ -177,22 +177,22 @@ const MatchStatistics = () => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                 >
-                    <WinnerBadge>
-                        <WinnerBadgeText>VENCEDORAS</WinnerBadgeText>
-                    </WinnerBadge>
-                    <WinnerContent>
-                        <WinnerAvatar>
-                            {matchWinner?.logo && (matchItem?.away.score != 0 || matchItem?.home.score != 0)  ? (
-                                <TeamLogo
-                                    source={{ uri: matchWinner?.logo }}
-                                    resizeMode="contain"
-                                    alt="Team logo image"
-                                />
-                            ) : <></>}
-                        </WinnerAvatar>
-
-                        <WinnerName numberOfLines={1}>{matchItem?.away.score != 0 || matchItem?.home.score != 0 ? matchWinner?.name : "A definir"}</WinnerName>
-                    </WinnerContent>
+                    {matchWinner?.logo && (matchItem?.away.score != 0 || matchItem?.home.score != 0) ? (
+                        <>
+                            <WinnerBadge>
+                                <WinnerBadgeText>VENCEDORAS</WinnerBadgeText>
+                            </WinnerBadge>
+                            <WinnerContent>
+                                <WinnerAvatar>
+                                    <TeamLogo
+                                        source={{ uri: matchWinner?.logo }}
+                                        resizeMode="contain"
+                                        alt="Team logo image"
+                                    />
+                                </WinnerAvatar>
+                                <WinnerName numberOfLines={1}>{matchWinner?.name}</WinnerName>
+                            </WinnerContent>
+                        </>) : <WinnerName numberOfLines={1}>A definir</WinnerName>}
                 </WinnerCard>
             </HeaderCard>
 
@@ -201,9 +201,10 @@ const MatchStatistics = () => {
                 showsVerticalScrollIndicator={false}
             >
                 <SummaryContainer>
-                    <SummaryTitleRow>
-                        <SummaryTitle>RESUMO</SummaryTitle>
-                    </SummaryTitleRow>
+                    {(matchItem?.home.score !== 0 || matchItem?.away.score !== 0) &&
+                        <SummaryTitleRow>
+                            <SummaryTitle>RESUMO</SummaryTitle>
+                        </SummaryTitleRow>}
 
                     {matchItem?.away?.scorers &&
                         matchItem.away.scorers

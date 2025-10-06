@@ -1,6 +1,7 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import EventCard from '@/components/cards/event/EventCard';
+
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { authService } from '@/services/auth/authService';
 import { COLORS } from '@/theme/colors';
@@ -78,14 +79,25 @@ const AdminHome = () => {
 
         <CardWrapper>
           <EventCard
+            title="Dashboards"
+            buttonLabel="Visualizar"
+            onClick={() => navigation.navigate('AdminDashboard')}
+            image={require('@/assets/dashboard/dashboard.png')}
+            icon={<FontAwesome name="eye" size={18} color={COLORS.white} />}
+          />
+          <EventCard
             title="Campeonatos"
+            buttonLabel="Gerenciar"
             onClick={() => navigation.navigate('AdminEvents')}
             image={require('@/assets/championship/championships.jpg')}
+            icon={<FontAwesome name="gear" size={18} color={COLORS.white} />}
           />
           <EventCard
             title="Notícias"
+            buttonLabel="Gerenciar"
             onClick={() => navigation.navigate('AdminNews')}
             image={require('@/assets/news/news.jpg')}
+            icon={<FontAwesome name="gear" size={18} color={COLORS.white} />}
           />
         </CardWrapper>
       </ScrollView>

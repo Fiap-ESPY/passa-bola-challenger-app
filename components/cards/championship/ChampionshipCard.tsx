@@ -76,12 +76,12 @@ const ChampionshipCard = ({
             colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
           />
           <EventTitle>{championship.title}</EventTitle>
-          {isAdmin || isOrganization && (
+          {(isAdmin || isOrganization) && (
             <>
               <StatusTag available={championship.isAvailable}>
                 <StatusTagText>{championship.isAvailable ? (organization?.team?.id && championship.registeredTeams?.includes(organization?.team?.id) ? 'Inscrito!' : 'Disponível'.toLocaleUpperCase()) : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
               </StatusTag>
-              <TotalTeamsText>{championship.registeredTeams?.length ?? 0}/{championship.maxTeams ?? 0} times</TotalTeamsText>
+              {championship.type === 'campeonato' && <TotalTeamsText>{championship.registeredTeams?.length ?? 0}/{championship.maxTeams ?? 0} times</TotalTeamsText>}
             </>
           )}
         </ImageBackground>
@@ -95,11 +95,14 @@ const ChampionshipCard = ({
             <LabelText>{championship.type.toLocaleUpperCase()}</LabelText>
           </Label>
           <EventTitle>{championship.title}</EventTitle>
-          {isAdmin &&
-            <StatusTag available={championship.isAvailable}>
-              <StatusTagText>{championship.isAvailable ? 'Disponível'.toLocaleUpperCase() : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
-            </StatusTag>
-          }
+          {(isAdmin || isOrganization) && (
+            <>
+              <StatusTag available={championship.isAvailable}>
+                <StatusTagText>{championship.isAvailable ? (organization?.team?.id && championship.registeredTeams?.includes(organization?.team?.id) ? 'Inscrito!' : 'Disponível'.toLocaleUpperCase()) : 'Indisponível'.toLocaleUpperCase()}</StatusTagText>
+              </StatusTag>
+              {championship.type === 'campeonato' && <TotalTeamsText>{championship.registeredTeams?.length ?? 0}/{championship.maxTeams ?? 0} times</TotalTeamsText>}
+            </>
+          )}
         </GradientBackground>
       )}
 

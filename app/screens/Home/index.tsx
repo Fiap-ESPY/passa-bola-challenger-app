@@ -253,8 +253,8 @@ const Home = () => {
                     championshipId: championship.docId,
                   });
                 }}
-                isAdmin={!!isAdmin}
-                isOrganization={!!isOrganization}
+                isAdmin={isAdmin}
+                isOrganization={isOrganization}
                 organization={organization}
               />
             </CardWrapper>

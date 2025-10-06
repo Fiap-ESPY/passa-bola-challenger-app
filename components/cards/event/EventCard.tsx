@@ -9,15 +9,18 @@ import {
 import ActionButton from '@/components/buttons/actionbutton/ActionButton';
 import { COLORS } from '@/theme/colors';
 import { FontAwesome } from '@expo/vector-icons';
+import { ReactNode } from 'react';
 import { ImageSourcePropType } from 'react-native';
 
 type EventCardProps = {
   title: string;
   onClick: () => void;
   image: ImageSourcePropType;
+  buttonLabel: string;
+  icon?: ReactNode;
 };
 
-const EventCard = ({ title, onClick, image }: EventCardProps) => {
+const EventCard = ({ title, onClick, image, buttonLabel, icon }: EventCardProps) => {
   return (
     <Card>
       <ImageBackground source={image} resizeMode="cover" alt="Image Background">
@@ -31,10 +34,10 @@ const EventCard = ({ title, onClick, image }: EventCardProps) => {
 
       <DescriptionArea>
         <ActionButton
-          label="Gerenciar"
+          label={buttonLabel}
           onPress={onClick}
           backgroundColor={COLORS.blue}
-          icon={<FontAwesome name="gear" size={18} color={COLORS.white} />}
+          icon={icon}
         />
       </DescriptionArea>
     </Card>

@@ -7,6 +7,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AdminCreateEvent from '../screens/Admin/createEvent';
 import AdminCreateNews from '../screens/Admin/createNews';
+import AdminDashboard from '../screens/Admin/dashboard';
 import AdminHome from '../screens/Admin/home';
 import ChampionshipDetails from '../screens/ChampionshipDetails';
 import ChampionshipStatistics from '../screens/ChampionshipStatistics';
@@ -42,6 +43,7 @@ export default function StackNavigation() {
       <Stack.Screen name="AdminHome" component={AdminHome} />
       <Stack.Screen name="AdminNews" component={News} />
       <Stack.Screen name="AdminEvents" component={Home} />
+      <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
       <Stack.Screen name="AdminCreateEvent" component={AdminCreateEvent} />
       <Stack.Screen name="AdminCreateNews" component={AdminCreateNews} />
       <Stack.Screen name="MatchStatistics" component={MatchStatistics} />
