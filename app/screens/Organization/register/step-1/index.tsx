@@ -1,5 +1,8 @@
+import { Organization } from '@/model/organization';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
 import { COLORS } from '@/theme/colors';
+import { isCnpjValid, isEmailValid, isPhoneValid } from '@/utils/validators/validators';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
@@ -21,9 +24,6 @@ import {
   StepText,
   TextInputStyled,
 } from './styles';
-
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Organization } from '@/model/organization';
 
 export const OrganizationRegisterStep1 = () => {
   const [organizationData, setOrganizationData] = useState<Partial<Organization>>({
@@ -54,7 +54,6 @@ export const OrganizationRegisterStep1 = () => {
 
       if (data.erro) {
         Alert.alert('CEP não encontrado', 'Por favor, verifique o CEP digitado.');
-
         setOrganizationData(prev => ({ ...prev, addressStreet: '', addressCity: '', addressState: '' }));
       } else {
         setOrganizationData(prev => ({
@@ -73,21 +72,37 @@ export const OrganizationRegisterStep1 = () => {
   };
 
   const handleContinue = () => {
-    const { email, cnpj, phone, cep, addressStreet, addressCity, addressState } = organizationData;
+    const { name, email, cnpj, phone, cep, addressStreet, addressCity, addressState } = organizationData;
 
-    if (!email || !cnpj || !phone || !cep || !addressStreet || !addressCity || !addressState) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios.');
+    if (!name || !email || !cnpj || !phone || !cep || !addressStreet || !addressCity || !addressState) {
+      Alert.alert('Campos em Falta', 'Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    if (!isEmailValid(email)) {
+      Alert.alert('E-mail Inválido', 'Por favor, insira um endereço de e-mail válido.');
+      return;
+    }
+    if (!isCnpjValid(cnpj)) {
+      Alert.alert('CNPJ Inválido', 'O CNPJ informado não é válido.');
+      return;
+    }
+    if (!isPhoneValid(phone)) {
+      Alert.alert('Telefone Inválido', 'Por favor, insira um número de telefone válido (com DDD).');
       return;
     }
 
     navigation.navigate('OrganizationRegisterStep2', organizationData);
   };
 
-
   const handleInputChange = (field: keyof Organization, value: string) => {
+    let formattedValue = value;
+    if (field === 'cnpj' || field === 'phone' || field === 'cep') {
+      formattedValue = value.replace(/\D/g, '');
+    }
     setOrganizationData(prevState => ({
       ...prevState,
-      [field]: value,
+      [field]: formattedValue,
     }));
   };
 
@@ -105,7 +120,7 @@ export const OrganizationRegisterStep1 = () => {
           </BackButton>
 
           <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1, justifyContent: 'center' }}
           >
             <ScrollView
@@ -119,107 +134,79 @@ export const OrganizationRegisterStep1 = () => {
               <Logo source={require('@/assets/logo.png')} resizeMode="contain" />
 
               <StepsContainer>
-                <StepCircle active={true}>
-                  <StepText active={true}>1</StepText>
-                </StepCircle>
-                <StepLine active={false} />
-                <StepCircle active={false}>
-                  <StepText active={false}>2</StepText>
-                </StepCircle>
-                <StepLine active={false} />
-                <StepCircle active={false}>
-                  <StepText active={false}>3</StepText>
-                </StepCircle>
-                <StepLine active={false} />
-                <StepCircle active={false}>
-                  <StepText active={false}>4</StepText>
-                </StepCircle>
+                <StepCircle active={true}><StepText active={true}>1</StepText></StepCircle>
+                <StepLine active={false} /><StepCircle active={false}><StepText active={false}>2</StepText></StepCircle>
+                <StepLine active={false} /><StepCircle active={false}><StepText active={false}>3</StepText></StepCircle>
+                <StepLine active={false} /><StepCircle active={false}><StepText active={false}>4</StepText></StepCircle>
               </StepsContainer>
 
               <Form>
                 <InputWrapper>
                   <FontAwesome name="user" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
-                    placeholder="Nome"
-                    placeholderTextColor="#7A7A7A"
-                    keyboardType="default"
-                    autoCapitalize="none"
+                    placeholder="Nome da Organização"
                     value={organizationData.name}
                     onChangeText={(text) => handleInputChange('name', text)}
-                    returnKeyType="next"
                   />
                 </InputWrapper>
                 <InputWrapper>
                   <FontAwesome name="envelope" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
                     placeholder="E-mail"
-                    placeholderTextColor="#7A7A7A"
                     keyboardType="email-address"
                     autoCapitalize="none"
                     value={organizationData.email}
                     onChangeText={(text) => handleInputChange('email', text)}
-                    returnKeyType="next"
                   />
                 </InputWrapper>
-
                 <InputWrapper>
                   <FontAwesome name="building" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
                     placeholder="CNPJ"
-                    placeholderTextColor="#7A7A7A"
                     keyboardType="numeric"
                     value={organizationData.cnpj}
                     onChangeText={(text) => handleInputChange('cnpj', text)}
-                    returnKeyType="next"
+                    maxLength={14}
                   />
-
                 </InputWrapper>
-
                 <InputWrapper >
                   <FontAwesome name="phone" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
-                    placeholder="Telefone"
-                    placeholderTextColor="#7A7A7A"
+                    placeholder="Telefone (com DDD)"
                     keyboardType="phone-pad"
                     value={organizationData.phone}
                     onChangeText={(text) => handleInputChange('phone', text)}
-                    returnKeyType="next"
+                    maxLength={11}
                   />
                 </InputWrapper>
                 <InputWrapper>
                   <FontAwesome name="location-arrow" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
                     placeholder="CEP"
-                    placeholderTextColor="#7A7A7A"
                     keyboardType="numeric"
                     value={organizationData.cep}
                     onChangeText={(text) => {
-                      handleInputChange('cep', text);
-                      if (text.length === 8) handleCepLookup(text);
+                      const formattedText = text.replace(/\D/g, '');
+                      handleInputChange('cep', formattedText);
+                      if (formattedText.length === 8) handleCepLookup(formattedText);
                     }}
                     maxLength={8}
-                    returnKeyType="done"
                   />
                   {cepLoading && <ActivityIndicator color={COLORS.blue} />}
                 </InputWrapper>
-
                 <InputWrapper>
                   <FontAwesome name="map-marker" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
                     placeholder="Endereço"
-                    placeholderTextColor="#7A7A7A"
                     value={organizationData.addressStreet}
                     onChangeText={(text) => handleInputChange('addressStreet', text)}
-                    returnKeyType="next"
                   />
                 </InputWrapper>
-
                 <Row>
                   <InputWrapper width="55%">
                     <FontAwesome name="map" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                     <TextInputStyled
                       placeholder="Cidade"
-                      placeholderTextColor="#7A7A7A"
                       value={organizationData.addressCity}
                       onChangeText={(text) => handleInputChange('addressCity', text)}
                     />
@@ -228,7 +215,6 @@ export const OrganizationRegisterStep1 = () => {
                     <FontAwesome name="flag" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                     <TextInputStyled
                       placeholder="UF"
-                      placeholderTextColor="#7A7A7A"
                       value={organizationData.addressState}
                       onChangeText={(text) => handleInputChange('addressState', text)}
                       maxLength={2}
@@ -240,14 +226,13 @@ export const OrganizationRegisterStep1 = () => {
                   <FontAwesome name="info-circle" size={20} color="#7A7A7A" style={{ marginRight: 10 }} />
                   <TextInputStyled
                     placeholder="Complemento (opcional)"
-                    placeholderTextColor="#7A7A7A"
                     value={organizationData.addressComplement}
                     onChangeText={(text) => handleInputChange('addressComplement', text)}
                   />
                 </InputWrapper>
 
                 <PrimaryButton onPress={handleContinue} disabled={loading} style={{ marginTop: 10 }}>
-                  <PrimaryText>{loading ? 'Carregando...' : 'Continuar'}</PrimaryText>
+                  <PrimaryText>{loading ? 'A validar...' : 'Continuar'}</PrimaryText>
                 </PrimaryButton>
               </Form>
             </ScrollView>
