@@ -5,16 +5,22 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { COLORS } from '@/theme/colors';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
-// SCREENS
-import AdminHome from '../screens/Admin/home';
-import HomeScreen from '../screens/Home';
-import LoginScreen from '../screens/Login';
-import MatchDetails from '../screens/MatchDetails';
-import MatchSwitching from '../screens/MatchSwitching';
-import NewsScreen from '../screens/News';
-import NewsDetails from '../screens/NewsDetails';
 import AdminCreateEvent from '../screens/Admin/createEvent';
+import AdminCreateNews from '../screens/Admin/createNews';
+import AdminDashboard from '../screens/Admin/dashboard';
+import AdminHome from '../screens/Admin/home';
+import ChampionshipDetails from '../screens/ChampionshipDetails';
+import ChampionshipStatistics from '../screens/ChampionshipStatistics';
+import Home from '../screens/Home';
+import Login from '../screens/Login';
+import MatchStatistics from '../screens/MatchStatistics';
+import MatchSwitching from '../screens/MatchSwitching';
+import News from '../screens/News';
+import NewsDetails from '../screens/NewsDetails';
+import OrganizationRegisterStep1 from '../screens/Organization/register/step-1';
+import OrganizationRegisterStep2 from '../screens/Organization/register/step-2';
+import OrganizationRegisterStep3 from '../screens/Organization/register/step-3';
+import OrganizationRegisterStep4 from '../screens/Organization/register/step-4';
 
 export default function StackNavigation() {
   const Stack = createStackNavigator<RootStackParamList>();
@@ -22,20 +28,36 @@ export default function StackNavigation() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="BottomTabs" component={BottomTabsNavigation} />
-      <Stack.Screen name="MatchDetails" component={MatchDetails} />
+       <Stack.Screen
+        name="ChampionshipDetails"
+        component={ChampionshipDetails}
+      />
+      
+      <Stack.Screen
+        name="ChampionshipStatistics"
+        component={ChampionshipStatistics}
+      />
       <Stack.Screen name="NewsDetails" component={NewsDetails} />
       <Stack.Screen name="MatchSwitching" component={MatchSwitching} />
+     
       <Stack.Screen name="AdminHome" component={AdminHome} />
-      <Stack.Screen name="AdminNews" component={NewsScreen} />
-      <Stack.Screen name="AdminEvents" component={HomeScreen} />
+      <Stack.Screen name="AdminNews" component={News} />
+      <Stack.Screen name="AdminEvents" component={Home} />
+      <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
       <Stack.Screen name="AdminCreateEvent" component={AdminCreateEvent} />
+      <Stack.Screen name="AdminCreateNews" component={AdminCreateNews} />
+      <Stack.Screen name="MatchStatistics" component={MatchStatistics} />
+      <Stack.Screen name="OrganizationRegisterStep1" component={OrganizationRegisterStep1} />
+      <Stack.Screen name="OrganizationRegisterStep2" component={OrganizationRegisterStep2} /> 
+      <Stack.Screen name="OrganizationRegisterStep3" component={OrganizationRegisterStep3} />
+      <Stack.Screen name="OrganizationRegisterStep4" component={OrganizationRegisterStep4} />
     </Stack.Navigator>
   );
 }
 
 const BottomTabsNavigation = () => {
   const BottomTabs = createBottomTabNavigator();
-
+  
   const screenOptions = {
     tabBarShowLabel: false,
     headerShown: false,
@@ -45,6 +67,12 @@ const BottomTabsNavigation = () => {
       backgroundColor: 'white',
       height: 70,
       elevation: 0,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.1,
+      shadowRadius: 5,
+    },
+    tabBarItemStyle: {
+      marginVertical: 10
     },
   };
 
@@ -56,7 +84,7 @@ const BottomTabsNavigation = () => {
     <BottomTabs.Navigator screenOptions={screenOptions} initialRouteName="home">
       <BottomTabs.Screen
         name="news"
-        component={NewsScreen}
+        component={News}
         options={{
           tabBarIcon: ({ focused }) => (
             <Ionicons
@@ -69,16 +97,17 @@ const BottomTabsNavigation = () => {
       />
       <BottomTabs.Screen
         name="home"
-        component={HomeScreen}
+        component={Home}
         options={{
           tabBarIcon: ({ focused }) => (
             <Ionicons name="home" size={27} color={focusedStyle(focused)} />
           ),
         }}
       />
+    
       <BottomTabs.Screen
         name="login"
-        component={LoginScreen}
+        component={Login}
         options={{
           tabBarIcon: ({ focused }) => (
             <FontAwesome name="user" size={27} color={focusedStyle(focused)} />
@@ -88,3 +117,5 @@ const BottomTabsNavigation = () => {
     </BottomTabs.Navigator>
   );
 };
+
+

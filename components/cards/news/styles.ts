@@ -22,7 +22,6 @@ export const NewsThumb = styled.Image`
   height: 100px;
   border-radius: 10px;
   margin-right: 6px;
-  align-self: center;
 `;
 
 export const NewsInfo = styled.View`
@@ -81,7 +80,18 @@ export const NewsDate = styled.Text`
   color: ${COLORS.grayMedium};
   text-align: left;
   margin-top: 12px;
-  position: absolute;
-  bottom: 0px;
-  left: 8px;
+`;
+
+
+export const NewsFooter = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+`;
+
+export const ActionsContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px; 
 `;

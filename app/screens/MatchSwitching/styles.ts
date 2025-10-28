@@ -77,7 +77,7 @@ export const TabText = styled.Text<{ $active?: boolean }>`
 `;
 
 export const SectionTitle = styled.Text`
-  margin: 35px 0 15px;
+  margin: 30px 0 15px;
   text-align: center;
   font-size: 18px;
   font-weight: 800;
@@ -89,8 +89,7 @@ export const Section = styled.View`
   row-gap: 12px;
 `;
 
-// Card do confronto
-export const MatchCard = styled.View`
+export const MatchCard = styled.TouchableOpacity`
   background-color: ${COLORS.white};
   border-radius: 16px;
   padding: 14px;
@@ -153,7 +152,7 @@ export const VsImage = styled.Image`
 `;
 
 export const WinnerTitle = styled.Text`
-  margin: 0px 0 12px;
+  margin: 0px 0 14px;
   text-align: center;
   font-size: 22px;
   font-weight: 900;
@@ -178,7 +177,7 @@ export const WinnerCard = styled(LinearGradient)`
 
 export const WinnerContent = styled.View`
   align-items: center;
-  row-gap: 12px;
+  gap: 12px;
 `;
 
 export const WinnerAvatar = styled.View`
@@ -191,8 +190,8 @@ export const WinnerAvatar = styled.View`
 `;
 
 export const WinnerLogo = styled.Image`
-  width: 64px;
-  height: 64px;
+  width: 70px;
+  height: 70px;
   border-radius: 32px;
 `;
 

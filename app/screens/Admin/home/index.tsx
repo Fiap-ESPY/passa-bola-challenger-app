@@ -1,12 +1,13 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 import EventCard from '@/components/cards/event/EventCard';
+
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { authService } from '@/services/auth/authService';
 import { COLORS } from '@/theme/colors';
 import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
-import { getAuth, signOut } from 'firebase/auth';
 import React from 'react';
 import { Alert, ScrollView, StatusBar } from 'react-native';
 import {
@@ -25,11 +26,9 @@ const AdminHome = () => {
 
   const handleLogout = async () => {
     try {
-      const auth = getAuth();
-      await signOut(auth);
-
+      await authService.logout();
+      await UserSession.clear();
       navigation.navigate('BottomTabs', { screen: 'home' });
-      UserSession.clear;
     } catch (e) {
       Alert.alert(
         'Erro ao sair',
@@ -76,18 +75,29 @@ const AdminHome = () => {
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
       >
-        <WelcomeText>Bem-vindo, Administrador! </WelcomeText>
+        <WelcomeText>Bem-vindo, Administrador!</WelcomeText>
 
         <CardWrapper>
           <EventCard
+            title="Dashboards"
+            buttonLabel="Visualizar"
+            onClick={() => navigation.navigate('AdminDashboard')}
+            image={require('@/assets/dashboard/dashboard.png')}
+            icon={<FontAwesome name="eye" size={18} color={COLORS.white} />}
+          />
+          <EventCard
             title="Campeonatos"
+            buttonLabel="Gerenciar"
             onClick={() => navigation.navigate('AdminEvents')}
-            image={require('@/assets/events/events.jpg')}
+            image={require('@/assets/championship/championships.jpg')}
+            icon={<FontAwesome name="gear" size={18} color={COLORS.white} />}
           />
           <EventCard
             title="Notícias"
+            buttonLabel="Gerenciar"
             onClick={() => navigation.navigate('AdminNews')}
             image={require('@/assets/news/news.jpg')}
+            icon={<FontAwesome name="gear" size={18} color={COLORS.white} />}
           />
         </CardWrapper>
       </ScrollView>

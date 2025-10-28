@@ -1,21 +1,26 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
-import MatchEventCard from '@/components/cards/matchevent/MatchEventCard';
+import ChampionshipCard from '@/components/cards/championship/ChampionshipCard';
 import SearchFilter from '@/components/filter/searchFilter/SearchFilter';
-import { MATCH_EVENTS_DATA } from '@/data/matchEventData';
+import { UserRole } from '@/model/enum/userRole';
 import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { listenAuth } from '@/services/auth';
+import { authService, UserSessionData } from '@/services/auth/authService';
+import { ChampionshipDocument, championshipService } from '@/services/championship/championshipService';
+import { OrganizationDocument, organizationService } from '@/services/organization/organizationService';
 import { COLORS } from '@/theme/colors';
-import { clearEvents, loadEvents, saveEvents } from '@/utils/events/eventsStore';
+import { UserSession } from '@/utils/session/session';
 import { FontAwesome } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { useNavigation } from 'expo-router';
+import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, ScrollView, StatusBar } from 'react-native';
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, StatusBar } from 'react-native';
+import { Container } from '../ChampionshipDetails/styles';
 import {
   BackButton,
   BackIcon,
   CardWrapper,
+  EmptyChampionshipSVG,
+  EmptyContainer,
+  EmptyText,
   FloatingButton,
   HeaderCard,
   HeaderGrad,
@@ -26,7 +31,6 @@ import {
   Tabs,
   TabText,
 } from './styles';
-import { clearNews } from '@/utils/news/newsStore';
 
 enum EventFilterType {
   ALL_EVENTS,
@@ -37,80 +41,136 @@ enum EventFilterType {
 const Home = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
 
-  const [events, setEvents] = useState(MATCH_EVENTS_DATA);
-  const [hydrated, setHydrated] = useState(false);
+  const [championships, setChampionships] = useState<ChampionshipDocument[]>([]);
+  const [isLoading, setisLoading] = useState(true);
+  const [isChecking, setIsChecking] = useState(true);
+
+  const [session, setSession] = useState<UserSessionData | null>(null);
 
   const [eventFilterType, setEventFilterType] = useState<EventFilterType>(
     EventFilterType.ALL_EVENTS
   );
   const [filterSearch, setFilterSearch] = useState<string>('');
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [organization, setOrganization] = useState<OrganizationDocument | null>(null);
+
+  const isAdmin = useMemo(() => session?.role === UserRole.ADMIN, [session]);
+  const isOrganization = useMemo(() => session?.role === UserRole.ORGANIZATION, [session]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-      let active = true;
+      const fetchData = async () => {
+        setisLoading(true);
+        try {
+          const userSession = await UserSession.get();
+          setSession(userSession);
 
-      const unsubAuth = listenAuth(user => setIsAdmin(!!user));
+          if (userSession?.role === UserRole.ORGANIZATION && userSession.uid) {
+            const findOrganization = await organizationService.getOrganizationById(userSession.uid)
+            setOrganization(findOrganization);
+          }
 
-      (async () => {
-        const stored = await loadEvents();
-        if (active && stored && Array.isArray(stored)) {
-          setEvents(stored);
-          setHydrated(true);
+          const fetchedChampionships = await championshipService.getAllChampionships();
+          setChampionships(fetchedChampionships);
+        } catch (error) {
+          console.error("Failed to fetch data:", error);
+          Alert.alert("Erro", "Não foi possível carregar os campeonatos.");
+        } finally {
+          setisLoading(false);
         }
-      })();
-
-      return () => {
-        active = false;
-        unsubAuth();
       };
+
+      fetchData();
     }, [])
   );
 
   useEffect(() => {
-    (async () => {
-      const stored = await loadEvents();
-      if (stored && Array.isArray(stored)) {
-        setEvents(stored);
-      } else {
-        await saveEvents(MATCH_EVENTS_DATA);
+    const unsubscribe = authService.onAuthChange(async (session: UserSessionData | null) => {
+      if (!session) {
+        await UserSession.clear();
+        navigation.navigate('BottomTabs', { screen: 'login' });
       }
-      setHydrated(true);
-    })();
+      setIsChecking(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!hydrated) return;
-    (async () => {
-      await saveEvents(events);
-    })();
-  }, [events, hydrated]);
 
-  const handleDelete = useCallback((id: number | string) => {
+  const handleDelete = useCallback((docId: string) => {
     Alert.alert(
-      'Remover evento',
-      'Tem certeza que deseja remover este evento?',
+      'Remover Campeonato',
+      'Tem certeza que deseja remover este campeonato?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
           text: 'Remover',
           style: 'destructive',
-          onPress: () => setEvents(curr => curr.filter(e => e.id !== id)),
+          onPress: async () => {
+            try {
+              await championshipService.deleteChampionship(docId);
+              setChampionships(curr => curr.filter(c => c.docId !== docId));
+              Alert.alert('Sucesso', 'Campeonato removido.');
+            } catch (error) {
+              Alert.alert('Erro', 'Não foi possível remover o campeonato.');
+            }
+          },
         },
       ]
     );
   }, []);
 
+
   const filteredData = useMemo(() => {
-    const base = events.filter(event =>
-      event.title.toLowerCase().includes(filterSearch.toLowerCase())
+    let base: ChampionshipDocument[] = [];
+
+    base = championships.length !== 0 ? championships.filter(event =>
+      event.title?.toLowerCase().includes(filterSearch.toLowerCase())
+    ) : [];
+
+    if (isOrganization && organization) {
+      base = base?.filter(event =>
+        event.type === 'campeonato' &&
+        (((event.registeredTeams?.length ?? 0) < (event?.maxTeams ?? 0) && event.isAvailable) || event.registeredTeams?.includes(organization.team.id))
+      );
+    }
+
+    if (!isAdmin && !isOrganization) {
+      base = base?.filter(event => 
+        event.type === 'campeonato' &&
+        ((event.registeredTeams?.length ?? 0) === (event?.maxTeams ?? 0) && event.isAvailable && event.isPublished) || event.type === 'racha'
+      );
+    }
+
+    const now = new Date();
+    let timeFiltered = base;
+    if (eventFilterType === EventFilterType.NEXT_EVENTS) {
+      timeFiltered = base.filter(e => new Date(e.dateAndHour) >= now);
+    }
+    if (eventFilterType === EventFilterType.PAST_EVENTS) {
+      timeFiltered = base.filter(e => new Date(e.dateAndHour) < now);
+    }
+
+    return timeFiltered.slice().sort(
+      (a, b) => new Date(b.dateAndHour).getTime() - new Date(a.dateAndHour).getTime()
     );
-    if (eventFilterType === EventFilterType.NEXT_EVENTS)
-      return base.filter(e => e.isAvailable);
-    if (eventFilterType === EventFilterType.PAST_EVENTS)
-      return base.filter(e => !e.isAvailable);
-    return base;
-  }, [events, eventFilterType, filterSearch]);
+  }, [championships, eventFilterType, filterSearch, isOrganization]);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    const fetchedChampionships = await championshipService.getAllChampionships();
+    setChampionships(fetchedChampionships);
+
+    setRefreshing(false);
+  }, []);
+
+  if (isLoading || isChecking) {
+    return (
+      <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.blue} />
+      </Container>
+    );
+  }
 
   return (
     <Screen>
@@ -164,25 +224,56 @@ const Home = () => {
 
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[COLORS.blue]}
+            tintColor={COLORS.blue}
+          />
+        }
       >
-        {filteredData.map(match => (
-          <CardWrapper key={match.id}>
-            <MatchEventCard
-              matchEvent={match}
-              onClick={() =>
-                navigation.navigate('MatchDetails', { matchId: match.id })
-              }
-              onDelete={() => handleDelete(match.id)}
-              onEdit={() => Alert.alert('Página em desenvolvimento...')}
-              isAdmin={isAdmin}
-            />
-          </CardWrapper>
-        ))}
+        {isLoading ? (
+          <EmptyContainer>
+            <ActivityIndicator size="large" color={COLORS.blue} />
+          </EmptyContainer>
+        ) : filteredData.length > 0 ? (
+          filteredData.map(championship => (
+            <CardWrapper key={championship.docId}>
+              <ChampionshipCard
+                championship={championship}
+                onClick={() =>
+                  navigation.navigate('ChampionshipDetails', {
+                    championshipId: championship.docId
+                  })
+                }
+                onDelete={() => handleDelete(championship.docId)}
+                onEdit={() => {
+                  navigation.navigate('AdminCreateEvent', {
+                    championshipId: championship.docId,
+                  });
+                }}
+                isAdmin={isAdmin}
+                isOrganization={isOrganization}
+                organization={organization}
+              />
+            </CardWrapper>
+          ))
+        ) : (
+          <EmptyContainer>
+            <EmptyChampionshipSVG source={require('@/assets/championship/empty_championship.png')} />
+            <EmptyText>Nenhum campeonato encontrado</EmptyText>
+          </EmptyContainer>
+        )}
       </ScrollView>
+
       {isAdmin && (
         <FloatingButton
-          activeOpacity={0.85}
-          onPress={() => navigation.navigate('AdminCreateEvent')}
+          onPress={() =>
+            navigation.navigate('AdminCreateEvent', {
+              championshipId: null,
+            })
+          }
         >
           <FontAwesome name="plus" size={25} color={COLORS.white} />
         </FloatingButton>

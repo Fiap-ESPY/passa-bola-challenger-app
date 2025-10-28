@@ -75,3 +75,9 @@ export const SourceText = styled.Text`
   text-align: right;
   margin-top: 30px;
 `;
+
+export const DateText = styled.Text`
+  font-size: 12px;
+  color: ${COLORS.grayMedium};
+  text-align: right;
+`;

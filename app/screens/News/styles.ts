@@ -140,3 +140,51 @@ export const FeaturedTitle = styled.Text`
   font-weight: 800;
   font-size: 18px;
 `;
+
+export const FloatingButton = styled.TouchableOpacity`
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+
+  width: 76px;
+  height: 76px;
+  border-radius: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  background-color: ${COLORS.blue};
+
+  /* sombra iOS */
+  shadow-color: #000;
+  shadow-opacity: 0.15;
+  shadow-radius: 8px;
+  shadow-offset: 0px 4px;
+
+  /* sombra Android */
+  elevation: 6;
+`;
+
+export const EmptyContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin-top: 50px;
+`;
+
+export const EmptyText = styled.Text`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${COLORS.tagText};
+  text-align: center; 
+  width: 230px;
+  margin-top: 12px;
+  opacity: 0.7; 
+`;
+
+export const EmptyNewsSVG = styled.Image`
+  width: 220px;
+  height: 220px;
+  opacity: 0.7; 
+`;
