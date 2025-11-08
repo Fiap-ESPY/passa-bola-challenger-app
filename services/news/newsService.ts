@@ -12,6 +12,7 @@ import {
     orderBy,
     serverTimestamp,
     Timestamp,
+    increment,
 } from 'firebase/firestore';
 
 /**
@@ -128,11 +129,23 @@ const deleteNews = async (docId: string): Promise<void> => {
     }
 };
 
+const incrementNewsViewCount = async (docId: string): Promise<void> => {
+    try {
+        const newsRef = doc(db, 'news', docId);
+        await updateDoc(newsRef, {
+            viewCount: increment(1),
+        });
+    } catch (error) {
+        console.error('Falha ao atualizar contagem de views:', error);
+    }
+};
+
 export const newsService = {
     addNews,
     getAllNews,
     getNewsByDocId,
     updateNews,
     deleteNews,
+    incrementNewsViewCount,
 };
 

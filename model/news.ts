@@ -10,4 +10,5 @@ export interface News {
   date: string;
   content: string;
   source: string;
+  viewCount: number;
 }

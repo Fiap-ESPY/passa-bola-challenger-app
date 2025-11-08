@@ -1,7 +1,8 @@
 import headerImage from '@/assets/header-bg.jpg';
 import logoImage from '@/assets/logo.png';
 
-import Dashboard from '@/components/dashboard';
+import { RootStackNavigationProps } from '@/navigation/navigationTypes';
+import { useNavigation } from 'expo-router';
 import React from 'react';
 import { ScrollView, StatusBar } from 'react-native';
 import {
@@ -9,15 +10,13 @@ import {
   BackIcon,
   HeaderGrad,
   Logo,
-  Screen,
-  WelcomeText
+  Screen
 } from './styles';
-import { RootStackNavigationProps } from '@/navigation/navigationTypes';
-import { useNavigation } from 'expo-router';
+import Dashboard from '@/components/dashboard/news';
 
 const AdminDashboard = () => {
   const navigation = useNavigation<RootStackNavigationProps>();
-  
+
   return (
     <Screen>
       <StatusBar barStyle="light-content" />
@@ -31,10 +30,7 @@ const AdminDashboard = () => {
         </BackButton>
         <Logo source={logoImage} resizeMode="contain" alt="Passa bola Logo" />
       </HeaderGrad>
-
-      <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 24 }}
-      >
+      <ScrollView contentContainerStyle={{ paddingTop: 150 }}>
         <Dashboard />
       </ScrollView>
     </Screen>

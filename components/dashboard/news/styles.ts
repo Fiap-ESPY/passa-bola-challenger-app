@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { BarChart } from "react-native-gifted-charts";
 
 export const ScreenContainer = styled.View`
   flex: 1;
@@ -12,6 +11,7 @@ export const CardContainer = styled.View`
   background-color: white;
   border-radius: 12px;
   padding: 20px;
+  margin-top: 30px;
   
   /* Sombra para iOS */
   shadow-color: #000;
