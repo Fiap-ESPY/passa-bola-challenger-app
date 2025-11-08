@@ -114,6 +114,12 @@ const News = () => {
     setRefreshing(false);
   }, []);
 
+  const handleNewsClick = (docId: string) => {
+    navigation.navigate('NewsDetails', { newsId: docId });
+
+    newsService.incrementNewsViewCount(docId);
+  };
+
   return (
     <Screen>
       <StatusBar barStyle="light-content" />
@@ -208,9 +214,7 @@ const News = () => {
               key={newsItem.docId}
               newsItem={newsItem}
               isAdmin={isAdmin}
-              onClick={() =>
-                navigation.navigate('NewsDetails', { newsId: newsItem.docId })
-              }
+              onClick={() => handleNewsClick(newsItem.docId)}
               onEdit={() =>
                 navigation.navigate('AdminCreateNews', {
                   newsId: newsItem.docId,

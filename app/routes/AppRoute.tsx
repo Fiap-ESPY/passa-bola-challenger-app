@@ -65,7 +65,7 @@ const BottomTabsNavigation = () => {
       borderWidth: 0,
       borderTopColor: 'white',
       backgroundColor: 'white',
-      height: 70,
+      height: 90,
       elevation: 0,
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.1,
@@ -89,7 +89,7 @@ const BottomTabsNavigation = () => {
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name="newspaper"
-              size={27}
+              size={30}
               color={focusedStyle(focused)}
             />
           ),
@@ -100,7 +100,7 @@ const BottomTabsNavigation = () => {
         component={Home}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Ionicons name="home" size={27} color={focusedStyle(focused)} />
+            <Ionicons name="home" size={30} color={focusedStyle(focused)} />
           ),
         }}
       />
@@ -110,7 +110,7 @@ const BottomTabsNavigation = () => {
         component={Login}
         options={{
           tabBarIcon: ({ focused }) => (
-            <FontAwesome name="user" size={27} color={focusedStyle(focused)} />
+            <FontAwesome name="user" size={30} color={focusedStyle(focused)} />
           ),
         }}
       />
